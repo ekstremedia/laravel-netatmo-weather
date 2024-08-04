@@ -1,0 +1,23 @@
+{
+    "name": "ekstremedia/laravel-netatmo-weather",
+    "description": "A Laravel package for the Netatmo Weather API",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Terje Nesthus",
+            "email": "terje@nesthus.no"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Ekstremedia\\NetatmoWeather\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ekstremedia\\NetatmoWeather\\NetatmoWeatherServiceProvider"
+            ]
+        }
+    }
+}
