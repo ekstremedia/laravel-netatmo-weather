@@ -27,7 +27,7 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__ . '/resources/lang', 'netatmoweather');
 
         $this->mergeConfigFrom(
-            __DIR__ . '/config/netatmo-weather.php', 'netatmoweather'
+            __DIR__ . '/config/netatmo-weather.php', 'netatmo-weather'
         );
     }
 
