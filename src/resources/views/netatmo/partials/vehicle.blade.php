@@ -10,7 +10,7 @@
             </div>
             <div class="">
                 <a href="{{ route('memory.vehicles.show', $vehicle->uuid) }}">
-                    @include('memoryapp::memoryvehicle.partials.plate', ['plate' => $vehicle->plate_number])
+                    @include('memoryapp::netatmo.partials.plate', ['plate' => $vehicle->plate_number])
                 </a>
             </div>
         </div>
@@ -21,7 +21,9 @@
     </div>
     <div class="flex flex-col rounded-lg border bg-indigo-50 px-2 py-2 shadow lg:w-1/2 space-y-2">
         <h2 class="text-left text-blue-800 w-full bg-blue-100 px-2 py-1 rounded">
-            {{ trans('memoryapp::messages.vehicle.fuel.fuel') }} @if($vehicle->fuel_type) <small>({{ $vehicle->fuel_type  }})</small>@endif
+            {{ trans('memoryapp::messages.vehicle.fuel.fuel') }} @if($vehicle->fuel_type)
+                <small>({{ $vehicle->fuel_type  }})</small>
+            @endif
         </h2>
         <div class="flex flex-row items-end">
             <div class="flex w-full items-center justify-between">

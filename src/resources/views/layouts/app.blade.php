@@ -25,10 +25,10 @@
 
 <div x-data="{ sidebar_open: false }">
     <!-- Navbar -->
-    @include('memoryapp::layouts.navbar')
+    @include('netatmoweather::layouts.navbar')
 
     <!-- Sidebar -->
-    @include('memoryapp::layouts.sidebar')
+    @include('netatmoweather::layouts.sidebar')
 
     <!-- Other content -->
 </div>
@@ -38,7 +38,7 @@
     <div class="mx-auto container w-full">
         @if (session('success'))
             <div class="m-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
-                <p class="font-bold">{{ trans('memoryapp::messages.general.Success') }}</p>
+                <p class="font-bold">{{ trans('netatmoweather::messages.general.Success') }}</p>
                 <p>{{ session('success') }}</p>
             </div>
         @endif

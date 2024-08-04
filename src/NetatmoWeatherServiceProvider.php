@@ -8,30 +8,30 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-//        $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
-        //        $this->loadViewsFrom(__DIR__ . '/views', 'memoryapp');
+        $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+
         $this->publishes([
-            __DIR__ . '/path/to/assets' => public_path('vendor/memoryapp'),
+            __DIR__ . '/path/to/assets' => public_path('vendor/netatmoweather'),
         ], 'public');
-        // Bootstrapping code here, such as routes, views, migrations, etc.
+
         if (config('memory.modules.vehicle')) {
             $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/');
-            // Load routes, views, etc., related to the vehicle module
         }
+
         $this->publishes([
-            __DIR__ . '/config/memory.php' => config_path('memory.php'),
+            __DIR__ . '/config/netatmo-weather.php' => config_path('netatmo-weather.php'),
         ], 'config');
 
-        $this->loadViewsFrom(__DIR__ . '/resources/views', 'memoryapp');
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'netatmoweather'); // Correct view namespace
 
-        $this->loadTranslationsFrom(__DIR__ . '/resources/lang', 'memoryapp');
+        $this->loadTranslationsFrom(__DIR__ . '/resources/lang', 'netatmoweather');
 
         $this->mergeConfigFrom(
-            __DIR__ . '/config/memory.php', 'memory'
+            __DIR__ . '/config/netatmo-weather.php', 'netatmoweather'
         );
     }
 
-    public function register()
+    public function register(): void
     {
         // Register bindings, configurations, etc.
     }

@@ -27,7 +27,7 @@
             @enderror
         </div>
     @endforeach
-    @include('memoryapp::main.partials.form.actions', [
+    @include('netatmoweather::main.partials.form.actions', [
         'buttonText' => isset($vehicle) ? trans("memoryapp::messages.general.Update") : trans("memoryapp::messages.general.Save")
         ])
 </form>

@@ -14,7 +14,7 @@
             </h1>
         </div>
         <div class="mx-4 pt-4 bg-white overflow-hidden shadow-xl rounded-lg p-5 mb-32">
-            @include('memoryapp::memoryvehicle.partials.form', ['vehicle' => $vehicle ?? null])
+            @include('memoryapp::netatmo.partials.form', ['vehicle' => $vehicle ?? null])
         </div>
     </div>
 @endsection
