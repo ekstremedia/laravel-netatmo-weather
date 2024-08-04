@@ -9,7 +9,7 @@ class NetatmoWeatherController extends Controller
 {
     public function index(Request $request)
     {
-        // Your code here
+        // Front page of netatmo weather
         return view('netatmoweather::netatmo.index');
     }
 }

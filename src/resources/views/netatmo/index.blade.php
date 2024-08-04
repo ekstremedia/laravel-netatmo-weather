@@ -5,6 +5,8 @@
 @section('content')
     <div class="flex justify-between p-4 w-full">
         <h1 class="text-2xl font-semibold leading-tight">
+
+            <br>
             <i class="fa fa-car fa-fw"></i> {{ trans('netatmoweather::messages.vehicles') }}
         </h1>
         <a href="{{ route('netatmo.index') }}">

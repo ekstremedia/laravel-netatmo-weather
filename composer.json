@@ -19,5 +19,8 @@
                 "Ekstremedia\\NetatmoWeather\\NetatmoWeatherServiceProvider"
             ]
         }
+    },
+    "require": {
+        "illuminate/support": "^11.19"
     }
 }
