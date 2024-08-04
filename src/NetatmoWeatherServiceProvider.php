@@ -22,7 +22,7 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
             __DIR__ . '/config/netatmo-weather.php' => config_path('netatmo-weather.php'),
         ], 'config');
 
-        $this->loadViewsFrom(__DIR__ . '/resources/views', 'netatmoweather'); // Correct view namespace
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'netatmoweather');
 
         $this->loadTranslationsFrom(__DIR__ . '/resources/lang', 'netatmoweather');
 
