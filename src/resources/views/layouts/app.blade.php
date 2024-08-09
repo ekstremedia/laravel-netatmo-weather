@@ -20,6 +20,8 @@
     </style>
     <script src="//unpkg.com/alpinejs" defer></script>
 
+    {{-- ToDo: Remove this @vite when publishing --}}
+    @vite(['resources/js/app.js'])
 </head>
 <body class="bg-indigo-100">
 
@@ -50,7 +52,9 @@
             </div>
         @endif
 
+
         @yield('content')
+
     </div>
 </div>
 </body>

@@ -16,6 +16,8 @@
                 <i class="fa fa-car"></i>
                 <span>
                         {{ trans('netatmoweather::messages.vehicle.create') }}
+
+
                     </span>
             </button>
         </a>

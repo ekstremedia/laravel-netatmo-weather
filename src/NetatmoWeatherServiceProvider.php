@@ -11,7 +11,8 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
 
         $this->publishes([
-            __DIR__ . '/path/to/assets' => public_path('vendor/netatmoweather'),
+            __DIR__ . '/assets/images' => public_path('netatmo-weather/images'),
+
         ], 'public');
 
         if (config('memory.modules.vehicle')) {
