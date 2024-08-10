@@ -15,8 +15,9 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
 
         ], 'public');
 
-        if (config('memory.modules.vehicle')) {
-        }
+//        if (config('memory.modules.vehicle')) {
+//
+//        }
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/');
 
         $this->publishes([
