@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('netatmo_tokens', static function (Blueprint $table) {
+        Schema::create('netatmo_weather_tokens', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('weather_station_id')
+                ->constrained('weather_stations')
+                ->onDelete('cascade');
             $table->text('access_token');
             $table->text('refresh_token');
             $table->timestamp('expires_at');
