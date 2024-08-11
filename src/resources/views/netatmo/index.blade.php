@@ -34,14 +34,12 @@
                                 role="alert">
                             <p class="font-bold">{{ $weatherStation->station_name }}</p>
                             <div class="flex gap-x-4">
-                                <div class="rounded bg-blue-300 px-4 py-1 outline outline-blue-400 text-blue-950">
-                                    <a href="{{ route('netatmo.edit', $weatherStation) }}">Edit</a>
-                                </div>
+                                <a class="rounded bg-blue-300 px-4 py-1 outline outline-blue-400 text-blue-950"
+                                   href="{{ route('netatmo.edit', $weatherStation) }}">Edit</a>
                                 <div
                                         x-data="{ showConfirm: false }"
-                                        class="rounded bg-blue-300 px-4 py-1 outline outline-blue-400 text-blue-950 cursor-pointer"
                                 >
-                                    <span @click="showConfirm = true">Delete</span>
+                                    <button class="rounded bg-blue-300 px-4 py-1 outline outline-blue-400 text-blue-950" @click="showConfirm = true">Delete</button>
 
                                     <!-- Confirmation Modal -->
                                     <div
@@ -54,7 +52,7 @@
                                                 <strong>{{ $weatherStation->station_name }}</strong>?</p>
                                             <div class="flex justify-end gap-x-4">
                                                 <button @click="showConfirm = false"
-                                                        class="bg-gray-300 text-gray-700 px-4 py-2 rounded">No
+                                                        class="bg-gray-300 text-gray-700 px-4 py-2 rounded">Cancel
                                                 </button>
                                                 <button
                                                         @click="$refs.deleteForm.submit()"
