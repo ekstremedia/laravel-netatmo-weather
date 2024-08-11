@@ -7,7 +7,7 @@
         <div>
             <i class="fas fa-car  fa-fw"></i>
             <span>
-                        {{ trans('memoryapp::messages.vehicles') }}
+                        {{ trans('netatmoweather::messages.vehicles') }}
                     </span>
         </div>
     </a>

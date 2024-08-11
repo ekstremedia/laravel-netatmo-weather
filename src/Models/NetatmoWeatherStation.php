@@ -4,7 +4,7 @@ namespace Ekstremedia\NetatmoWeather\Models;
 use Ekstremedia\NetatmoWeather\Traits\Encryptable;
 use Illuminate\Database\Eloquent\Model;
 
-class WeatherStation extends Model
+class NetatmoWeatherStation extends Model
 {
     use Encryptable;
 

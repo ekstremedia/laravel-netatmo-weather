@@ -1,6 +1,6 @@
 {{-- resources/views/memoryvehicle/fuel/form.blade.php --}}
 
-@extends('memoryapp::layouts.app')
+@extends('netatmoweather::layouts.app')
 
 @section('content')
     <div class="mx-auto container">
@@ -8,9 +8,9 @@
             <h1 class="text-xl">
                 <div>
                     @if(isset($vehicle))
-                        {{ trans('memoryapp::messages.vehicle.fuel.edit') }}
+                        {{ trans('netatmoweather::messages.vehicle.fuel.edit') }}
                     @else
-                        {{ trans('memoryapp::messages.vehicle.fuel.create') }}
+                        {{ trans('netatmoweather::messages.vehicle.fuel.create') }}
                     @endif
                 </div>
                 <small>
@@ -19,7 +19,7 @@
             </h1>
         </div>
         <div class="mx-4 pt-4 bg-white overflow-hidden shadow-xl rounded-lg p-5 mb-32">
-            @include('memoryapp::netatmo.fuel.partials.form')
+            @include('netatmoweather::netatmo.fuel.partials.form')
         </div>
     </div>
 @endsection

@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('weather_stations', static function (Blueprint $table) {
+        Schema::create('netatmo_weather_stations', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
                 ->constrained()
@@ -29,6 +29,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('weather_stations');
+        Schema::dropIfExists('netatmo_weather_stations');
     }
 };

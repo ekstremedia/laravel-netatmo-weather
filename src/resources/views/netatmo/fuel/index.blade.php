@@ -1,6 +1,6 @@
 {{-- resources/views/memoryvehicle/fuel/index.blade.php --}}
 
-@extends('memoryapp::layouts.app')
+@extends('netatmoweather::layouts.app')
 
 @section('content')
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -22,7 +22,7 @@
 
         <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-5">
-                @include('memoryapp::netatmo.partials.fuel.vehicles_table', ['vehicles' => $vehicles])
+                @include('netatmoweather::netatmo.partials.fuel.vehicles_table', ['vehicles' => $vehicles])
             </div>
         </div>
     </div>

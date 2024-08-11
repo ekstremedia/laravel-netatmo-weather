@@ -14,7 +14,7 @@
     @foreach ($fields as $field)
         <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="{{ $field['name'] }}">
-                {{ trans("memoryapp::messages.vehicle.fuel." . $field['name']) }} @if($field['required'])
+                {{ trans("netatmoweather::messages.vehicle.fuel." . $field['name']) }} @if($field['required'])
                     <span class="text-red-700">*</span>
                 @endif
             </label>
@@ -27,7 +27,7 @@
                         $field['name'] === 'date_of_fuel' && !isset($fuel) ? date('Y-m-d') :
                         ($field['name'] === 'fuel_type' && isset($vehicle) ? $vehicle->fuel_type :
                         ($fuel->{$field['name']} ?? null))) }}"
-                placeholder="{{ trans("memoryapp::messages.vehicle.fuel." . $field['name']) }}"
+                placeholder="{{ trans("netatmoweather::messages.vehicle.fuel." . $field['name']) }}"
                 {{ $field['required'] ? 'required' : '' }}>
 
             @error($field['name'])
@@ -37,6 +37,6 @@
     @endforeach
 
     @include('netatmoweather::main.partials.form.actions', [
-        'buttonText' => isset($fuel) ? trans("memoryapp::messages.general.Update") : trans("memoryapp::messages.general.Save")
+        'buttonText' => isset($fuel) ? trans("netatmoweather::messages.general.Update") : trans("netatmoweather::messages.general.Save")
         ])
 </form>
