@@ -1,6 +1,7 @@
 <?php
 
 namespace Ekstremedia\NetatmoWeather\Traits;
+
 use Illuminate\Support\Facades\Crypt;
 
 trait Encryptable
@@ -8,8 +9,7 @@ trait Encryptable
     /**
      * Get an attribute from the model.
      *
-     * @param string $key
-     * @return mixed
+     * @param  string  $key
      */
     public function getAttribute($key): mixed
     {
@@ -25,8 +25,8 @@ trait Encryptable
     /**
      * Set a given attribute on the model.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return $this
      */
     public function setAttribute($key, $value): static

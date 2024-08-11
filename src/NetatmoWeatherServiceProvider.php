@@ -8,28 +8,28 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+        $this->loadRoutesFrom(__DIR__.'/routes/web.php');
 
         $this->publishes([
-            __DIR__ . '/assets/images' => public_path('netatmo-weather/images'),
+            __DIR__.'/assets/images' => public_path('netatmo-weather/images'),
 
         ], 'public');
 
-//        if (config('memory.modules.vehicle')) {
-//
-//        }
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations/');
+        //        if (config('memory.modules.vehicle')) {
+        //
+        //        }
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations/');
 
         $this->publishes([
-            __DIR__ . '/config/netatmo-weather.php' => config_path('netatmo-weather.php'),
+            __DIR__.'/config/netatmo-weather.php' => config_path('netatmo-weather.php'),
         ], 'config');
 
-        $this->loadViewsFrom(__DIR__ . '/resources/views', 'netatmoweather');
+        $this->loadViewsFrom(__DIR__.'/resources/views', 'netatmoweather');
 
-        $this->loadTranslationsFrom(__DIR__ . '/resources/lang', 'netatmoweather');
+        $this->loadTranslationsFrom(__DIR__.'/resources/lang', 'netatmoweather');
 
         $this->mergeConfigFrom(
-            __DIR__ . '/config/netatmo-weather.php', 'netatmo-weather'
+            __DIR__.'/config/netatmo-weather.php', 'netatmo-weather'
         );
     }
 

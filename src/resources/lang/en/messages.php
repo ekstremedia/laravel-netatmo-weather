@@ -27,5 +27,5 @@ return [
         'New' => 'New',
         'Date' => 'Date',
         'total_sum' => 'Total sum',
-    ]
+    ],
 ];

@@ -5,7 +5,6 @@ namespace Ekstremedia\NetatmoWeather\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Ekstremedia\NetatmoWeather\Http\Requests\NetatmoWeatherStationRequest;
 use Ekstremedia\NetatmoWeather\Models\NetatmoWeatherStation;
-use Illuminate\Http\Request;
 
 class NetatmoWeatherStationController extends Controller
 {
@@ -28,6 +27,7 @@ class NetatmoWeatherStationController extends Controller
     public function create()
     {
         $fields = $this->getFormFields();
+
         return view('netatmoweather::netatmo.form', compact('fields'));
 
     }
@@ -71,9 +71,10 @@ class NetatmoWeatherStationController extends Controller
     public function edit(NetatmoWeatherStation $weatherStation)
     {
         $fields = $this->getFormFields();
+
         return view('netatmoweather::netatmo.form', [
             'fields' => $fields,
-            'weatherStation' => $weatherStation
+            'weatherStation' => $weatherStation,
         ]);
     }
 
@@ -96,6 +97,7 @@ class NetatmoWeatherStationController extends Controller
     public function destroy(NetatmoWeatherStation $weatherStation)
     {
         $weatherStation->delete();
+
         return redirect()->route('netatmo.index')->with('success', 'Weather station deleted successfully.');
     }
 }
