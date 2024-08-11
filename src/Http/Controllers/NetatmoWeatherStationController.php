@@ -3,6 +3,7 @@
 namespace Ekstremedia\NetatmoWeather\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Ekstremedia\NetatmoWeather\Http\Requests\NetatmoWeatherStationRequest;
 use Ekstremedia\NetatmoWeather\Models\NetatmoWeatherStation;
 use Illuminate\Http\Request;
 
@@ -30,6 +31,7 @@ class NetatmoWeatherStationController extends Controller
         return view('netatmoweather::netatmo.form', compact('fields'));
 
     }
+
     private function getFormFields(): array
     {
         return [
@@ -40,12 +42,19 @@ class NetatmoWeatherStationController extends Controller
             ['name' => 'webhook_uri', 'type' => 'text', 'required' => false],
         ];
     }
+
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(NetatmoWeatherStationRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['user_id'] = auth()->id();
+
+        NetatmoWeatherStation::create($data);
+
+        return redirect()->route('netatmo.index')->with('success', 'Weather station created successfully.');
+
     }
 
     /**
@@ -71,9 +80,14 @@ class NetatmoWeatherStationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, NetatmoWeatherStation $weatherStation)
+    public function update(NetatmoWeatherStationRequest $request, NetatmoWeatherStation $weatherStation)
     {
-        //
+        $data = $request->validated();
+
+        $weatherStation->update($data);
+
+        return redirect()->route('netatmo.index')->with('success', 'Weather station updated successfully.');
+
     }
 
     /**
@@ -81,6 +95,7 @@ class NetatmoWeatherStationController extends Controller
      */
     public function destroy(NetatmoWeatherStation $weatherStation)
     {
-        //
+        $weatherStation->delete();
+        return redirect()->route('netatmo.index')->with('success', 'Weather station deleted successfully.');
     }
 }
