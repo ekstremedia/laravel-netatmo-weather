@@ -46,7 +46,7 @@
                 </div>
         </div>
         @else
-            <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 flex justify-between items-center"
+            <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 flex justify-between items-center w-full"
                  role="alert">
                 <p class="font-bold">No weather stations found</p>
                 <div class="flex gap-x-4">
