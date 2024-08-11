@@ -27,16 +27,17 @@ class NetatmoWeatherStationController extends Controller
     public function create()
     {
         $fields = $this->getFormFields();
-        ray($fields);
-        return view('netatmoweather::netatmo.form', [
-            'fields' => $fields
-        ]);
+        return view('netatmoweather::netatmo.form', compact('fields'));
 
     }
     private function getFormFields(): array
     {
         return [
-            ['name' => 'station_name', 'type' => 'text', 'label' => 'Brand', 'required' => true]
+            ['name' => 'station_name', 'type' => 'text', 'required' => true],
+            ['name' => 'client_id', 'type' => 'text', 'required' => true],
+            ['name' => 'client_secret', 'type' => 'text', 'required' => true],
+            ['name' => 'redirect_uri', 'type' => 'text', 'required' => false],
+            ['name' => 'webhook_uri', 'type' => 'text', 'required' => false],
         ];
     }
     /**

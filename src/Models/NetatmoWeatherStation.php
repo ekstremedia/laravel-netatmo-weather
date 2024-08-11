@@ -1,12 +1,16 @@
 <?php
+
 namespace Ekstremedia\NetatmoWeather\Models;
 
+use Ekstremedia\NetatmoWeather\Database\Factories\NetatmoWeatherStationFactory;
 use Ekstremedia\NetatmoWeather\Traits\Encryptable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class NetatmoWeatherStation extends Model
 {
     use Encryptable;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
@@ -22,4 +26,9 @@ class NetatmoWeatherStation extends Model
         'client_id',
         'client_secret',
     ];
+
+    protected static function newFactory(): NetatmoWeatherStationFactory
+    {
+        return NetatmoWeatherStationFactory::new();
+    }
 }

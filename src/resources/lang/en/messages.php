@@ -8,6 +8,10 @@ return [
         'add' => 'Add weather station',
         'edit' => 'Edit weather station',
         'station_name' => 'Station name',
+        'client_id' => 'Client ID',
+        'client_secret' => 'Client secret',
+        'redirect_uri' => 'Redirect URI',
+        'webhook_uri' => 'Webhook URI',
     ],
     'general' => [
         'Success' => 'Success',

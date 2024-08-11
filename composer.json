@@ -11,7 +11,11 @@
     "autoload": {
         "psr-4": {
             "Ekstremedia\\NetatmoWeather\\": "src/"
-        }
+        },
+        "classmap": [
+            "database/factories",
+            "database/seeders"
+        ]
     },
     "extra": {
         "laravel": {
