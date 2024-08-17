@@ -5,16 +5,20 @@ namespace Ekstremedia\NetatmoWeather\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Ekstremedia\NetatmoWeather\Http\Requests\NetatmoWeatherStationRequest;
 use Ekstremedia\NetatmoWeather\Models\NetatmoWeatherStation;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 
 class NetatmoWeatherStationController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
         // Front page of netatmo weather
-        logger('NetatmoWeatherStationController@index');
+        logger()->info('Fetching weather stations', ['user_id' => auth()->id()]);
 
         $weatherStations = NetatmoWeatherStation::where('user_id', auth()->id())->get();
 
@@ -24,7 +28,7 @@ class NetatmoWeatherStationController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
         $fields = $this->getFormFields();
 
@@ -46,7 +50,7 @@ class NetatmoWeatherStationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(NetatmoWeatherStationRequest $request)
+    public function store(NetatmoWeatherStationRequest $request): RedirectResponse
     {
         $data = $request->validated();
         $data['user_id'] = auth()->id();
@@ -60,7 +64,7 @@ class NetatmoWeatherStationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(NetatmoWeatherStation $weatherStation)
+    public function show(NetatmoWeatherStation $weatherStation): void
     {
         //
     }
@@ -68,7 +72,7 @@ class NetatmoWeatherStationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(NetatmoWeatherStation $weatherStation)
+    public function edit(NetatmoWeatherStation $weatherStation): View
     {
         $fields = $this->getFormFields();
 
@@ -81,7 +85,7 @@ class NetatmoWeatherStationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(NetatmoWeatherStationRequest $request, NetatmoWeatherStation $weatherStation)
+    public function update(NetatmoWeatherStationRequest $request, NetatmoWeatherStation $weatherStation): RedirectResponse
     {
         $data = $request->validated();
 
@@ -94,7 +98,7 @@ class NetatmoWeatherStationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(NetatmoWeatherStation $weatherStation)
+    public function destroy(NetatmoWeatherStation $weatherStation): RedirectResponse
     {
         $weatherStation->delete();
 

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('netatmo_weather_tokens', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('weather_station_id')
+            $table->foreignId('netatmo_weather_station_id')
                 ->constrained('netatmo_weather_stations')
                 ->onDelete('cascade');
             $table->text('access_token');

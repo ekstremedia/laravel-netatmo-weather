@@ -6,11 +6,19 @@ use Ekstremedia\NetatmoWeather\Database\Factories\NetatmoWeatherStationFactory;
 use Ekstremedia\NetatmoWeather\Traits\Encryptable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Http;
 
 class NetatmoWeatherStation extends Model
 {
     use Encryptable;
     use HasFactory;
+
+//    protected $table = 'netatmo_weather_stations';
+//    protected $primaryKey = 'id';
+//    public $incrementing = true;
+//    protected $keyType = 'int';
+    protected $with = ['token'];
 
     protected $fillable = [
         'user_id',
@@ -31,4 +39,10 @@ class NetatmoWeatherStation extends Model
     {
         return NetatmoWeatherStationFactory::new();
     }
+
+    public function token()
+    {
+        return $this->hasOne(NetatmoWeatherToken::class);
+    }
+
 }

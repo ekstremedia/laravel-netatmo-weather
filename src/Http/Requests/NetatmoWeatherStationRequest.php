@@ -8,7 +8,8 @@ class NetatmoWeatherStationRequest extends FormRequest
 {
     public function authorize(): true
     {
-        return true;
+        // Only authenticated users can create a weather station
+        return auth()->check();
     }
 
     public function rules(): array
