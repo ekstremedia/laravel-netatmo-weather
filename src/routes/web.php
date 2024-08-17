@@ -5,7 +5,6 @@ use Ekstremedia\NetatmoWeather\Http\Controllers\NetatmoWeatherStationAuthControl
 use Ekstremedia\NetatmoWeather\Http\Controllers\NetatmoWeatherStationController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::middleware(['web', 'auth'])->group(function () {
     Route::resource('netatmo', NetatmoWeatherStationController::class)->parameters([
         'netatmo' => 'weatherStation',

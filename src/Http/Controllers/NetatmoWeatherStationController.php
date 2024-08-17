@@ -5,9 +5,7 @@ namespace Ekstremedia\NetatmoWeather\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Ekstremedia\NetatmoWeather\Http\Requests\NetatmoWeatherStationRequest;
 use Ekstremedia\NetatmoWeather\Models\NetatmoWeatherStation;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 
 class NetatmoWeatherStationController extends Controller
@@ -17,11 +15,27 @@ class NetatmoWeatherStationController extends Controller
      */
     public function index(): View
     {
-        // Front page of netatmo weather
+        // Log the action of fetching weather stations
         logger()->info('Fetching weather stations', ['user_id' => auth()->id()]);
 
+        // Fetch weather stations for the authenticated user
         $weatherStations = NetatmoWeatherStation::where('user_id', auth()->id())->get();
 
+        // Check each weather station's token validity and refresh if necessary
+        foreach ($weatherStations as $weatherStation) {
+            if ($weatherStation->token && ! $weatherStation->token->hasValidToken()) {
+                try {
+                    $weatherStation->token->refreshToken();
+                } catch (\Exception $e) {
+                    logger()->error('Failed to refresh token', [
+                        'weather_station_id' => $weatherStation->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+        }
+
+        // Return the view with the list of weather stations
         return view('netatmoweather::netatmo.index', compact('weatherStations'));
     }
 

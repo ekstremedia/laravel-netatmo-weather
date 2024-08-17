@@ -40,18 +40,37 @@ class NetatmoWeatherToken extends Model
      */
     public function refreshToken(): void
     {
-        if (!$this->refresh_token) {
+        logger('Refreshing token', [
+            'netatmo_weather_station_id' => $this->netatmo_weather_station_id,
+        ]);
+
+        if (! $this->refresh_token) {
             throw new \Exception('No refresh token available.');
         }
 
-        $response = Http::asForm()->post(config('netatmo.netatmo_token_url'), [
+        // Retrieve the associated weather station
+        $weatherStation = $this->weatherStation;
+
+        if (! $weatherStation) {
+            throw new \Exception('Associated weather station not found.');
+        }
+
+        //        dd(config('netatmo-weather.netatmo_token_url'));
+        //        dd([
+        //            'grant_type' => 'refresh_token',
+        //            'client_id' => $weatherStation->client_id,
+        //            'client_secret' => $weatherStation->client_secret,
+        //            'refresh_token' => $this->refresh_token,
+        //        ]);
+        $response = Http::asForm()->post(config('netatmo-weather.netatmo_token_url'), [
             'grant_type' => 'refresh_token',
-            'client_id' => $this->client_id,
-            'client_secret' => $this->client_secret,
+            'client_id' => $weatherStation->client_id,
+            'client_secret' => $weatherStation->client_secret,
             'refresh_token' => $this->refresh_token,
         ]);
 
         if ($response->failed()) {
+            ray($response->json());
             throw new \Exception('Failed to refresh token.');
         }
 
@@ -61,5 +80,14 @@ class NetatmoWeatherToken extends Model
             'access_token' => $tokens['access_token'],
             'expires_at' => now()->addSeconds($tokens['expires_in']),
         ]);
+
+        logger('Token refreshed!!!!!', [
+            'netatmo_weather_station_id' => $this->netatmo_weather_station_id,
+        ]);
+    }
+
+    public function weatherStation(): BelongsTo
+    {
+        return $this->belongsTo(NetatmoWeatherStation::class, 'netatmo_weather_station_id');
     }
 }

@@ -2,31 +2,34 @@
 
 namespace Ekstremedia\NetatmoWeather\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Ekstremedia\NetatmoWeather\Models\NetatmoWeatherStation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 
 class NetatmoWeatherStationAuthController extends Controller
 {
     public function authenticate(NetatmoWeatherStation $weatherstation): RedirectResponse
     {
-        if ($weatherstation->token?->hasValidToken()) {
+        try {
+            $this->ensureValidToken($weatherstation);
+
             return redirect()->route('netatmo.index')->with('success', 'Already authenticated.');
+        } catch (\Exception $e) {
+            // If token refresh fails, proceed with re-authentication
+            $queryParams = http_build_query([
+                'client_id' => $weatherstation->client_id,
+                'redirect_uri' => route('netatmo.callback', $weatherstation),
+                'response_type' => 'code',
+                'scope' => 'read_station',
+                'state' => csrf_token(),
+            ]);
+
+            $authUrl = config('netatmo-weather.netatmo_auth_url').'?'.$queryParams;
+
+            return redirect($authUrl);
         }
-
-        $queryParams = http_build_query([
-            'client_id' => $weatherstation->client_id,
-            'redirect_uri' => route('netatmo.callback', $weatherstation),
-            'response_type' => 'code',
-            'scope' => 'read_station',
-            'state' => csrf_token(),
-        ]);
-
-        $authUrl = config('netatmo-weather.netatmo_auth_url') . '?' . $queryParams;
-
-        return redirect($authUrl);
     }
 
     public function handleCallback(Request $request, NetatmoWeatherStation $weatherstation): RedirectResponse
@@ -62,4 +65,35 @@ class NetatmoWeatherStationAuthController extends Controller
         return redirect()->route('netatmo.index')->with('success', 'Authenticated successfully.');
     }
 
+    public function ensureValidToken(NetatmoWeatherStation $weatherstation): void
+    {
+        // Check if the token is valid or if it needs to be refreshed
+        if ($weatherstation->token && $weatherstation->token->hasValidToken()) {
+            return; // Token is valid, no need to refresh
+        }
+
+        if (! $weatherstation->token || ! $weatherstation->token->refresh_token) {
+            throw new \Exception('No refresh token available.');
+        }
+
+        // Make the request to refresh the token
+        $response = Http::asForm()->post(config('netatmo-weather.netatmo_token_url'), [
+            'grant_type' => 'refresh_token',
+            'client_id' => $weatherstation->client_id,
+            'client_secret' => $weatherstation->client_secret,
+            'refresh_token' => $weatherstation->token->refresh_token,
+        ]);
+
+        if ($response->failed()) {
+            throw new \Exception('Failed to refresh token.');
+        }
+
+        $tokens = $response->json();
+
+        // Update the token in the database
+        $weatherstation->token()->update([
+            'access_token' => $tokens['access_token'],
+            'expires_at' => now()->addSeconds($tokens['expires_in']),
+        ]);
+    }
 }

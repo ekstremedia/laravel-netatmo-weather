@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('netatmo_weather_tokens', function (Blueprint $table) {
+        Schema::create('netatmo_weather_tokens', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('netatmo_weather_station_id')
                 ->constrained('netatmo_weather_stations')
@@ -25,10 +25,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('netatmo_tokens');
     }
