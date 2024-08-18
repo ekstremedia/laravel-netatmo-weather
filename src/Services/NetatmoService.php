@@ -28,13 +28,13 @@ class NetatmoService
     public function getStationData(NetatmoStation $weatherStation): array
     {
         // Refresh token if necessary
-        if (! $weatherStation->token->hasValidToken()) {
+        if (!$weatherStation->token->hasValidToken()) {
             $weatherStation->token->refreshToken();
         }
 
         // Make the API request
         $response = Http::withToken($weatherStation->token->access_token)
-            ->get($this->apiUrl.'/getstationsdata');
+            ->get($this->apiUrl . '/getstationsdata');
 
         if ($response->failed()) {
             throw new RequestException($response);
@@ -47,16 +47,7 @@ class NetatmoService
 
     public function storeStationData(NetatmoStation $weatherStation, array $data)
     {
-        ray('Modules count: '.count($data['devices'][0]['modules']));
         foreach ($data['devices'][0]['modules'] as $moduleData) {
-            $debug =
-                [
-                    'module_id' => $moduleData['_id'],
-                    'module_name' => $moduleData['module_name'],
-                    'module_type' => $moduleData['type'],
-                    'data_type' => $moduleData['data_type'],
-                ];
-            ray($debug);
             if ($moduleData['_id']) {
                 $module = $weatherStation->modules()->updateOrCreate(
                     ['module_id' => $moduleData['_id']],
@@ -66,7 +57,6 @@ class NetatmoService
                         'data_type' => $moduleData['data_type'],
                     ]
                 );
-                ray('Module after updateOrCreate:', $module->toArray())->green();
                 $module->readings()->create([
                     'time_utc' => Carbon::createFromTimestamp($moduleData['dashboard_data']['time_utc']),
                     'dashboard_data' => $moduleData['dashboard_data'],

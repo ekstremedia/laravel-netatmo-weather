@@ -29,4 +29,10 @@ class NetatmoModule extends Model
     {
         return $this->hasMany(NetatmoModuleReading::class);
     }
+
+    public function latestReading(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(NetatmoModuleReading::class)->latest('time_utc');
+    }
+
 }

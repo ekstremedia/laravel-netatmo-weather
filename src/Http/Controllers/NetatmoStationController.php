@@ -82,9 +82,13 @@ class NetatmoStationController extends Controller
     public function show(NetatmoStation $weatherStation, NetatmoService $netatmoService): view|RedirectResponse
     {
         try {
-            $data = $netatmoService->getStationData($weatherStation);
+            // Fetch data from the weather station
+            $netatmoService->getStationData($weatherStation);
+          $weatherStation->load('modules.latestReading');
+//          $weatherStation->refresh();
 
-            return view('netatmoweather::netatmo.show', compact('data', 'weatherStation'));
+
+            return view('netatmoweather::netatmo.show', compact('weatherStation'));
         } catch (\Exception $e) {
             return redirect()->route('netatmo.index')->with('error', 'Failed to retrieve data from Netatmo: '.$e->getMessage());
         }
