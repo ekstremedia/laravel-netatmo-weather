@@ -2,14 +2,14 @@
 
 namespace Ekstremedia\NetatmoWeather\Database\Seeders;
 
-use Ekstremedia\NetatmoWeather\Models\NetatmoWeatherStation;
+use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Illuminate\Database\Seeder;
 
 class WeatherStationSeeder extends Seeder
 {
     public function run(): void
     {
-        NetatmoWeatherStation::factory()->create([
+        NetatmoStation::factory()->create([
             'station_name' => 'Terje sin værstasjon',
             'user_id' => 1,
             'client_id' => '123547',

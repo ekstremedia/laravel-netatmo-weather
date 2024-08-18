@@ -2,12 +2,12 @@
 
 namespace Ekstremedia\NetatmoWeather\Database\Factories;
 
-use Ekstremedia\NetatmoWeather\Models\NetatmoWeatherStation;
+use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class NetatmoWeatherStationFactory extends Factory
 {
-    protected $model = NetatmoWeatherStation::class;
+    protected $model = NetatmoStation::class;
 
     public function definition(): array
     {

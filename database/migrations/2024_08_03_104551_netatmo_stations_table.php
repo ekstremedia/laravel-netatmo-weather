@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('netatmo_weather_stations', static function (Blueprint $table) {
+        Schema::create('netatmo_stations', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
                 ->constrained()
@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('client_secret');
             $table->string('redirect_uri')->nullable();
             $table->string('webhook_uri')->nullable();
+            $table->uuid()->unique();
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('netatmo_weather_stations');
+        Schema::dropIfExists('netatmo_stations');
     }
 };

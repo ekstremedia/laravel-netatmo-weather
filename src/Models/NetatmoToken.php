@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
-class NetatmoWeatherToken extends Model
+class NetatmoToken extends Model
 {
     use HasFactory;
 
@@ -17,7 +17,7 @@ class NetatmoWeatherToken extends Model
         'user_id',
         'access_token',
         'refresh_token',
-        'netatmo_weather_station_id',
+        'netatmo_station_id',
         'expires_at',
     ];
 
@@ -41,7 +41,7 @@ class NetatmoWeatherToken extends Model
     public function refreshToken(): void
     {
         logger('Refreshing token', [
-            'netatmo_weather_station_id' => $this->netatmo_weather_station_id,
+            'station_id' => $this->station_id,
         ]);
 
         if (! $this->refresh_token) {
@@ -82,12 +82,12 @@ class NetatmoWeatherToken extends Model
         ]);
 
         logger('Token refreshed!!!!!', [
-            'netatmo_weather_station_id' => $this->netatmo_weather_station_id,
+            'station_id' => $this->station_id,
         ]);
     }
 
-    public function weatherStation(): BelongsTo
+    public function station(): BelongsTo
     {
-        return $this->belongsTo(NetatmoWeatherStation::class, 'netatmo_weather_station_id');
+        return $this->belongsTo(NetatmoStation::class, 'netatmo_station_id');
     }
 }

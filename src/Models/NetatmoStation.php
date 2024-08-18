@@ -4,15 +4,19 @@ namespace Ekstremedia\NetatmoWeather\Models;
 
 use Ekstremedia\NetatmoWeather\Database\Factories\NetatmoWeatherStationFactory;
 use Ekstremedia\NetatmoWeather\Traits\Encryptable;
+use Ekstremedia\NetatmoWeather\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class NetatmoWeatherStation extends Model
+class NetatmoStation extends Model
 {
     use Encryptable;
     use HasFactory;
+    use HasUuid;
 
-    //    protected $table = 'netatmo_weather_stations';
+    //        protected $table = 'netatmo_stations';
     //    protected $primaryKey = 'id';
     //    public $incrementing = true;
     //    protected $keyType = 'int';
@@ -27,6 +31,12 @@ class NetatmoWeatherStation extends Model
         'webhook_uri',
     ];
 
+    // Specify that UUID should be used as the route key name
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
     // Specify which attributes should be encrypted
     protected array $encryptable = [
         'client_id',
@@ -38,8 +48,13 @@ class NetatmoWeatherStation extends Model
         return NetatmoWeatherStationFactory::new();
     }
 
-    public function token()
+    public function token(): HasOne
     {
-        return $this->hasOne(NetatmoWeatherToken::class);
+        return $this->hasOne(NetatmoToken::class);
+    }
+
+    public function modules(): HasMany
+    {
+        return $this->hasMany(NetatmoModule::class);
     }
 }

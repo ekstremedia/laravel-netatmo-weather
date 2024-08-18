@@ -3,14 +3,14 @@
 namespace Ekstremedia\NetatmoWeather\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Ekstremedia\NetatmoWeather\Models\NetatmoWeatherStation;
+use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
-class NetatmoWeatherStationAuthController extends Controller
+class NetatmoStationAuthController extends Controller
 {
-    public function authenticate(NetatmoWeatherStation $weatherstation): RedirectResponse
+    public function authenticate(NetatmoStation $weatherstation): RedirectResponse
     {
         try {
             $this->ensureValidToken($weatherstation);
@@ -32,7 +32,7 @@ class NetatmoWeatherStationAuthController extends Controller
         }
     }
 
-    public function handleCallback(Request $request, NetatmoWeatherStation $weatherstation): RedirectResponse
+    public function handleCallback(Request $request, NetatmoStation $weatherstation): RedirectResponse
     {
         if ($request->has('error')) {
             return redirect()->route('netatmo.index')->with('error', 'Authentication failed.');
@@ -54,7 +54,7 @@ class NetatmoWeatherStationAuthController extends Controller
 
         // Create or update the token in the NetatmoWeatherToken model
         $weatherstation->token()->updateOrCreate(
-            ['netatmo_weather_station_id' => $weatherstation->id],
+            ['netatmo_station_id' => $weatherstation->id],
             [
                 'access_token' => $tokens['access_token'],
                 'refresh_token' => $tokens['refresh_token'],
@@ -65,7 +65,7 @@ class NetatmoWeatherStationAuthController extends Controller
         return redirect()->route('netatmo.index')->with('success', 'Authenticated successfully.');
     }
 
-    public function ensureValidToken(NetatmoWeatherStation $weatherstation): void
+    public function ensureValidToken(NetatmoStation $weatherstation): void
     {
         // Check if the token is valid or if it needs to be refreshed
         if ($weatherstation->token && $weatherstation->token->hasValidToken()) {
