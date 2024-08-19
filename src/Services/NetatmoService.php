@@ -60,10 +60,12 @@ class NetatmoService
             ]
         );
 
-        $mainDevice->readings()->create([
-            'time_utc' => Carbon::createFromTimestamp($mainDeviceData['dashboard_data']['time_utc']),
-            'dashboard_data' => $mainDeviceData['dashboard_data'],
-        ]);
+        $mainDevice->readings()->updateOrCreate(
+            ['netatmo_module_id' => $mainDevice->id],
+            [
+                'time_utc' => Carbon::createFromTimestamp($mainDeviceData['dashboard_data']['time_utc']),
+                'dashboard_data' => $mainDeviceData['dashboard_data'],
+            ]);
 
         // Store or update the modules
         foreach ($mainDeviceData['modules'] as $moduleData) {
@@ -77,10 +79,12 @@ class NetatmoService
                     ]
                 );
 
-                $module->readings()->create([
-                    'time_utc' => Carbon::createFromTimestamp($moduleData['dashboard_data']['time_utc']),
-                    'dashboard_data' => $moduleData['dashboard_data'],
-                ]);
+                $module->readings()->updateOrCreate(
+                    ['netatmo_module_id' => $module->id],
+                    [
+                        'time_utc' => Carbon::createFromTimestamp($moduleData['dashboard_data']['time_utc']),
+                        'dashboard_data' => $moduleData['dashboard_data'],
+                    ]);
             } else {
                 // Handle the error case, log it, etc.
                 logger()->error('Failed to retrieve module ID.', ['module' => $moduleData]);

@@ -1,5 +1,6 @@
 {
     "name": "ekstremedia/laravel-netatmo-weather",
+    "license": "MIT",
     "description": "A Laravel package for the Netatmo Weather API",
     "type": "library",
     "authors": [
@@ -23,9 +24,6 @@
                 "Ekstremedia\\NetatmoWeather\\NetatmoWeatherServiceProvider"
             ]
         }
-    },
-    "require": {
-        "illuminate/support": "^11.19"
     },
     "require-dev": {
         "laravel/pint": "^1.17"
