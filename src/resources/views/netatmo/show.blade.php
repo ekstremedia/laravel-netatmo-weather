@@ -9,10 +9,11 @@
             <div class="mb-4">
                 @foreach($weatherStation->modules as $module)
                     <div class="mb-4">
-                        <span class="font-bold">Module:</span> {{ $module->module_name }} <small>{{ $module->module_id }}</small>
+                        <span class="font-bold">Module:</span> {{ $module->module_name }}
+                        <small>{{ $module->module_id }}</small>
                         <div class="mb-4">
                             {{--                                <strong>Measure:</strong> {{ $reading->type }}--}}
-{{--                            <strong>Value:</strong> {{ $module->latestReading }}--}}
+                            {{--                            <strong>Value:</strong> {{ $module->latestReading }}--}}
                             @foreach($module->latestReading['dashboard_data'] as $key => $reading)
                                 {{ $key }}: {{ $reading }} <br>
                             @endforeach
@@ -20,6 +21,6 @@
                     </div>
                 @endforeach
 
-</div>
-</div>
+            </div>
+        </div>
 @endsection

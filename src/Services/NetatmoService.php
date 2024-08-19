@@ -41,13 +41,32 @@ class NetatmoService
         }
 
         $this->storeStationData($weatherStation, $response->json()['body']);
+        ray($response->json());
 
         return $response->json();
     }
 
-    public function storeStationData(NetatmoStation $weatherStation, array $data)
+    public function storeStationData(NetatmoStation $weatherStation, array $data): void
     {
-        foreach ($data['devices'][0]['modules'] as $moduleData) {
+        $mainDeviceData = $data['devices'][0];
+
+        // Store or update the main device
+        $mainDevice = $weatherStation->modules()->updateOrCreate(
+            ['module_id' => $mainDeviceData['_id']],
+            [
+                'module_name' => $mainDeviceData['module_name'],
+                'module_type' => $mainDeviceData['type'],
+                'data_type' => $mainDeviceData['data_type'],
+            ]
+        );
+
+        $mainDevice->readings()->create([
+            'time_utc' => Carbon::createFromTimestamp($mainDeviceData['dashboard_data']['time_utc']),
+            'dashboard_data' => $mainDeviceData['dashboard_data'],
+        ]);
+
+        // Store or update the modules
+        foreach ($mainDeviceData['modules'] as $moduleData) {
             if ($moduleData['_id']) {
                 $module = $weatherStation->modules()->updateOrCreate(
                     ['module_id' => $moduleData['_id']],
@@ -57,6 +76,7 @@ class NetatmoService
                         'data_type' => $moduleData['data_type'],
                     ]
                 );
+
                 $module->readings()->create([
                     'time_utc' => Carbon::createFromTimestamp($moduleData['dashboard_data']['time_utc']),
                     'dashboard_data' => $moduleData['dashboard_data'],
@@ -65,7 +85,7 @@ class NetatmoService
                 // Handle the error case, log it, etc.
                 logger()->error('Failed to retrieve module ID.', ['module' => $moduleData]);
             }
-
         }
     }
+
 }
