@@ -34,5 +34,4 @@ class NetatmoModule extends Model
     {
         return $this->hasOne(NetatmoModuleReading::class)->latest('time_utc');
     }
-
 }

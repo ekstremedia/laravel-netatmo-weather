@@ -28,13 +28,13 @@ class NetatmoService
     public function getStationData(NetatmoStation $weatherStation): array
     {
         // Refresh token if necessary
-        if (!$weatherStation->token->hasValidToken()) {
+        if (! $weatherStation->token->hasValidToken()) {
             $weatherStation->token->refreshToken();
         }
 
         // Make the API request
         $response = Http::withToken($weatherStation->token->access_token)
-            ->get($this->apiUrl . '/getstationsdata');
+            ->get($this->apiUrl.'/getstationsdata');
 
         if ($response->failed()) {
             throw new RequestException($response);
@@ -90,5 +90,4 @@ class NetatmoService
             }
         }
     }
-
 }

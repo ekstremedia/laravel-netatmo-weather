@@ -36,6 +36,7 @@ class NetatmoStationAuthController extends Controller
     {
         if ($request->has('error')) {
             ray($request->all());
+
             return redirect()->route('netatmo.index')->with('error', 'Authentication failed.');
         }
 

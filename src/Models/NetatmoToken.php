@@ -45,7 +45,7 @@ class NetatmoToken extends Model
             'refresh_token' => $this->refresh_token,
         ]);
 
-        if (!$this->refresh_token) {
+        if (! $this->refresh_token) {
             throw new \Exception('No refresh token available.');
         }
 
@@ -53,7 +53,7 @@ class NetatmoToken extends Model
 
         ray($weatherStation->client_id, $weatherStation->client_secret);
 
-        if (!$weatherStation) {
+        if (! $weatherStation) {
             throw new \Exception('Associated weather station not found.');
         }
 
