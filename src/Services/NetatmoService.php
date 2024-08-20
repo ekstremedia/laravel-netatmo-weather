@@ -27,7 +27,6 @@ class NetatmoService
      */
     public function getStationData(NetatmoStation $weatherStation): array
     {
-        ray($weatherStation);
         // Refresh token if necessary
         if (!$weatherStation->token->hasValidToken()) {
             $weatherStation->token->refreshToken();
@@ -42,7 +41,6 @@ class NetatmoService
         }
 
         $this->storeStationData($weatherStation, $response->json()['body']);
-        ray($response->json());
 
         return $response->json();
     }
@@ -68,7 +66,7 @@ class NetatmoService
                 'dashboard_data' => $mainDeviceData['dashboard_data'],
             ]);
 
-        // Store or update the modules
+        // Store or update the addon modules
         foreach ($mainDeviceData['modules'] as $moduleData) {
             if ($moduleData['_id']) {
                 $module = $weatherStation->modules()->updateOrCreate(
