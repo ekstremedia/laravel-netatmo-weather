@@ -18,9 +18,25 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->string('module_id')->unique();
             $table->string('module_name');
-            $table->string('module_type');
+            $table->string('type');
+            $table->string('battery_percent')->nullable();
+            $table->string('battery_vp')->nullable();
+            $table->string('firmware')->nullable();
+            $table->string('last_message')->nullable();
+            $table->string('last_seen')->nullable();
+            $table->string('wifi_status')->nullable();
+            $table->string('rf_status')->nullable();
+            $table->string('reachable')->nullable();
+            $table->string('last_status_store')->nullable();
+            $table->string('date_setup')->nullable();
+            $table->string('last_setup')->nullable();
+            $table->string('co2_calibrating')->nullable();
+            $table->string('home_id')->nullable();
+            $table->string('home_name')->nullable();
+            $table->json('user')->nullable();
+            $table->json('place')->nullable();
             $table->json('data_type'); // Stores the types of data the module collects, e.g., ["Temperature", "Humidity"]
-            //            $table->uuid()->unique();
+            $table->json('dashboard_data')->nullable();
             $table->timestamps();
         });
     }

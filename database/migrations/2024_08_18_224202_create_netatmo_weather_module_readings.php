@@ -18,7 +18,6 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->timestamp('time_utc');
             $table->json('dashboard_data'); // Stores the actual sensor data like temperature, humidity, etc.
-            //            $table->uuid()->unique();
             $table->timestamps();
         });
     }

@@ -90,7 +90,7 @@ class NetatmoStationController extends Controller
         try {
             // Fetch data from the weather station
             $netatmoService->getStationData($weatherStation);
-            $weatherStation->load('modules.latestReading');
+//            $weatherStation->load('modules.latestReading');
             //          $weatherStation->refresh();
 
             return view('netatmoweather::netatmo.show', compact('weatherStation'));
