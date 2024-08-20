@@ -69,6 +69,7 @@ class NetatmoStationAuthController extends Controller
 
     public function ensureValidToken(NetatmoStation $weatherstation): void
     {
+        ray('THIS CODE RAN')->orange();
         // Check if the token is valid or if it needs to be refreshed
         if ($weatherstation->token && $weatherstation->token->hasValidToken()) {
             return; // Token is valid, no need to refresh
@@ -95,6 +96,7 @@ class NetatmoStationAuthController extends Controller
         // Update the token in the database
         $weatherstation->token()->update([
             'access_token' => $tokens['access_token'],
+            'refresh_token' => $tokens['refresh_token'],
             'expires_at' => now()->addSeconds($tokens['expires_in']),
         ]);
     }
