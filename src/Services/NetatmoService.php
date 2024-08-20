@@ -27,6 +27,7 @@ class NetatmoService
      */
     public function getStationData(NetatmoStation $weatherStation): array
     {
+        ray($weatherStation);
         // Refresh token if necessary
         if (!$weatherStation->token->hasValidToken()) {
             $weatherStation->token->refreshToken();

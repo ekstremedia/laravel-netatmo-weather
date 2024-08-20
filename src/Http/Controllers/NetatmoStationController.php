@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Ekstremedia\NetatmoWeather\Http\Requests\NetatmoWeatherStationRequest;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Services\NetatmoService;
+use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -16,19 +17,25 @@ class NetatmoStationController extends Controller
      */
     public function index(): View
     {
+
+//        $weatherStation = NetatmoStation::find(1);
+//        $weatherStation->token->refreshToken();
+//        dd("HER", $weatherStation);
         // Log the action of fetching weather stations
 
         // Fetch weather stations for the authenticated user
         $weatherStations = NetatmoStation::where('user_id', auth()->id())->get();
+
+
         //        logger()->info('Fetching weather stations', ['$weatherStations' => $weatherStations]);
 
         // Check each weather station's token validity and refresh if necessary
         foreach ($weatherStations as $weatherStation) {
-            if ($weatherStation->token && ! $weatherStation->token->hasValidToken()) {
+            if ($weatherStation->token && !$weatherStation->token->hasValidToken()) {
                 try {
                     $weatherStation->token->refreshToken();
-                } catch (\Exception $e) {
-                    logger()->error('Failed to refresh token', [
+                } catch (Exception $e) {
+                    logger()->error('Failed to refresh token!!', [
                         'weather_station_id' => $weatherStation->id,
                         'error' => $e->getMessage(),
                     ]);
@@ -84,13 +91,14 @@ class NetatmoStationController extends Controller
         try {
             // Fetch data from the weather station
             $netatmoService->getStationData($weatherStation);
-          $weatherStation->load('modules.latestReading');
+            $weatherStation->load('modules.latestReading');
 //          $weatherStation->refresh();
 
 
             return view('netatmoweather::netatmo.show', compact('weatherStation'));
-        } catch (\Exception $e) {
-            return redirect()->route('netatmo.index')->with('error', 'Failed to retrieve data from Netatmo: '.$e->getMessage());
+        } catch (Exception $e) {
+            ray($e);
+            return redirect()->route('netatmo.index')->with('error', 'Failed to retrieve data from Netatmo: ' . $e->getMessage());
         }
         //        return view('netatmoweather::netatmo.show', compact('weatherStation'));
     }

@@ -7,8 +7,10 @@
                 <i class="fa fa-sun text-yellow-400 fa-fw"></i>
                 <a href="{{ route('netatmo.index') }}">Netatmo Weather</a>
             </div>
+            <a href="https://dev.netatmo.com/apidocumentation/weather" target="_blank">
             <img src="{{ asset('netatmo-weather/images/netatmo-logo-vector.svg') }}" alt="Description of your image"
                  width="100">
+            </a>
         </div>
         <button @click="sidebar_open = !sidebar_open"
                 class="p-2 m-2 text-black hover:text-white focus:outline-none focus:text-white sm:hidden">

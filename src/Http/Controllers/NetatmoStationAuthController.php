@@ -35,6 +35,7 @@ class NetatmoStationAuthController extends Controller
     public function handleCallback(Request $request, NetatmoStation $weatherstation): RedirectResponse
     {
         if ($request->has('error')) {
+            ray($request->all());
             return redirect()->route('netatmo.index')->with('error', 'Authentication failed.');
         }
 
@@ -85,7 +86,7 @@ class NetatmoStationAuthController extends Controller
         ]);
 
         if ($response->failed()) {
-            throw new \Exception('Failed to refresh token.');
+            throw new \Exception('Failed to refresh token!.');
         }
 
         $tokens = $response->json();

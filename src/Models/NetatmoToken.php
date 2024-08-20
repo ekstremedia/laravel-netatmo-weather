@@ -41,48 +41,54 @@ class NetatmoToken extends Model
     public function refreshToken(): void
     {
         logger('Refreshing token', [
-            'station_id' => $this->station_id,
+            'station_id' => $this->netatmo_station_id,
+            'refresh_token' => $this->refresh_token,
         ]);
 
-        if (! $this->refresh_token) {
+        if (!$this->refresh_token) {
             throw new \Exception('No refresh token available.');
         }
 
-        // Retrieve the associated weather station
-        $weatherStation = $this->weatherStation;
+        $weatherStation = NetatmoStation::find($this->netatmo_station_id);
 
-        if (! $weatherStation) {
+        ray($weatherStation->client_id, $weatherStation->client_secret);
+
+        if (!$weatherStation) {
             throw new \Exception('Associated weather station not found.');
         }
 
-        //        dd(config('netatmo-weather.netatmo_token_url'));
-        //        dd([
-        //            'grant_type' => 'refresh_token',
-        //            'client_id' => $weatherStation->client_id,
-        //            'client_secret' => $weatherStation->client_secret,
-        //            'refresh_token' => $this->refresh_token,
-        //        ]);
-        $response = Http::asForm()->post(config('netatmo-weather.netatmo_token_url'), [
+        $apiData = [
             'grant_type' => 'refresh_token',
             'client_id' => $weatherStation->client_id,
             'client_secret' => $weatherStation->client_secret,
             'refresh_token' => $this->refresh_token,
+        ];
+
+        ray($apiData)->green();
+        ray(config('netatmo-weather.netatmo_token_url'));
+
+        $response = Http::asForm()->post(config('netatmo-weather.netatmo_token_url'), $apiData);
+
+        logger('Netatmo API Response', [
+            'response' => $response->json(),
+            'status' => $response->status(),
         ]);
 
         if ($response->failed()) {
-            ray($response->json());
-            throw new \Exception('Failed to refresh token.');
+            logger('Failed to refresh token ;/', $response->json());
+            throw new \Exception('Failed to refresh tokenz.');
         }
 
         $tokens = $response->json();
 
         $this->update([
             'access_token' => $tokens['access_token'],
+            'refresh_token' => $tokens['refresh_token'],
             'expires_at' => now()->addSeconds($tokens['expires_in']),
         ]);
 
-        logger('Token refreshed!!!!!', [
-            'station_id' => $this->station_id,
+        logger('Token refreshed successfully', [
+            'station_id' => $this->netatmo_station_id,
         ]);
     }
 
