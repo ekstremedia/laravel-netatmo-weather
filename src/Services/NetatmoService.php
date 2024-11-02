@@ -67,7 +67,7 @@ class NetatmoService
         $mainDevice = $weatherStation->modules()->updateOrCreate(
             ['module_id' => $mainDeviceData['_id']],
             [
-                'module_name' => $mainDeviceData['module_name'],
+                'module_name' => $mainDeviceData['module_name'] ?? 'Main Device',
                 'type' => $mainDeviceData['type'],
                 'battery_percent' => $mainDeviceData['battery_percent'] ?? null,
                 'battery_vp' => $mainDeviceData['battery_vp'] ?? null,
@@ -86,7 +86,7 @@ class NetatmoService
                 'user' => $mainDeviceData['user'] ?? null,
                 'place' => $mainDeviceData['place'] ?? null,
                 'data_type' => $mainDeviceData['data_type'],
-                'dashboard_data' => $mainDeviceData['dashboard_data'],
+                'dashboard_data' => $mainDeviceData['dashboard_data'] ?? null,
             ]
         );
 
@@ -114,7 +114,7 @@ class NetatmoService
                     'user' => $moduleData['user'] ?? null,
                     'place' => $moduleData['place'] ?? null,
                     'data_type' => $moduleData['data_type'],
-                    'dashboard_data' => $moduleData['dashboard_data'],
+                    'dashboard_data' => $moduleData['dashboard_data'] ?? null,
                 ]
             );
         }
