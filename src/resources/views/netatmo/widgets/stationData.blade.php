@@ -7,5 +7,5 @@
         'NAModule4' => 'netatmoweather::netatmo.widgets.NAModule4',
     ];
 @endphp
-
+{{ $module->type  }}
 @include($moduleViewMap[$module->type] ?? 'default.view', ['module' => $module])

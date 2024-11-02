@@ -55,7 +55,7 @@ class NetatmoService
         $this->storeStationData($weatherStation, $responseBody['body']);
 
         // Save response to file for debugging
-        Storage::disk('logs')->put('getstationsdata.json', json_encode($responseBody, JSON_PRETTY_PRINT));
+        Storage::disk('logs')->put("getstationsdata-" . $weatherStation->id . ".json", json_encode($responseBody, JSON_PRETTY_PRINT));
 
         return $response->json();
     }
@@ -64,6 +64,7 @@ class NetatmoService
     {
         // Store or update the main device (the base station)
         $mainDeviceData = $data['devices'][0];
+        ray($mainDeviceData);
         $mainDevice = $weatherStation->modules()->updateOrCreate(
             ['module_id' => $mainDeviceData['_id']],
             [
