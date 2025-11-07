@@ -3,12 +3,14 @@
 namespace Ekstremedia\NetatmoWeather\Http\Controllers;
 
 use Ekstremedia\NetatmoWeather\Http\Requests\NetatmoWeatherStationRequest;
+use Ekstremedia\NetatmoWeather\Models\NetatmoModule;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Services\NetatmoService;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
 class NetatmoStationController extends Controller
@@ -91,6 +93,19 @@ class NetatmoStationController extends Controller
                 ->with('error', 'Please authenticate with Netatmo first.');
         }
 
+        // Check if device selection is needed
+        if (! $weatherStation->device_id) {
+            try {
+                $devices = $netatmoService->getAvailableDevices($weatherStation);
+                if (count($devices) > 1) {
+                    return redirect()->route('netatmo.select-device', $weatherStation)
+                        ->with('info', 'Please select which weather station this configuration should use.');
+                }
+            } catch (Exception $e) {
+                // Continue to try fetching data anyway
+            }
+        }
+
         try {
             // Fetch data from the weather station
             $netatmoService->getStationData($weatherStation);
@@ -104,6 +119,81 @@ class NetatmoStationController extends Controller
 
             return redirect()->route('netatmo.index')
                 ->with('error', 'Failed to retrieve data from Netatmo: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Show device selection page.
+     */
+    public function selectDevice(NetatmoStation $weatherStation, NetatmoService $netatmoService): View|RedirectResponse
+    {
+        $this->authorize('update', $weatherStation);
+
+        // Check if token exists and is valid
+        if (! $weatherStation->token || ! $weatherStation->token->hasValidToken()) {
+            return redirect()->route('netatmo.authenticate', $weatherStation)
+                ->with('error', 'Please authenticate with Netatmo first.');
+        }
+
+        try {
+            $devices = $netatmoService->getAvailableDevices($weatherStation);
+
+            return view('netatmoweather::netatmo.select-device', compact('weatherStation', 'devices'));
+        } catch (Exception $e) {
+            logger()->error('Failed to get available devices', [
+                'error' => $e->getMessage(),
+                'station_id' => $weatherStation->id,
+            ]);
+
+            return redirect()->route('netatmo.index')
+                ->with('error', 'Failed to get available devices: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Set the device ID for a station.
+     */
+    public function setDevice(Request $request, NetatmoStation $weatherStation): RedirectResponse
+    {
+        $this->authorize('update', $weatherStation);
+
+        $validated = $request->validate([
+            'device_id' => 'required|string|max:255',
+        ]);
+
+        $weatherStation->update([
+            'device_id' => $validated['device_id'],
+        ]);
+
+        return redirect()->route('netatmo.show', $weatherStation)
+            ->with('success', 'Device selected successfully.');
+    }
+
+    /**
+     * Display the public view of a weather station.
+     */
+    public function publicShow(NetatmoStation $weatherStation, NetatmoService $netatmoService): View
+    {
+        // Check if the station is marked as public
+        abort_if(! $weatherStation->is_public, 404, 'This weather station is not publicly available.');
+
+        // Check if token exists and is valid
+        if (! $weatherStation->token || ! $weatherStation->token->hasValidToken()) {
+            abort(503, 'Weather station data is currently unavailable.');
+        }
+
+        try {
+            // Fetch data from the weather station
+            $netatmoService->getStationData($weatherStation);
+
+            return view('netatmoweather::netatmo.public', compact('weatherStation'));
+        } catch (Exception $e) {
+            logger()->error('Failed to retrieve data from Netatmo for public view', [
+                'error' => $e->getMessage(),
+                'station_id' => $weatherStation->id,
+            ]);
+
+            abort(503, 'Unable to retrieve weather data at this time.');
         }
     }
 
@@ -148,5 +238,52 @@ class NetatmoStationController extends Controller
 
         return redirect()->route('netatmo.index')
             ->with('success', 'Weather station deleted successfully.');
+    }
+
+    /**
+     * Toggle public access for a weather station.
+     */
+    public function togglePublic(NetatmoStation $weatherStation)
+    {
+        // Check if the current user owns this station
+        if ($weatherStation->user_id != auth()->id()) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Unauthorized'
+            ], 403);
+        }
+
+        $weatherStation->update([
+            'is_public' => !$weatherStation->is_public,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'is_public' => $weatherStation->is_public,
+        ]);
+    }
+
+    /**
+     * Delete an archived module.
+     */
+    public function destroyModule(NetatmoStation $weatherStation, NetatmoModule $module): RedirectResponse
+    {
+        $this->authorize('update', $weatherStation);
+
+        // Verify the module belongs to this station
+        if ($module->netatmo_station_id !== $weatherStation->id) {
+            abort(404);
+        }
+
+        // Only allow deletion of inactive modules
+        if ($module->is_active) {
+            return redirect()->route('netatmo.show', $weatherStation)
+                ->with('error', 'Cannot delete active modules. Module must be inactive first.');
+        }
+
+        $module->delete();
+
+        return redirect()->route('netatmo.show', $weatherStation)
+            ->with('success', 'Module deleted successfully.');
     }
 }

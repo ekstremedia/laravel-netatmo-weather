@@ -64,7 +64,7 @@ it('handles callback successfully', function () {
     ]);
 
     $response = $this->get(route('netatmo.callback', [
-        'weatherstation' => $station,
+        'weatherStation' => $station,
         'code' => 'test_authorization_code',
         'state' => $state,
     ]));
@@ -91,7 +91,7 @@ it('rejects callback with invalid state', function () {
     session()->put('netatmo_oauth_state_'.$station->id, 'correct_state');
 
     $response = $this->get(route('netatmo.callback', [
-        'weatherstation' => $station,
+        'weatherStation' => $station,
         'code' => 'test_authorization_code',
         'state' => 'wrong_state',
     ]));
@@ -110,7 +110,7 @@ it('rejects callback with missing state', function () {
     ]);
 
     $response = $this->get(route('netatmo.callback', [
-        'weatherstation' => $station,
+        'weatherStation' => $station,
         'code' => 'test_authorization_code',
         'state' => 'any_state',
     ]));
@@ -136,7 +136,7 @@ it('handles token api error gracefully', function () {
     ]);
 
     $response = $this->get(route('netatmo.callback', [
-        'weatherstation' => $station,
+        'weatherStation' => $station,
         'code' => 'test_authorization_code',
         'state' => $state,
     ]));
@@ -156,7 +156,7 @@ it('prevents callback for unauthorized user', function () {
     ]);
 
     $response = $this->get(route('netatmo.callback', [
-        'weatherstation' => $station,
+        'weatherStation' => $station,
         'code' => 'test_code',
         'state' => 'test_state',
     ]));
@@ -193,7 +193,7 @@ it('updates existing token instead of creating duplicate', function () {
     ]);
 
     $response = $this->get(route('netatmo.callback', [
-        'weatherstation' => $station,
+        'weatherStation' => $station,
         'code' => 'test_authorization_code',
         'state' => $state,
     ]));

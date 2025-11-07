@@ -18,29 +18,29 @@ class NetatmoStationAuthController extends Controller
     /**
      * Initiate OAuth authentication flow with Netatmo.
      */
-    public function authenticate(NetatmoStation $weatherstation): RedirectResponse
+    public function authenticate(NetatmoStation $weatherStation): RedirectResponse
     {
         // Verify ownership
-        $this->authorize('authenticate', $weatherstation);
+        $this->authorize('authenticate', $weatherStation);
 
         try {
-            $this->ensureValidToken($weatherstation);
+            $this->ensureValidToken($weatherStation);
 
             return redirect()->route('netatmo.index')
                 ->with('success', 'Already authenticated with Netatmo.');
         } catch (TokenRefreshException $e) {
             logger()->info('Token refresh failed, redirecting to OAuth authentication', [
-                'station_id' => $weatherstation->id,
+                'station_id' => $weatherStation->id,
                 'error' => $e->getMessage(),
             ]);
 
             // Generate and store OAuth state token
             $state = Str::random(40);
-            session()->put('netatmo_oauth_state_'.$weatherstation->id, $state);
+            session()->put('netatmo_oauth_state_'.$weatherStation->id, $state);
 
             $queryParams = http_build_query([
-                'client_id' => $weatherstation->client_id,
-                'redirect_uri' => route('netatmo.callback', $weatherstation),
+                'client_id' => $weatherStation->client_id,
+                'redirect_uri' => route('netatmo.callback', $weatherStation),
                 'response_type' => 'code',
                 'scope' => 'read_station',
                 'state' => $state,
@@ -55,15 +55,15 @@ class NetatmoStationAuthController extends Controller
     /**
      * Handle OAuth callback from Netatmo.
      */
-    public function handleCallback(Request $request, NetatmoStation $weatherstation): RedirectResponse
+    public function handleCallback(Request $request, NetatmoStation $weatherStation): RedirectResponse
     {
         // Verify ownership
-        $this->authorize('authenticate', $weatherstation);
+        $this->authorize('authenticate', $weatherStation);
 
         // Check for errors in the callback
         if ($request->has('error')) {
             logger()->error('Netatmo OAuth authentication error', [
-                'station_id' => $weatherstation->id,
+                'station_id' => $weatherStation->id,
                 'error' => $request->get('error'),
                 'error_description' => $request->get('error_description'),
             ]);
@@ -79,10 +79,10 @@ class NetatmoStationAuthController extends Controller
         ]);
 
         // Validate OAuth state to prevent CSRF
-        $sessionState = session()->get('netatmo_oauth_state_'.$weatherstation->id);
+        $sessionState = session()->get('netatmo_oauth_state_'.$weatherStation->id);
         if (! $sessionState || $validated['state'] !== $sessionState) {
             logger()->warning('OAuth state mismatch - possible CSRF attack', [
-                'station_id' => $weatherstation->id,
+                'station_id' => $weatherStation->id,
                 'ip' => $request->ip(),
             ]);
 
@@ -91,20 +91,20 @@ class NetatmoStationAuthController extends Controller
         }
 
         // Clear the state from session
-        session()->forget('netatmo_oauth_state_'.$weatherstation->id);
+        session()->forget('netatmo_oauth_state_'.$weatherStation->id);
 
         // Exchange authorization code for access token
         $response = Http::asForm()->post(config('netatmo-weather.netatmo_token_url'), [
             'grant_type' => 'authorization_code',
-            'client_id' => $weatherstation->client_id,
-            'client_secret' => $weatherstation->client_secret,
+            'client_id' => $weatherStation->client_id,
+            'client_secret' => $weatherStation->client_secret,
             'code' => $validated['code'],
-            'redirect_uri' => route('netatmo.callback', $weatherstation),
+            'redirect_uri' => route('netatmo.callback', $weatherStation),
         ]);
 
         if ($response->failed()) {
             logger()->error('Failed to exchange authorization code for token', [
-                'station_id' => $weatherstation->id,
+                'station_id' => $weatherStation->id,
                 'status' => $response->status(),
             ]);
 
@@ -115,8 +115,8 @@ class NetatmoStationAuthController extends Controller
         $tokens = $response->json();
 
         // Store the tokens
-        $weatherstation->token()->updateOrCreate(
-            ['netatmo_station_id' => $weatherstation->id],
+        $weatherStation->token()->updateOrCreate(
+            ['netatmo_station_id' => $weatherStation->id],
             [
                 'access_token' => $tokens['access_token'],
                 'refresh_token' => $tokens['refresh_token'],
@@ -125,7 +125,7 @@ class NetatmoStationAuthController extends Controller
         );
 
         logger()->info('Netatmo authentication successful', [
-            'station_id' => $weatherstation->id,
+            'station_id' => $weatherStation->id,
         ]);
 
         return redirect()->route('netatmo.index')
@@ -138,19 +138,19 @@ class NetatmoStationAuthController extends Controller
      *
      * @throws TokenRefreshException
      */
-    protected function ensureValidToken(NetatmoStation $weatherstation): void
+    protected function ensureValidToken(NetatmoStation $weatherStation): void
     {
         // Check if the token is valid
-        if ($weatherstation->token && $weatherstation->token->hasValidToken()) {
+        if ($weatherStation->token && $weatherStation->token->hasValidToken()) {
             return;
         }
 
         // No token or no refresh token available
-        if (! $weatherstation->token || ! $weatherstation->token->refresh_token) {
+        if (! $weatherStation->token || ! $weatherStation->token->refresh_token) {
             throw TokenRefreshException::noRefreshToken();
         }
 
         // Attempt to refresh the token
-        $weatherstation->token->refreshToken();
+        $weatherStation->token->refreshToken();
     }
 }

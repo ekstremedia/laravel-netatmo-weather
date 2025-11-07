@@ -16,6 +16,9 @@ A Laravel package for integrating Netatmo Weather Station API with your Laravel 
 - Automatic token refresh
 - Fetch and store weather station data
 - Support for multiple weather stations per user
+- **Device selection** - Manage multiple Netatmo devices with manual device selection for each configuration
+- **Module lifecycle management** - Automatic archiving of disconnected/removed modules with manual deletion
+- **Public sharing** - Share weather data publicly with customizable per-station access
 - Built-in database models and migrations
 - Encrypted storage of sensitive credentials
 - Configurable caching of weather data
@@ -160,13 +163,122 @@ Route::delete('/netatmo/{weatherstation}', [NetatmoStationController::class, 'de
 
 Visit `/netatmo` in your browser to manage your weather stations.
 
+## Public Sharing
+
+The package supports public sharing of weather station data. Each station can be individually configured for public access:
+
+### Enabling Public Access
+
+**Via the UI:**
+1. Navigate to your weather station detail page
+2. Use the toggle switch in the "Public Access" section
+3. Copy the generated public URL to share
+
+**Or in the edit form:**
+1. Check the "Make this station publicly accessible" checkbox when creating or editing a station
+
+**Programmatically:**
+```php
+$station = NetatmoStation::find($id);
+$station->update(['is_public' => true]);
+```
+
+### Public Route
+
+Once enabled, your weather station data will be accessible at:
+```
+/netatmo/public/{station-uuid}
+```
+
+This route:
+- Does not require authentication
+- Shows a clean, minimal view with only weather widgets
+- Returns 404 if the station is not marked as public
+- Returns 503 if data is temporarily unavailable
+
+### Security
+
+- Only stations explicitly marked as `is_public = true` are accessible
+- OAuth tokens and credentials are never exposed
+- Station owners maintain full control over public access
+- Public URLs use UUIDs for non-sequential identification
+
+## Device Selection
+
+If your Netatmo account has access to multiple weather stations, the package will prompt you to select which physical device each configuration should display data from.
+
+### How It Works
+
+1. **Single Device**: If you only have one weather station, the device is automatically selected
+2. **Multiple Devices**: When you have multiple weather stations, you'll be redirected to a device selection page after authentication
+3. **Manual Selection**: Choose which Netatmo device this configuration should use from a list showing:
+   - Station name
+   - Number of modules
+   - Device ID (MAC address)
+
+### Changing Device Selection
+
+You can change which device a configuration uses at any time by visiting:
+```
+/netatmo/{station}/select-device
+```
+
+This is useful if you want to:
+- Reassign a configuration to a different physical device
+- Fix incorrect device assignments
+- Manage multiple locations with similar setups
+
+### Technical Details
+
+- Device IDs are Netatmo MAC addresses (e.g., `70:ee:50:5e:db:30`)
+- The same physical device can be used by multiple configurations
+- Different configurations can display data from different devices
+- Device selection is stored in the `device_id` column
+
+## Module Lifecycle Management
+
+The package automatically tracks which modules are active and archives modules that are no longer detected by the Netatmo API.
+
+### How It Works
+
+1. **Active Modules**: Modules currently detected in the Netatmo API response are marked as active and displayed normally
+2. **Automatic Archiving**: When a module is no longer in the API response (removed, dead battery, lost connection), it's automatically marked as inactive
+3. **Archived Section**: Inactive modules appear in a collapsible "Archived Modules" section on the station detail page
+4. **Manual Deletion**: You can permanently delete archived modules if they're no longer needed
+
+### Common Scenarios
+
+**Lost Module:**
+- Battery dies on outdoor module
+- Next data refresh marks it as inactive
+- Module appears in Archived Modules section
+- Replace battery → module automatically reactivates on next refresh
+
+**Removed Module:**
+- You remove a rain gauge from your station
+- Module is automatically archived
+- You can delete it permanently from the archived section
+
+**Different Station Configurations:**
+- Your home has outdoor + wind modules
+- Your cabin has only the main module
+- Each configuration only shows its own active modules
+
+### Benefits
+
+- No stale data displayed from disconnected modules
+- Historical data preserved for inactive modules
+- Clean interface showing only current setup
+- Easy cleanup of permanently removed modules
+
 ## Authentication Flow
 
 1. Create a weather station record with your Client ID, Client Secret, and Redirect URI
 2. Navigate to the authentication route: `/netatmo/{station}/authenticate`
 3. You'll be redirected to Netatmo to authorize the app
 4. After authorization, you'll be redirected back with access tokens
-5. The package automatically stores and refreshes tokens as needed
+5. If your Netatmo account has multiple weather stations, you'll be prompted to select which device this configuration should use
+6. The package automatically stores and refreshes tokens as needed
 
 ## Data Structure
 
@@ -176,6 +288,8 @@ Visit `/netatmo` in your browser to manage your weather stations.
 - `uuid` - UUID for public routing
 - `user_id` - Associated user
 - `station_name` - Name of the station
+- `device_id` - Netatmo device MAC address (selected during setup if multiple devices exist, or auto-populated if only one device)
+- `is_public` - Boolean flag for public access (default: false)
 - `client_id` - Encrypted Netatmo Client ID
 - `client_secret` - Encrypted Netatmo Client Secret
 - `redirect_uri` - OAuth redirect URI
@@ -189,6 +303,7 @@ Stores data for each module (base station and add-on modules):
 - Battery status
 - Connection status (wifi_status, rf_status, reachable)
 - Dashboard data (stored as JSON)
+- `is_active` - Boolean flag indicating if module is currently detected (default: true)
 
 ### NetatmoToken
 

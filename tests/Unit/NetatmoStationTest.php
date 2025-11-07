@@ -127,3 +127,46 @@ it('cascades delete to token and modules', function () {
     assertDatabaseMissing('netatmo_tokens', ['id' => $token->id]);
     assertDatabaseMissing('netatmo_modules', ['id' => $module->id]);
 });
+
+it('defaults is_public to false', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    $station->refresh();
+
+    expect($station->is_public)->toBeFalse();
+});
+
+it('can create a public station', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Public Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'is_public' => true,
+    ]);
+
+    expect($station->is_public)->toBeTrue();
+
+    assertDatabaseHas('netatmo_stations', [
+        'id' => $station->id,
+        'is_public' => true,
+    ]);
+});
+
+it('casts is_public to boolean', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'is_public' => 1, // integer
+    ]);
+
+    expect($station->is_public)->toBeBool();
+    expect($station->is_public)->toBeTrue();
+});

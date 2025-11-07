@@ -156,3 +156,99 @@ it('redirects to authenticate when showing station with invalid token', function
     get(route('netatmo.show', $station->uuid))
         ->assertRedirect(route('netatmo.authenticate', $station->uuid));
 });
+
+it('can toggle public access for a station', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'is_public' => false,
+    ]);
+
+    post(route('netatmo.toggle-public', $station->uuid))
+        ->assertOk()
+        ->assertJson([
+            'success' => true,
+            'is_public' => true,
+        ]);
+
+    assertDatabaseHas('netatmo_stations', [
+        'id' => $station->id,
+        'is_public' => true,
+    ]);
+});
+
+it('can store a station with public access enabled', function () {
+    $data = [
+        'station_name' => 'Public Station',
+        'client_id' => 'client_id',
+        'client_secret' => 'client_secret',
+        'is_public' => true,
+    ];
+
+    post(route('netatmo.store'), $data)
+        ->assertRedirect();
+
+    assertDatabaseHas('netatmo_stations', [
+        'station_name' => 'Public Station',
+        'is_public' => true,
+    ]);
+});
+
+it('can update station public access via form', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'is_public' => false,
+    ]);
+
+    $data = [
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'is_public' => true,
+    ];
+
+    put(route('netatmo.update', $station->uuid), $data)
+        ->assertRedirect();
+
+    assertDatabaseHas('netatmo_stations', [
+        'id' => $station->id,
+        'is_public' => true,
+    ]);
+});
+
+it('returns 404 for non-public station on public route', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Private Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'is_public' => false,
+    ]);
+
+    // Test public route without authentication by creating a fresh request
+    $this->app['auth']->forgetGuards();
+
+    get(route('netatmo.public', $station->uuid))
+        ->assertNotFound();
+});
+
+it('returns 503 for public station without valid token', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Public Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'is_public' => true,
+    ]);
+
+    // Test public route without authentication
+    $this->app['auth']->forgetGuards();
+
+    get(route('netatmo.public', $station->uuid))
+        ->assertStatus(503);
+});

@@ -81,7 +81,12 @@ class NetatmoService
             throw InvalidApiResponseException::noDevices();
         }
 
-        $mainDeviceData = $data['devices'][0];
+        // Find the correct device from the API response
+        $mainDeviceData = $this->findCorrectDevice($weatherStation, $data['devices']);
+
+        if (! $mainDeviceData) {
+            throw InvalidApiResponseException::missingRequiredFields('Could not find matching device in API response');
+        }
 
         // Validate required fields
         if (! isset($mainDeviceData['_id'], $mainDeviceData['type'], $mainDeviceData['data_type'])) {
@@ -90,18 +95,111 @@ class NetatmoService
 
         // Use database transaction to ensure atomicity
         DB::transaction(function () use ($weatherStation, $mainDeviceData) {
-            // Store main device
+            // Store device_id if not already set
+            if (! $weatherStation->device_id) {
+                $weatherStation->update(['device_id' => $mainDeviceData['_id']]);
+            }
+
+            // Collect all module IDs from API response
+            $activeModuleIds = [$mainDeviceData['_id']];
+            if (isset($mainDeviceData['modules']) && is_array($mainDeviceData['modules'])) {
+                foreach ($mainDeviceData['modules'] as $moduleData) {
+                    $activeModuleIds[] = $moduleData['_id'];
+                }
+            }
+
+            // Mark modules not in API response as inactive
+            $weatherStation->modules()
+                ->whereNotIn('module_id', $activeModuleIds)
+                ->update(['is_active' => false]);
+
+            // Store main device (will be marked as active)
             $this->storeModuleData($weatherStation, array_merge($mainDeviceData, [
                 'module_name' => $mainDeviceData['module_name'] ?? 'Main Device',
             ]));
 
-            // Store add-on modules
+            // Store add-on modules (will be marked as active)
             if (isset($mainDeviceData['modules']) && is_array($mainDeviceData['modules'])) {
                 foreach ($mainDeviceData['modules'] as $moduleData) {
                     $this->storeModuleData($weatherStation, $moduleData);
                 }
             }
         });
+    }
+
+    /**
+     * Get all available devices from Netatmo API.
+     */
+    public function getAvailableDevices(NetatmoStation $weatherStation): array
+    {
+        // Refresh token if necessary
+        if (! $weatherStation->token->hasValidToken()) {
+            $weatherStation->token->refreshToken();
+        }
+
+        // Make the API request
+        $response = Http::withToken($weatherStation->token->access_token)
+            ->get($this->apiUrl.'/getstationsdata');
+
+        if ($response->failed()) {
+            throw new RequestException($response);
+        }
+
+        $responseBody = $response->json();
+
+        if (! isset($responseBody['body']['devices']) || empty($responseBody['body']['devices'])) {
+            return [];
+        }
+
+        return collect($responseBody['body']['devices'])->map(function ($device) {
+            return [
+                'device_id' => $device['_id'],
+                'station_name' => $device['station_name'] ?? 'Unknown Station',
+                'module_count' => isset($device['modules']) ? count($device['modules']) + 1 : 1, // +1 for main device
+            ];
+        })->toArray();
+    }
+
+    /**
+     * Find the correct device from the API response.
+     */
+    protected function findCorrectDevice(NetatmoStation $weatherStation, array $devices): ?array
+    {
+        // If device_id is set, find the matching device
+        if ($weatherStation->device_id) {
+            foreach ($devices as $device) {
+                if (isset($device['_id']) && $device['_id'] === $weatherStation->device_id) {
+                    return $device;
+                }
+            }
+
+            // Device ID is set but not found - log warning and don't fallback
+            logger()->warning('Device ID not found in API response', [
+                'station_id' => $weatherStation->id,
+                'device_id' => $weatherStation->device_id,
+                'available_devices' => array_column($devices, '_id'),
+            ]);
+
+            return null;
+        }
+
+        // If only one device, use it
+        if (count($devices) === 1) {
+            return $devices[0];
+        }
+
+        // Multiple devices but no device_id - don't auto-select
+        // User needs to manually select the correct device
+        logger()->warning('Multiple devices found but no device_id set', [
+            'station_id' => $weatherStation->id,
+            'station_name' => $weatherStation->station_name,
+            'available_devices' => array_map(fn($d) => [
+                'id' => $d['_id'] ?? null,
+                'name' => $d['station_name'] ?? null,
+            ], $devices),
+        ]);
+
+        return null;
     }
 
     /**
@@ -132,6 +230,7 @@ class NetatmoService
                 'place' => $moduleData['place'] ?? null,
                 'data_type' => $moduleData['data_type'],
                 'dashboard_data' => $moduleData['dashboard_data'] ?? null,
+                'is_active' => true,
             ]
         );
     }

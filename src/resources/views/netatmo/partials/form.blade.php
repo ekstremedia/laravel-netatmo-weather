@@ -53,7 +53,30 @@
         </div>
     @endforeach
 
-    <div class="pt-6 border-t border-dark-border/50 flex items-center justify-end space-x-3">
+    <!-- Public Access Toggle -->
+    <div class="space-y-2 pt-6 border-t border-dark-border/50">
+        <div class="bg-purple-900/20 border border-purple-700/30 rounded-xl p-4">
+            <div class="flex items-start space-x-3">
+                <input type="checkbox"
+                       id="is_public"
+                       name="is_public"
+                       value="1"
+                       {{ old('is_public', isset($weatherStation) && $weatherStation->is_public ? true : false) ? 'checked' : '' }}
+                       class="w-5 h-5 mt-0.5 rounded border-purple-500/50 bg-dark-surface/60 text-netatmo-purple focus:ring-2 focus:ring-netatmo-purple/50 focus:ring-offset-0 transition-colors">
+                <div class="flex-1">
+                    <label for="is_public" class="text-purple-200 font-semibold cursor-pointer block mb-1">
+                        <i class="fas fa-share-alt mr-1"></i>
+                        Make this station publicly accessible
+                    </label>
+                    <p class="text-purple-300/70 text-sm">
+                        When enabled, anyone with the public link will be able to view this weather station's data without logging in.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pt-6 flex items-center justify-end space-x-3">
         <a href="{{ url()->previous() }}"
            class="inline-flex items-center space-x-2 px-6 py-3 bg-dark-surface/60 hover:bg-dark-surface border border-dark-border/50 text-purple-200 font-medium rounded-xl transition-all duration-200">
             <i class="fas fa-times"></i>

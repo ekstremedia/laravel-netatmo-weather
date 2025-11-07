@@ -60,5 +60,14 @@ class TestCase extends Orchestra
 
         $migration = include __DIR__.'/../database/migrations/2024_08_18_224202_create_netatmo_weather_module_readings.php';
         $migration->up();
+
+        $migration = include __DIR__.'/../database/migrations/2025_01_07_000001_add_is_public_to_netatmo_stations_table.php';
+        $migration->up();
+
+        $migration = include __DIR__.'/../database/migrations/2025_01_07_000002_fix_netatmo_modules_unique_constraint.php';
+        $migration->up();
+
+        $migration = include __DIR__.'/../database/migrations/2025_01_07_000003_add_device_id_to_netatmo_stations_table.php';
+        $migration->up();
     }
 }

@@ -107,11 +107,11 @@
                                         <i class="fas fa-chart-bar mr-2"></i>Quick Overview
                                     </h4>
                                     <span class="text-xs text-purple-400/70">
-                                        <i class="fas fa-cube mr-1"></i>{{ $weatherstation->modules->count() }} {{ $weatherstation->modules->count() === 1 ? 'module' : 'modules' }}
+                                        <i class="fas fa-cube mr-1"></i>{{ $weatherstation->modules->where('is_active', true)->count() }} {{ $weatherstation->modules->where('is_active', true)->count() === 1 ? 'module' : 'modules' }}
                                     </span>
                                 </div>
                                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                                    @foreach($weatherstation->modules->take(6) as $module)
+                                    @foreach($weatherstation->modules->where('is_active', true)->take(6) as $module)
                                         @if($module->dashboard_data)
                                             @php
                                                 $icon = match($module->type) {

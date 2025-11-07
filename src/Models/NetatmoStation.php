@@ -20,10 +20,19 @@ class NetatmoStation extends Model
     protected $fillable = [
         'user_id',
         'station_name',
+        'device_id',
+        'is_public',
         'client_id',
         'client_secret',
         'redirect_uri',
         'webhook_uri',
+    ];
+
+    /**
+     * Attributes that should be cast.
+     */
+    protected $casts = [
+        'is_public' => 'boolean',
     ];
 
     /**

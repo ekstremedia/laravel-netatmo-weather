@@ -20,6 +20,18 @@ class NetatmoWeatherStationRequest extends FormRequest
             'client_secret' => 'required|string|max:255',
             'redirect_uri' => 'nullable|url',
             'webhook_uri' => 'nullable|url',
+            'is_public' => 'nullable|boolean',
         ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        // Convert checkbox value to boolean
+        $this->merge([
+            'is_public' => $this->has('is_public') ? true : false,
+        ]);
     }
 }

@@ -33,6 +33,7 @@ class NetatmoModule extends Model
         'place',
         'data_type',
         'dashboard_data',
+        'is_active',
     ];
 
     protected $casts = [
@@ -40,6 +41,7 @@ class NetatmoModule extends Model
         'user' => 'array',
         'place' => 'array',
         'dashboard_data' => 'array',
+        'is_active' => 'boolean',
     ];
 
     public function netatmoStation(): BelongsTo
