@@ -7,26 +7,23 @@ use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Services\NetatmoService;
 use Exception;
 use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 
 class NetatmoStationController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index(): View
     {
-
-        //        $weatherStation = NetatmoStation::find(1);
-        //        $weatherStation->token->refreshToken();
-        //        dd("HER", $weatherStation);
-        // Log the action of fetching weather stations
-
-        // Fetch weather stations for the authenticated user
-        $weatherStations = NetatmoStation::where('user_id', auth()->id())->get();
-
-        //        logger()->info('Fetching weather stations', ['$weatherStations' => $weatherStations]);
+        // Fetch weather stations with eager loading to prevent N+1 queries
+        $weatherStations = NetatmoStation::where('user_id', auth()->id())
+            ->with(['token', 'modules'])
+            ->get();
 
         // Check each weather station's token validity and refresh if necessary
         foreach ($weatherStations as $weatherStation) {
@@ -34,7 +31,7 @@ class NetatmoStationController extends Controller
                 try {
                     $weatherStation->token->refreshToken();
                 } catch (Exception $e) {
-                    logger()->error('Failed to refresh token!!', [
+                    logger()->error('Failed to refresh token for weather station', [
                         'weather_station_id' => $weatherStation->id,
                         'error' => $e->getMessage(),
                     ]);
@@ -42,7 +39,6 @@ class NetatmoStationController extends Controller
             }
         }
 
-        // Return the view with the list of weather stations
         return view('netatmoweather::netatmo.index', compact('weatherStations'));
     }
 
@@ -85,8 +81,10 @@ class NetatmoStationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(NetatmoStation $weatherStation, NetatmoService $netatmoService): view|RedirectResponse
+    public function show(NetatmoStation $weatherStation, NetatmoService $netatmoService): View|RedirectResponse
     {
+        $this->authorize('view', $weatherStation);
+
         // Check if token exists and is valid
         if (! $weatherStation->token || ! $weatherStation->token->hasValidToken()) {
             return redirect()->route('netatmo.authenticate', $weatherStation)
@@ -99,9 +97,13 @@ class NetatmoStationController extends Controller
 
             return view('netatmoweather::netatmo.show', compact('weatherStation'));
         } catch (Exception $e) {
-            logger()->error('Failed to retrieve data from Netatmo', ['error' => $e->getMessage(), 'station_id' => $weatherStation->id]);
+            logger()->error('Failed to retrieve data from Netatmo', [
+                'error' => $e->getMessage(),
+                'station_id' => $weatherStation->id,
+            ]);
 
-            return redirect()->route('netatmo.index')->with('error', 'Failed to retrieve data from Netatmo: '.$e->getMessage());
+            return redirect()->route('netatmo.index')
+                ->with('error', 'Failed to retrieve data from Netatmo: '.$e->getMessage());
         }
     }
 
@@ -110,6 +112,8 @@ class NetatmoStationController extends Controller
      */
     public function edit(NetatmoStation $weatherStation): View
     {
+        $this->authorize('update', $weatherStation);
+
         $fields = $this->getFormFields();
 
         return view('netatmoweather::netatmo.form', [
@@ -123,12 +127,14 @@ class NetatmoStationController extends Controller
      */
     public function update(NetatmoWeatherStationRequest $request, NetatmoStation $weatherStation): RedirectResponse
     {
+        $this->authorize('update', $weatherStation);
+
         $data = $request->validated();
 
         $weatherStation->update($data);
 
-        return redirect()->route('netatmo.index')->with('success', 'Weather station updated successfully.');
-
+        return redirect()->route('netatmo.index')
+            ->with('success', 'Weather station updated successfully.');
     }
 
     /**
@@ -136,8 +142,11 @@ class NetatmoStationController extends Controller
      */
     public function destroy(NetatmoStation $weatherStation): RedirectResponse
     {
+        $this->authorize('delete', $weatherStation);
+
         $weatherStation->delete();
 
-        return redirect()->route('netatmo.index')->with('success', 'Weather station deleted successfully.');
+        return redirect()->route('netatmo.index')
+            ->with('success', 'Weather station deleted successfully.');
     }
 }

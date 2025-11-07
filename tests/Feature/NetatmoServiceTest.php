@@ -136,7 +136,8 @@ it('returns cached data when recent', function () {
 
     // Verify data was returned from cache
     expect($data)->toBeArray()
-        ->toHaveKey('devices');
+        ->toHaveKey('body')
+        ->and($data['body'])->toHaveKey('devices');
 });
 
 it('updates existing modules instead of duplicating', function () {

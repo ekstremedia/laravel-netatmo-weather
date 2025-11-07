@@ -8,7 +8,32 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class NetatmoModule extends Model
 {
-    protected $guarded = [];
+    protected $table = 'netatmo_modules';
+
+    protected $fillable = [
+        'netatmo_station_id',
+        'module_id',
+        'module_name',
+        'type',
+        'battery_percent',
+        'battery_vp',
+        'firmware',
+        'last_message',
+        'last_seen',
+        'wifi_status',
+        'rf_status',
+        'reachable',
+        'last_status_store',
+        'date_setup',
+        'last_setup',
+        'co2_calibrating',
+        'home_id',
+        'home_name',
+        'user',
+        'place',
+        'data_type',
+        'dashboard_data',
+    ];
 
     protected $casts = [
         'data_type' => 'array',
@@ -26,9 +51,4 @@ class NetatmoModule extends Model
     {
         return $this->hasMany(NetatmoModuleReading::class);
     }
-    //
-    //    public function latestReading(): \Illuminate\Database\Eloquent\Relations\HasOne
-    //    {
-    //        return $this->hasOne(NetatmoModuleReading::class)->latest('time_utc');
-    //    }
 }

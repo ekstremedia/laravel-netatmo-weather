@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class NetatmoModuleReading extends Model
 {
+    protected $table = 'netatmo_module_readings';
+
     protected $fillable = [
         'netatmo_module_id',
         'time_utc',
@@ -14,14 +16,12 @@ class NetatmoModuleReading extends Model
     ];
 
     protected $casts = [
-        'dashboard_data' => 'array', // This will cast dashboard_data to an array
+        'dashboard_data' => 'array',
     ];
 
-    public function weatherStationModule(): BelongsTo
-    {
-        return $this->belongsTo(NetatmoModule::class);
-    }
-
+    /**
+     * Get the module that owns this reading.
+     */
     public function module(): BelongsTo
     {
         return $this->belongsTo(NetatmoModule::class, 'netatmo_module_id');

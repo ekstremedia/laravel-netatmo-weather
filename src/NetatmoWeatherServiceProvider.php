@@ -2,11 +2,19 @@
 
 namespace Ekstremedia\NetatmoWeather;
 
+use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
+use Ekstremedia\NetatmoWeather\Policies\NetatmoStationPolicy;
+use Ekstremedia\NetatmoWeather\Services\NetatmoService;
+use Ekstremedia\NetatmoWeather\Services\TokenRefreshService;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class NetatmoWeatherServiceProvider extends ServiceProvider
 {
+    /**
+     * Bootstrap package services.
+     */
     public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
@@ -29,17 +37,47 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
             __DIR__.'/config/netatmo-weather.php', 'netatmo-weather'
         );
 
+        // Register policies
+        Gate::policy(NetatmoStation::class, NetatmoStationPolicy::class);
+
+        // Register Blade directives with error handling
         Blade::directive('datetime', static function ($expression) {
-            return "<?php echo \Illuminate\Support\Carbon::createFromTimestamp($expression)->setTimezone(config('app.timezone'))->format('Y-m-d H:i'); ?>";
+            return "<?php
+                try {
+                    echo \Illuminate\Support\Carbon::createFromTimestamp({$expression})
+                        ->setTimezone(config('app.timezone'))
+                        ->format('Y-m-d H:i');
+                } catch (\Exception \$e) {
+                    echo 'Invalid date';
+                }
+            ?>";
         });
 
         Blade::directive('time', static function ($expression) {
-            return "<?php echo \Illuminate\Support\Carbon::createFromTimestamp($expression)->setTimezone(config('app.timezone'))->format('H:i'); ?>";
+            return "<?php
+                try {
+                    echo \Illuminate\Support\Carbon::createFromTimestamp({$expression})
+                        ->setTimezone(config('app.timezone'))
+                        ->format('H:i');
+                } catch (\Exception \$e) {
+                    echo '--:--';
+                }
+            ?>";
         });
     }
 
+    /**
+     * Register package services.
+     */
     public function register(): void
     {
-        // Register bindings, configurations, etc.
+        // Register service as singleton
+        $this->app->singleton(NetatmoService::class, function ($app) {
+            return new NetatmoService;
+        });
+
+        $this->app->singleton(TokenRefreshService::class, function ($app) {
+            return new TokenRefreshService;
+        });
     }
 }
