@@ -3,5 +3,3 @@ node_modules/
 .idea/
 composer.lock
 package-lock.json
-src/assets/dist/
-src/resources/css/app.css

@@ -26,16 +26,16 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: #1a1332;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #94a3b8;
+            background: #6d28d9;
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
+            background: #8b5cf6;
         }
     </style>
     <script>
@@ -44,12 +44,19 @@
                 extend: {
                     colors: {
                         'netatmo': {
-                            'blue': '#0082c3',
-                            'light': '#e8f4f8',
+                            'purple': '#8b5cf6',
+                            'deep': '#6d28d9',
+                            'dark': '#5b21b6',
+                        },
+                        'dark': {
+                            'bg': '#0f0a1f',
+                            'surface': '#1a1332',
+                            'elevated': '#251b47',
+                            'border': '#3d2e6b',
                         },
                         'weather': {
-                            'warm': '#ff6b35',
-                            'cool': '#4ecdc4',
+                            'warm': '#f59e0b',
+                            'cool': '#06b6d4',
                         }
                     }
                 }
@@ -57,7 +64,7 @@
         }
     </script>
 </head>
-<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
+<body class="bg-gradient-to-br from-dark-bg via-dark-surface to-purple-950 min-h-screen text-slate-100">
 
 <div x-data="{ sidebar_open: false }">
     <!-- Navbar -->
@@ -72,21 +79,21 @@
         <!-- Flash Messages -->
         @if (session('success'))
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-                <div class="bg-green-50 border-l-4 border-green-500 rounded-r-xl shadow-lg p-4 flex items-start space-x-3"
+                <div class="bg-green-900/20 border-l-4 border-green-500 rounded-r-xl shadow-lg shadow-green-900/20 backdrop-blur-sm p-4 flex items-start space-x-3"
                      x-data="{ show: true }"
                      x-show="show"
                      x-transition:enter="transition ease-out duration-300"
                      x-transition:enter-start="opacity-0 transform translate-y-2"
                      x-transition:enter-end="opacity-100 transform translate-y-0"
                      role="alert">
-                    <div class="bg-green-500 rounded-full p-1">
+                    <div class="bg-green-600 rounded-full p-1.5 shadow-lg shadow-green-900/30">
                         <i class="fas fa-check text-white text-sm"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="font-bold text-green-800">{{ trans('netatmoweather::messages.general.Success') }}</p>
-                        <p class="text-green-700">{{ session('success') }}</p>
+                        <p class="font-bold text-green-300">{{ trans('netatmoweather::messages.general.Success') }}</p>
+                        <p class="text-green-400/90">{{ session('success') }}</p>
                     </div>
-                    <button @click="show = false" class="text-green-500 hover:text-green-700">
+                    <button @click="show = false" class="text-green-400 hover:text-green-300 transition-colors">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -95,21 +102,21 @@
 
         @if (session('error'))
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-                <div class="bg-red-50 border-l-4 border-red-500 rounded-r-xl shadow-lg p-4 flex items-start space-x-3"
+                <div class="bg-red-900/20 border-l-4 border-red-500 rounded-r-xl shadow-lg shadow-red-900/20 backdrop-blur-sm p-4 flex items-start space-x-3"
                      x-data="{ show: true }"
                      x-show="show"
                      x-transition:enter="transition ease-out duration-300"
                      x-transition:enter-start="opacity-0 transform translate-y-2"
                      x-transition:enter-end="opacity-100 transform translate-y-0"
                      role="alert">
-                    <div class="bg-red-500 rounded-full p-1">
+                    <div class="bg-red-600 rounded-full p-1.5 shadow-lg shadow-red-900/30">
                         <i class="fas fa-exclamation-circle text-white text-sm"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="font-bold text-red-800">Error</p>
-                        <p class="text-red-700">{{ session('error') }}</p>
+                        <p class="font-bold text-red-300">Error</p>
+                        <p class="text-red-400/90">{{ session('error') }}</p>
                     </div>
-                    <button @click="show = false" class="text-red-500 hover:text-red-700">
+                    <button @click="show = false" class="text-red-400 hover:text-red-300 transition-colors">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>

@@ -41,10 +41,20 @@ php artisan migrate
 
 The package uses **Tailwind CSS** with a CDN approach for zero build step integration:
 - CDN loaded in `src/resources/views/layouts/app.blade.php`
-- Custom color scheme: `netatmo-blue` (#0082c3), `weather-warm`, `weather-cool`
-- Uses Alpine.js for interactive components (modals, sidebar)
+- **Dark theme with deep purple color scheme**:
+  - `netatmo-purple` (#8b5cf6) - Primary purple
+  - `netatmo-deep` (#6d28d9) - Deep purple
+  - `netatmo-dark` (#5b21b6) - Darkest purple
+  - `dark-bg` (#0f0a1f) - Background
+  - `dark-surface` (#1a1332) - Surface elements
+  - `dark-elevated` (#251b47) - Elevated elements
+  - `dark-border` (#3d2e6b) - Borders
+  - `weather-warm` (#f59e0b) - Warm weather
+  - `weather-cool` (#06b6d4) - Cool weather
+- Uses Alpine.js for interactive components (modals, sidebar, notifications)
 - Fully responsive design with mobile-first approach
-- Modern glassmorphism effects with backdrop blur
+- Modern glassmorphism effects with backdrop blur and shadows
+- Purple-themed gradients throughout UI elements
 
 **For production integration**, consumers should:
 1. Add package views to their Tailwind config:
@@ -54,6 +64,7 @@ content: [
 ]
 ```
 2. Rebuild their assets to include package classes
+3. Or continue using the CDN approach for zero-config setup
 
 ## Architecture Overview
 
