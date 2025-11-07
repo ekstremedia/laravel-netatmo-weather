@@ -1,6 +1,7 @@
 # Laravel Netatmo Weather
 
 [![Tests](https://github.com/ekstremedia/laravel-netatmo-weather/workflows/Tests/badge.svg)](https://github.com/ekstremedia/laravel-netatmo-weather/actions)
+[![codecov](https://codecov.io/gh/ekstremedia/laravel-netatmo-weather/branch/main/graph/badge.svg)](https://codecov.io/gh/ekstremedia/laravel-netatmo-weather)
 [![PHP Version](https://img.shields.io/packagist/php-v/ekstremedia/laravel-netatmo-weather)](https://packagist.org/packages/ekstremedia/laravel-netatmo-weather)
 [![Laravel Version](https://img.shields.io/badge/Laravel-11.x%20%7C%2012.x-orange)](https://laravel.com)
 [![License](https://img.shields.io/packagist/l/ekstremedia/laravel-netatmo-weather)](https://github.com/ekstremedia/laravel-netatmo-weather/blob/main/LICENSE)

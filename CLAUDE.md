@@ -128,8 +128,12 @@ A comprehensive code review and refactoring was completed, addressing all critic
 # Run all tests with Pest
 composer test
 
-# Run tests with coverage report
+# Run tests with coverage report (local)
 composer test-coverage
+vendor/bin/pest --coverage
+
+# Generate coverage XML for Codecov
+vendor/bin/pest --coverage --coverage-clover=coverage.xml
 
 # Run specific test suite
 vendor/bin/pest --testsuite Unit
@@ -141,6 +145,13 @@ vendor/bin/pest tests/Unit/NetatmoStationTest.php
 # Run tests in parallel (faster)
 vendor/bin/pest --parallel
 ```
+
+**Coverage Reporting:**
+- Integrated with Codecov for automated coverage tracking
+- Coverage reports generated on every push to main/develop
+- Target: 80% code coverage
+- View coverage dashboard: https://codecov.io/gh/ekstremedia/laravel-netatmo-weather
+- Excluded from coverage: tests, migrations, views, config, assets, factories
 
 ### Code Quality
 ```bash
