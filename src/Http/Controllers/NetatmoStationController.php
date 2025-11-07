@@ -249,12 +249,12 @@ class NetatmoStationController extends Controller
         if ($weatherStation->user_id != auth()->id()) {
             return response()->json([
                 'success' => false,
-                'error' => 'Unauthorized'
+                'error' => 'Unauthorized',
             ], 403);
         }
 
         $weatherStation->update([
-            'is_public' => !$weatherStation->is_public,
+            'is_public' => ! $weatherStation->is_public,
         ]);
 
         return response()->json([

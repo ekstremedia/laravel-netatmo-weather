@@ -193,7 +193,7 @@ class NetatmoService
         logger()->warning('Multiple devices found but no device_id set', [
             'station_id' => $weatherStation->id,
             'station_name' => $weatherStation->station_name,
-            'available_devices' => array_map(fn($d) => [
+            'available_devices' => array_map(fn ($d) => [
                 'id' => $d['_id'] ?? null,
                 'name' => $d['station_name'] ?? null,
             ], $devices),
