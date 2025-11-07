@@ -1,6 +1,5 @@
 {
     "name": "ekstremedia/laravel-netatmo-weather",
-    "version": "1.0.0",
     "license": "MIT",
     "description": "A Laravel package for integrating Netatmo Weather Station API with your Laravel application",
     "keywords": [
