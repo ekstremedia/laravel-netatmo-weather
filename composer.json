@@ -1,7 +1,14 @@
 {
     "name": "ekstremedia/laravel-netatmo-weather",
     "license": "MIT",
-    "description": "A Laravel package for the Netatmo Weather API",
+    "description": "A Laravel package for integrating Netatmo Weather Station API with your Laravel application",
+    "keywords": [
+        "laravel",
+        "netatmo",
+        "weather",
+        "api",
+        "weather-station"
+    ],
     "type": "library",
     "authors": [
         {
@@ -9,6 +16,16 @@
             "email": "terje@nesthus.no"
         }
     ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0|^12.0",
+        "illuminate/database": "^11.0|^12.0",
+        "illuminate/http": "^11.0|^12.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.17",
+        "orchestra/testbench": "^9.0|^10.0"
+    },
     "autoload": {
         "psr-4": {
             "Ekstremedia\\NetatmoWeather\\": "src/"
@@ -18,6 +35,11 @@
             "database/seeders"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Ekstremedia\\NetatmoWeather\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
@@ -25,7 +47,6 @@
             ]
         }
     },
-    "require-dev": {
-        "laravel/pint": "^1.17"
-    }
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

@@ -95,7 +95,7 @@ class NetatmoStationController extends Controller
 
             return view('netatmoweather::netatmo.show', compact('weatherStation'));
         } catch (Exception $e) {
-            ray($e);
+            logger()->error('Failed to retrieve data from Netatmo', ['error' => $e->getMessage(), 'station_id' => $weatherStation->id]);
 
             return redirect()->route('netatmo.index')->with('error', 'Failed to retrieve data from Netatmo: '.$e->getMessage());
         }

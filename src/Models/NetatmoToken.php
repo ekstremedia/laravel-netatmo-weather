@@ -2,7 +2,6 @@
 
 namespace Ekstremedia\NetatmoWeather\Models;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,7 +26,7 @@ class NetatmoToken extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(config('netatmo-weather.user_model', 'App\Models\User'));
     }
 
     public function hasValidToken(): bool
@@ -51,8 +50,6 @@ class NetatmoToken extends Model
 
         $weatherStation = NetatmoStation::find($this->netatmo_station_id);
 
-        ray($weatherStation->client_id, $weatherStation->client_secret);
-
         if (! $weatherStation) {
             throw new \Exception('Associated weather station not found.');
         }
@@ -63,9 +60,6 @@ class NetatmoToken extends Model
             'client_secret' => $weatherStation->client_secret,
             'refresh_token' => $this->refresh_token,
         ];
-
-        ray($apiData)->green();
-        ray(config('netatmo-weather.netatmo_token_url'));
 
         $response = Http::asForm()->post(config('netatmo-weather.netatmo_token_url'), $apiData);
 

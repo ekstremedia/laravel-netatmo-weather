@@ -32,11 +32,8 @@ class NetatmoService
 
         if ($latestModule && $latestModule->updated_at->gt(now()->subMinutes(10))) {
             // Data is younger than 10 minutes, return it
-            ray('Data is younger than 10 minutes, returning it');
             return $this->prepareStationData($weatherStation);
         }
-
-        ray('Data is older than 10 minutes, fetching new data');
         // Refresh token if necessary
         if (!$weatherStation->token->hasValidToken()) {
             $weatherStation->token->refreshToken();
@@ -64,7 +61,6 @@ class NetatmoService
     {
         // Store or update the main device (the base station)
         $mainDeviceData = $data['devices'][0];
-        ray($mainDeviceData);
         $mainDevice = $weatherStation->modules()->updateOrCreate(
             ['module_id' => $mainDeviceData['_id']],
             [

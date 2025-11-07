@@ -35,7 +35,7 @@ class NetatmoStationAuthController extends Controller
     public function handleCallback(Request $request, NetatmoStation $weatherstation): RedirectResponse
     {
         if ($request->has('error')) {
-            ray($request->all());
+            logger()->error('Netatmo authentication error', $request->all());
 
             return redirect()->route('netatmo.index')->with('error', 'Authentication failed.');
         }
@@ -69,7 +69,6 @@ class NetatmoStationAuthController extends Controller
 
     public function ensureValidToken(NetatmoStation $weatherstation): void
     {
-        ray('THIS CODE RAN')->orange();
         // Check if the token is valid or if it needs to be refreshed
         if ($weatherstation->token && $weatherstation->token->hasValidToken()) {
             return; // Token is valid, no need to refresh
