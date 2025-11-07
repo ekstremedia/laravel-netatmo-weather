@@ -6,9 +6,9 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <div class="bg-gradient-to-br from-cyan-500 via-blue-500 to-teal-500 p-3 rounded-xl shadow-lg">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
-                    </svg>
+                    <img src="{{ asset('netatmo-weather/images/icons/termometer.svg') }}"
+                         alt="Outdoor Module"
+                         class="w-8 h-8">
                 </div>
                 <div>
                     <h3 class="text-2xl font-bold text-white">{{ $module->module_name }}</h3>
@@ -48,62 +48,62 @@
 
     {{-- Main Content --}}
     @if($module->dashboard_data)
-        <div class="p-6 space-y-6">
+        <div class="p-4 space-y-4">
 
             {{-- Primary Metrics --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {{-- Temperature Card --}}
-                <div class="bg-gradient-to-br from-orange-500/10 to-amber-500/10 rounded-2xl p-6 border border-orange-500/20">
-                    <div class="flex items-start justify-between gap-3 mb-4">
+                <div class="bg-gradient-to-br from-orange-500/10 to-amber-500/10 rounded-2xl p-4 border border-orange-500/20">
+                    <div class="flex items-start justify-between gap-2 mb-3">
                         <div class="flex-1 min-w-0">
-                            <div class="text-orange-300/80 text-sm font-medium uppercase tracking-wide mb-1">Temperature</div>
-                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['Temperature'] }}<span class="text-xl md:text-2xl text-orange-200/60">°C</span></div>
+                            <div class="text-orange-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Temperature</div>
+                            <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['Temperature'] }}<span class="text-lg md:text-xl text-orange-200/60">°C</span></div>
                         </div>
-                        <div class="bg-orange-500/20 p-2.5 rounded-xl flex-shrink-0">
-                            <svg class="w-7 h-7 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-orange-500/20 p-2 rounded-xl flex-shrink-0">
+                            <svg class="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                             </svg>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between text-sm">
-                        <span class="text-blue-300 flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center justify-between text-xs gap-2">
+                        <span class="text-blue-300 flex items-center whitespace-nowrap">
+                            <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
                             </svg>
                             {{ $module->dashboard_data['min_temp'] }}°C
                         </span>
-                        <span class="text-orange-200/50 text-xs">@time($module->dashboard_data['date_min_temp'])</span>
-                        <span class="text-red-300 flex items-center">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <span class="text-orange-200/50 text-[10px]">@time($module->dashboard_data['date_min_temp'])</span>
+                        <span class="text-red-300 flex items-center whitespace-nowrap">
+                            <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
                             </svg>
                             {{ $module->dashboard_data['max_temp'] }}°C
                         </span>
                     </div>
-                    <div class="mt-3 pt-3 border-t border-orange-500/20">
-                        <span class="text-xs text-orange-200/60 uppercase">Trend: </span>
-                        <span class="text-sm font-semibold text-orange-200">{{ $module->dashboard_data['temp_trend'] }}</span>
+                    <div class="mt-2 pt-2 border-t border-orange-500/20">
+                        <span class="text-[10px] text-orange-200/60 uppercase">Trend: </span>
+                        <span class="text-xs font-semibold text-orange-200">{{ $module->dashboard_data['temp_trend'] }}</span>
                     </div>
                 </div>
 
                 {{-- Humidity Card --}}
-                <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-6 border border-blue-500/20">
-                    <div class="flex items-start justify-between gap-3 mb-4">
+                <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-4 border border-blue-500/20">
+                    <div class="flex items-start justify-between gap-2 mb-3">
                         <div class="flex-1 min-w-0">
-                            <div class="text-blue-300/80 text-sm font-medium uppercase tracking-wide mb-1">Humidity</div>
-                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['Humidity'] }}<span class="text-xl md:text-2xl text-blue-200/60">%</span></div>
+                            <div class="text-blue-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Humidity</div>
+                            <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['Humidity'] }}<span class="text-lg md:text-xl text-blue-200/60">%</span></div>
                         </div>
-                        <div class="bg-blue-500/20 p-2.5 rounded-xl flex-shrink-0">
-                            <svg class="w-7 h-7 text-blue-300" fill="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-blue-500/20 p-2 rounded-xl flex-shrink-0">
+                            <svg class="w-6 h-6 text-blue-300" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/>
                             </svg>
                         </div>
                     </div>
                     <div class="mt-auto">
-                        <div class="w-full bg-dark-surface/40 rounded-full h-2.5 overflow-hidden">
-                            <div class="bg-gradient-to-r from-blue-400 to-cyan-400 h-2.5 rounded-full transition-all duration-500" style="width: {{ $module->dashboard_data['Humidity'] }}%"></div>
+                        <div class="w-full bg-dark-surface/40 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-400 to-cyan-400 h-2 rounded-full transition-all duration-500" style="width: {{ $module->dashboard_data['Humidity'] }}%"></div>
                         </div>
-                        <p class="text-xs text-blue-200/60 mt-2">
+                        <p class="text-[10px] text-blue-200/60 mt-1.5">
                             @if($module->dashboard_data['Humidity'] < 30)
                                 Dry
                             @elseif($module->dashboard_data['Humidity'] < 70)
@@ -117,12 +117,12 @@
             </div>
 
             {{-- Status Section --}}
-            <div class="grid grid-cols-3 gap-4">
+            <div class="grid grid-cols-3 gap-3">
                 {{-- Battery --}}
-                <div class="bg-dark-surface/40 rounded-xl p-4 border border-dark-border/30 hover:border-cyan-500/30 transition-colors">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm text-purple-300/80">Battery</span>
-                        <svg class="w-5 h-5
+                <div class="bg-dark-surface/40 rounded-xl p-3 border border-dark-border/30 hover:border-cyan-500/30 transition-colors">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs text-purple-300/80">Battery</span>
+                        <svg class="w-4 h-4
                             @if($module->battery_percent > 50) text-green-400
                             @elseif($module->battery_percent > 20) text-amber-400
                             @else text-red-400
@@ -131,8 +131,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
                         </svg>
                     </div>
-                    <div class="text-2xl font-bold text-white">{{ $module->battery_percent }}%</div>
-                    <div class="w-full bg-dark-surface/60 rounded-full h-1.5 mt-2 overflow-hidden">
+                    <div class="text-xl font-bold text-white leading-none">{{ $module->battery_percent }}%</div>
+                    <div class="w-full bg-dark-surface/60 rounded-full h-1.5 mt-1.5 overflow-hidden">
                         <div class="
                             @if($module->battery_percent > 50) bg-green-400
                             @elseif($module->battery_percent > 20) bg-amber-400
@@ -143,27 +143,27 @@
                 </div>
 
                 {{-- RF Signal --}}
-                <div class="bg-dark-surface/40 rounded-xl p-4 border border-dark-border/30 hover:border-purple-500/30 transition-colors">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm text-purple-300/80">RF Signal</span>
-                        <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-dark-surface/40 rounded-xl p-3 border border-dark-border/30 hover:border-purple-500/30 transition-colors">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs text-purple-300/80">RF Signal</span>
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/>
                         </svg>
                     </div>
-                    <div class="text-2xl font-bold text-white">{{ $module->rf_status }}</div>
-                    <div class="text-xs text-purple-400/60 mt-1">Signal strength</div>
+                    <div class="text-xl font-bold text-white leading-none">{{ $module->rf_status }}</div>
+                    <div class="text-[10px] text-purple-400/60 mt-1">Signal strength</div>
                 </div>
 
                 {{-- Firmware --}}
-                <div class="bg-dark-surface/40 rounded-xl p-4 border border-dark-border/30 hover:border-teal-500/30 transition-colors">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm text-purple-300/80">Firmware</span>
-                        <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-dark-surface/40 rounded-xl p-3 border border-dark-border/30 hover:border-teal-500/30 transition-colors">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs text-purple-300/80">Firmware</span>
+                        <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
-                    <div class="text-2xl font-bold text-white">{{ $module->firmware }}</div>
-                    <div class="text-xs text-teal-400/60 mt-1">
+                    <div class="text-xl font-bold text-white leading-none">{{ $module->firmware }}</div>
+                    <div class="text-[10px] text-teal-400/60 mt-1">
                         @if($module->reachable)
                             <span class="text-green-400">● Connected</span>
                         @else

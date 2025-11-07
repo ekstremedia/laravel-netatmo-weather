@@ -6,9 +6,9 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <div class="bg-gradient-to-br from-sky-500 via-blue-500 to-indigo-500 p-3 rounded-xl shadow-lg">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 008 10.586V5L7 4z"/>
-                    </svg>
+                    <img src="{{ asset('netatmo-weather/images/icons/rain.svg') }}"
+                         alt="Rain Gauge"
+                         class="w-8 h-8">
                 </div>
                 <div>
                     <h3 class="text-2xl font-bold text-white">{{ $module->module_name }}</h3>
@@ -48,72 +48,72 @@
 
     {{-- Main Content --}}
     @if($module->dashboard_data)
-        <div class="p-6 space-y-6">
+        <div class="p-4 space-y-4">
 
             {{-- Primary Rain Metrics --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {{-- Current Rain --}}
-                <div class="bg-gradient-to-br from-sky-500/10 to-blue-500/10 rounded-2xl p-6 border border-sky-500/20">
-                    <div class="flex items-start justify-between gap-3 mb-4">
+                <div class="bg-gradient-to-br from-sky-500/10 to-blue-500/10 rounded-2xl p-4 border border-sky-500/20">
+                    <div class="flex items-start justify-between gap-2 mb-3">
                         <div class="flex-1 min-w-0">
-                            <div class="text-sky-300/80 text-sm font-medium uppercase tracking-wide mb-1">Current</div>
-                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['Rain'] ?? '0' }}<span class="text-xl md:text-2xl text-sky-200/60">mm</span></div>
+                            <div class="text-sky-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Current</div>
+                            <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['Rain'] ?? '0' }}<span class="text-lg md:text-xl text-sky-200/60">mm</span></div>
                         </div>
-                        <div class="bg-sky-500/20 p-2.5 rounded-xl flex-shrink-0">
-                            <svg class="w-7 h-7 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-sky-500/20 p-2 rounded-xl flex-shrink-0">
+                            <svg class="w-6 h-6 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 008 10.586V5L7 4z"/>
                             </svg>
                         </div>
                     </div>
-                    <div class="text-xs text-sky-200/60 uppercase">Rainfall amount</div>
+                    <div class="text-[10px] text-sky-200/60 uppercase">Rainfall amount</div>
                 </div>
 
                 {{-- Last Hour --}}
-                <div class="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-2xl p-6 border border-blue-500/20">
-                    <div class="flex items-start justify-between gap-3 mb-4">
+                <div class="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-2xl p-4 border border-blue-500/20">
+                    <div class="flex items-start justify-between gap-2 mb-3">
                         <div class="flex-1 min-w-0">
-                            <div class="text-blue-300/80 text-sm font-medium uppercase tracking-wide mb-1">Last Hour</div>
-                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['sum_rain_1'] ?? '0' }}<span class="text-xl md:text-2xl text-blue-200/60">mm</span></div>
+                            <div class="text-blue-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Last Hour</div>
+                            <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['sum_rain_1'] ?? '0' }}<span class="text-lg md:text-xl text-blue-200/60">mm</span></div>
                         </div>
-                        <div class="bg-blue-500/20 p-2.5 rounded-xl flex-shrink-0">
-                            <svg class="w-7 h-7 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-blue-500/20 p-2 rounded-xl flex-shrink-0">
+                            <svg class="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                     </div>
-                    <div class="text-xs text-blue-200/60 uppercase">60-minute total</div>
+                    <div class="text-[10px] text-blue-200/60 uppercase">60-minute total</div>
                 </div>
 
                 {{-- Last 24 Hours --}}
-                <div class="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl p-6 border border-indigo-500/20">
-                    <div class="flex items-start justify-between gap-3 mb-4">
+                <div class="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl p-4 border border-indigo-500/20">
+                    <div class="flex items-start justify-between gap-2 mb-3">
                         <div class="flex-1 min-w-0">
-                            <div class="text-indigo-300/80 text-sm font-medium uppercase tracking-wide mb-1">Last 24h</div>
-                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['sum_rain_24'] ?? '0' }}<span class="text-xl md:text-2xl text-indigo-200/60">mm</span></div>
+                            <div class="text-indigo-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Last 24h</div>
+                            <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['sum_rain_24'] ?? '0' }}<span class="text-lg md:text-xl text-indigo-200/60">mm</span></div>
                         </div>
-                        <div class="bg-indigo-500/20 p-2.5 rounded-xl flex-shrink-0">
-                            <svg class="w-7 h-7 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-indigo-500/20 p-2 rounded-xl flex-shrink-0">
+                            <svg class="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                         </div>
                     </div>
-                    <div class="text-xs text-indigo-200/60 uppercase">Daily total</div>
+                    <div class="text-[10px] text-indigo-200/60 uppercase">Daily total</div>
                 </div>
             </div>
 
             {{-- Rain Status Indicator --}}
-            <div class="bg-dark-surface/40 rounded-xl p-4 border border-dark-border/30">
+            <div class="bg-dark-surface/40 rounded-xl p-3 border border-dark-border/30">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-2">
                         @php
                             $rainCurrent = $module->dashboard_data['Rain'] ?? 0;
                             $isRaining = $rainCurrent > 0;
                         @endphp
-                        <div class="p-3 rounded-lg
+                        <div class="p-2 rounded-lg
                             @if($isRaining) bg-blue-500/20 border border-blue-500/30
                             @else bg-gray-500/20 border border-gray-500/30
                             @endif">
-                            <svg class="w-6 h-6
+                            <svg class="w-5 h-5
                                 @if($isRaining) text-blue-400
                                 @else text-gray-400
                                 @endif" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,8 +121,8 @@
                             </svg>
                         </div>
                         <div>
-                            <div class="text-sm text-purple-300/80 mb-1">Weather Status</div>
-                            <div class="text-xl font-bold
+                            <div class="text-xs text-purple-300/80 mb-0.5">Weather Status</div>
+                            <div class="text-base font-bold leading-none
                                 @if($isRaining) text-blue-300
                                 @else text-gray-300
                                 @endif">
@@ -135,8 +135,8 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-sm text-purple-300/80 mb-1">Precipitation Rate</div>
-                        <div class="text-lg font-semibold text-white">
+                        <div class="text-xs text-purple-300/80 mb-0.5">Precipitation Rate</div>
+                        <div class="text-base font-semibold text-white leading-none">
                             @if($rainCurrent > 5)
                                 Heavy
                             @elseif($rainCurrent > 2)
@@ -152,12 +152,12 @@
             </div>
 
             {{-- Status Section --}}
-            <div class="grid grid-cols-3 gap-4">
+            <div class="grid grid-cols-3 gap-3">
                 {{-- Battery --}}
-                <div class="bg-dark-surface/40 rounded-xl p-4 border border-dark-border/30 hover:border-sky-500/30 transition-colors">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm text-purple-300/80">Battery</span>
-                        <svg class="w-5 h-5
+                <div class="bg-dark-surface/40 rounded-xl p-3 border border-dark-border/30 hover:border-sky-500/30 transition-colors">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs text-purple-300/80">Battery</span>
+                        <svg class="w-4 h-4
                             @if($module->battery_percent > 50) text-green-400
                             @elseif($module->battery_percent > 20) text-amber-400
                             @else text-red-400
@@ -166,8 +166,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
                         </svg>
                     </div>
-                    <div class="text-2xl font-bold text-white">{{ $module->battery_percent }}%</div>
-                    <div class="w-full bg-dark-surface/60 rounded-full h-1.5 mt-2 overflow-hidden">
+                    <div class="text-xl font-bold text-white leading-none">{{ $module->battery_percent }}%</div>
+                    <div class="w-full bg-dark-surface/60 rounded-full h-1.5 mt-1.5 overflow-hidden">
                         <div class="
                             @if($module->battery_percent > 50) bg-green-400
                             @elseif($module->battery_percent > 20) bg-amber-400
@@ -178,27 +178,27 @@
                 </div>
 
                 {{-- RF Signal --}}
-                <div class="bg-dark-surface/40 rounded-xl p-4 border border-dark-border/30 hover:border-purple-500/30 transition-colors">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm text-purple-300/80">RF Signal</span>
-                        <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-dark-surface/40 rounded-xl p-3 border border-dark-border/30 hover:border-purple-500/30 transition-colors">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs text-purple-300/80">RF Signal</span>
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/>
                         </svg>
                     </div>
-                    <div class="text-2xl font-bold text-white">{{ $module->rf_status }}</div>
-                    <div class="text-xs text-purple-400/60 mt-1">Signal strength</div>
+                    <div class="text-xl font-bold text-white leading-none">{{ $module->rf_status }}</div>
+                    <div class="text-[10px] text-purple-400/60 mt-1">Signal strength</div>
                 </div>
 
                 {{-- Firmware --}}
-                <div class="bg-dark-surface/40 rounded-xl p-4 border border-dark-border/30 hover:border-indigo-500/30 transition-colors">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm text-purple-300/80">Firmware</span>
-                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-dark-surface/40 rounded-xl p-3 border border-dark-border/30 hover:border-indigo-500/30 transition-colors">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs text-purple-300/80">Firmware</span>
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
-                    <div class="text-2xl font-bold text-white">{{ $module->firmware }}</div>
-                    <div class="text-xs text-indigo-400/60 mt-1">
+                    <div class="text-xl font-bold text-white leading-none">{{ $module->firmware }}</div>
+                    <div class="text-[10px] text-indigo-400/60 mt-1">
                         @if($module->reachable)
                             <span class="text-green-400">● Connected</span>
                         @else

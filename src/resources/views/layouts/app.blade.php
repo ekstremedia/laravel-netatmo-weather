@@ -37,6 +37,20 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #8b5cf6;
         }
+
+        /* Fixed background gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at top left, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom right, rgba(109, 40, 217, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -64,7 +78,7 @@
         }
     </script>
 </head>
-<body class="bg-gradient-to-br from-dark-bg via-dark-surface to-purple-950 min-h-screen text-slate-100">
+<body class="bg-dark-bg min-h-screen text-slate-100">
 
 <div x-data="{ sidebar_open: false }">
     <!-- Navbar -->

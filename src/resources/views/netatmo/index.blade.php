@@ -10,7 +10,7 @@
                 <div class="bg-gradient-to-br from-netatmo-purple via-purple-600 to-netatmo-deep p-3 rounded-2xl shadow-lg shadow-purple-900/50 ring-2 ring-purple-500/20">
                     <img src="{{ asset('netatmo-weather/images/icons/station.svg') }}"
                          alt="Weather Station"
-                         class="w-10 h-10 brightness-0 invert">
+                         class="w-10 h-10">
                 </div>
                 <div>
                     <h1 class="text-3xl font-bold text-white">
@@ -62,7 +62,7 @@
                                     <div class="bg-dark-elevated/80 p-3 rounded-xl shadow-sm border border-dark-border/30">
                                         <img src="{{ asset('netatmo-weather/images/icons/station.svg') }}"
                                              alt="Station"
-                                             class="w-8 h-8 brightness-150">
+                                             class="w-8 h-8">
                                     </div>
                                     <div>
                                         <div class="flex items-center space-x-3">
