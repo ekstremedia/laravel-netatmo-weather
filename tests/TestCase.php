@@ -38,6 +38,16 @@ class TestCase extends Orchestra
             'prefix' => '',
         ]);
 
+        // Set up auth config to use test user model
+        config()->set('auth.providers.users.model', \Ekstremedia\NetatmoWeather\Tests\Support\User::class);
+
+        // Create users table
+        \Illuminate\Support\Facades\Schema::create('users', function ($table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+        });
+
         // Run package migrations
         $migration = include __DIR__.'/../database/migrations/2024_08_03_104551_netatmo_stations_table.php';
         $migration->up();
@@ -46,6 +56,9 @@ class TestCase extends Orchestra
         $migration->up();
 
         $migration = include __DIR__.'/../database/migrations/2024_08_18_224146_create_netatmo_station_modules_table.php';
+        $migration->up();
+
+        $migration = include __DIR__.'/../database/migrations/2024_08_18_224202_create_netatmo_weather_module_readings.php';
         $migration->up();
     }
 }

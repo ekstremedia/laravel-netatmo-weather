@@ -183,3 +183,119 @@ it('updates existing modules instead of duplicating', function () {
         'module_name' => 'New Name',
     ]);
 });
+
+it('throws exception when no devices in api response', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    $apiData = []; // No devices
+
+    $service = new NetatmoService;
+
+    expect(fn () => $service->storeStationData($station, $apiData))
+        ->toThrow(\Ekstremedia\NetatmoWeather\Exceptions\InvalidApiResponseException::class);
+});
+
+it('handles api errors gracefully', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    NetatmoToken::create([
+        'netatmo_station_id' => $station->id,
+        'access_token' => 'valid_access_token',
+        'refresh_token' => 'valid_refresh_token',
+        'expires_at' => now()->addHour(),
+    ]);
+
+    Http::fake([
+        '*/getstationsdata' => Http::response([], 500),
+    ]);
+
+    $service = new NetatmoService;
+
+    expect(fn () => $service->getStationData($station))
+        ->toThrow(Exception::class);
+});
+
+it('automatically refreshes expired tokens', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    NetatmoToken::create([
+        'netatmo_station_id' => $station->id,
+        'access_token' => 'expired_access_token',
+        'refresh_token' => 'valid_refresh_token',
+        'expires_at' => now()->subHour(), // Expired
+    ]);
+
+    Http::fake([
+        config('netatmo-weather.netatmo_token_url') => Http::response([
+            'access_token' => 'new_access_token',
+            'refresh_token' => 'new_refresh_token',
+            'expires_in' => 10800,
+        ], 200),
+        '*/getstationsdata' => Http::response([
+            'body' => [
+                'devices' => [
+                    [
+                        '_id' => 'device_1',
+                        'type' => 'NAMain',
+                        'module_name' => 'Indoor',
+                        'data_type' => ['Temperature'],
+                        'dashboard_data' => ['Temperature' => 22.5],
+                        'modules' => [],
+                    ],
+                ],
+            ],
+            'status' => 'ok',
+        ], 200),
+    ]);
+
+    $service = new NetatmoService;
+    $data = $service->getStationData($station);
+
+    expect($data)->toBeArray()
+        ->and($station->fresh()->token->access_token)->toBe('new_access_token');
+});
+
+it('handles modules with missing dashboard data', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    $apiData = [
+        'devices' => [
+            [
+                '_id' => 'device_1',
+                'type' => 'NAMain',
+                'module_name' => 'Indoor',
+                'data_type' => ['Temperature'],
+                // No dashboard_data
+                'modules' => [],
+            ],
+        ],
+    ];
+
+    $service = new NetatmoService;
+    $service->storeStationData($station, $apiData);
+
+    assertDatabaseHas('netatmo_modules', [
+        'module_id' => 'device_1',
+        'module_name' => 'Indoor',
+    ]);
+});
