@@ -104,8 +104,8 @@ it('stores different module types', function () {
     foreach ($types as $type => $name) {
         NetatmoModule::create([
             'netatmo_station_id' => $station->id,
-            'module_id' => 'module_' . $type,
-            'module_name' => $name . ' Module',
+            'module_id' => 'module_'.$type,
+            'module_name' => $name.' Module',
             'type' => $type,
             'data_type' => ['Temperature'],
         ]);

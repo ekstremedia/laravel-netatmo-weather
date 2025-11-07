@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class NetatmoModule extends Model
 {
-
     protected $guarded = [];
 
     protected $casts = [
@@ -18,18 +17,18 @@ class NetatmoModule extends Model
         'dashboard_data' => 'array',
     ];
 
-    public function weatherStation(): BelongsTo
+    public function netatmoStation(): BelongsTo
     {
-        return $this->belongsTo(NetatmoStation::class);
+        return $this->belongsTo(NetatmoStation::class, 'netatmo_station_id');
     }
 
     public function readings(): HasMany
     {
         return $this->hasMany(NetatmoModuleReading::class);
     }
-//
-//    public function latestReading(): \Illuminate\Database\Eloquent\Relations\HasOne
-//    {
-//        return $this->hasOne(NetatmoModuleReading::class)->latest('time_utc');
-//    }
+    //
+    //    public function latestReading(): \Illuminate\Database\Eloquent\Relations\HasOne
+    //    {
+    //        return $this->hasOne(NetatmoModuleReading::class)->latest('time_utc');
+    //    }
 }

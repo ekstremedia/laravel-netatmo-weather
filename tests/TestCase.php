@@ -12,6 +12,11 @@ class TestCase extends Orchestra
     {
         parent::setUp();
 
+        // Enable foreign key constraints for SQLite
+        if (config('database.default') === 'testing') {
+            \Illuminate\Support\Facades\DB::statement('PRAGMA foreign_keys=ON;');
+        }
+
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Ekstremedia\\NetatmoWeather\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
@@ -28,9 +33,9 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
         config()->set('database.connections.testing', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
 
         // Run package migrations

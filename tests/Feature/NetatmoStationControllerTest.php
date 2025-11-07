@@ -14,7 +14,8 @@ use function Pest\Laravel\put;
 
 beforeEach(function () {
     // Create a simple test user that implements Authenticatable
-    $user = new class extends Authenticatable {
+    $user = new class extends Authenticatable
+    {
         protected $fillable = ['id', 'name', 'email'];
 
         public function getAuthIdentifier()

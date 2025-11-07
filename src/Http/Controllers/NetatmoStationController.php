@@ -88,7 +88,7 @@ class NetatmoStationController extends Controller
     public function show(NetatmoStation $weatherStation, NetatmoService $netatmoService): view|RedirectResponse
     {
         // Check if token exists and is valid
-        if (!$weatherStation->token || !$weatherStation->token->hasValidToken()) {
+        if (! $weatherStation->token || ! $weatherStation->token->hasValidToken()) {
             return redirect()->route('netatmo.authenticate', $weatherStation)
                 ->with('error', 'Please authenticate with Netatmo first.');
         }

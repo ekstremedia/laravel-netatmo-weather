@@ -17,20 +17,4 @@ trait HasUuid
             }
         });
     }
-
-    /**
-     * Tells Laravel that the primary key is non-incrementing.
-     */
-    public function getIncrementing(): bool
-    {
-        return false;
-    }
-
-    /**
-     * Tells Laravel that the primary key is a string (UUID).
-     */
-    public function getKeyType(): string
-    {
-        return 'string';
-    }
 }

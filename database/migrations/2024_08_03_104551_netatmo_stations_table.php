@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('netatmo_stations', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained()
-                ->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
             $table->string('station_name');
             $table->text('client_id');
             $table->text('client_secret');
@@ -23,6 +21,9 @@ return new class extends Migration
             $table->string('webhook_uri')->nullable();
             $table->uuid()->unique();
             $table->timestamps();
+
+            // Optional: Create index for better performance
+            $table->index('user_id');
         });
     }
 

@@ -55,7 +55,7 @@ it('fetches station data from api', function () {
         ], 200),
     ]);
 
-    $service = new NetatmoService();
+    $service = new NetatmoService;
     $data = $service->getStationData($station);
 
     expect($data)->toBeArray()
@@ -89,7 +89,7 @@ it('stores module data correctly', function () {
         ],
     ];
 
-    $service = new NetatmoService();
+    $service = new NetatmoService;
     $service->storeStationData($station, $apiData);
 
     expect($station->fresh()->modules)->toHaveCount(1);
@@ -128,7 +128,7 @@ it('returns cached data when recent', function () {
     // HTTP should not be called
     Http::fake();
 
-    $service = new NetatmoService();
+    $service = new NetatmoService;
     $data = $service->getStationData($station);
 
     // Verify no HTTP call was made
@@ -171,7 +171,7 @@ it('updates existing modules instead of duplicating', function () {
         ],
     ];
 
-    $service = new NetatmoService();
+    $service = new NetatmoService;
     $service->storeStationData($station, $apiData);
 
     // Should still have only 1 module, but with updated data

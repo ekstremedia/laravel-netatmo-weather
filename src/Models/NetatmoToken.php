@@ -86,7 +86,7 @@ class NetatmoToken extends Model
         ]);
     }
 
-    public function station(): BelongsTo
+    public function netatmoStation(): BelongsTo
     {
         return $this->belongsTo(NetatmoStation::class, 'netatmo_station_id');
     }

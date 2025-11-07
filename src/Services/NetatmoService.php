@@ -2,16 +2,15 @@
 
 namespace Ekstremedia\NetatmoWeather\Services;
 
-use Carbon\Carbon;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 class NetatmoService
 {
     protected mixed $apiUrl;
+
     protected mixed $tokenUrl;
 
     public function __construct()
@@ -35,13 +34,13 @@ class NetatmoService
             return $this->prepareStationData($weatherStation);
         }
         // Refresh token if necessary
-        if (!$weatherStation->token->hasValidToken()) {
+        if (! $weatherStation->token->hasValidToken()) {
             $weatherStation->token->refreshToken();
         }
 
         // Make the API request
         $response = Http::withToken($weatherStation->token->access_token)
-            ->get($this->apiUrl . '/getstationsdata');
+            ->get($this->apiUrl.'/getstationsdata');
 
         if ($response->failed()) {
             throw new RequestException($response);
@@ -150,5 +149,4 @@ class NetatmoService
             ],
         ];
     }
-
 }
