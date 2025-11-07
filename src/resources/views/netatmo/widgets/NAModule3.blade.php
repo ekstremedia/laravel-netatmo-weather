@@ -54,13 +54,13 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {{-- Current Rain --}}
                 <div class="bg-gradient-to-br from-sky-500/10 to-blue-500/10 rounded-2xl p-6 border border-sky-500/20">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex-1 min-w-0">
                             <div class="text-sky-300/80 text-sm font-medium uppercase tracking-wide mb-1">Current</div>
-                            <div class="text-5xl font-bold text-white">{{ $module->dashboard_data['Rain'] ?? '0' }}<span class="text-2xl text-sky-200/60">mm</span></div>
+                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['Rain'] ?? '0' }}<span class="text-xl md:text-2xl text-sky-200/60">mm</span></div>
                         </div>
-                        <div class="bg-sky-500/20 p-3 rounded-xl">
-                            <svg class="w-8 h-8 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-sky-500/20 p-2.5 rounded-xl flex-shrink-0">
+                            <svg class="w-7 h-7 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 008 10.586V5L7 4z"/>
                             </svg>
                         </div>
@@ -70,13 +70,13 @@
 
                 {{-- Last Hour --}}
                 <div class="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-2xl p-6 border border-blue-500/20">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex-1 min-w-0">
                             <div class="text-blue-300/80 text-sm font-medium uppercase tracking-wide mb-1">Last Hour</div>
-                            <div class="text-5xl font-bold text-white">{{ $module->dashboard_data['sum_rain_1'] ?? '0' }}<span class="text-2xl text-blue-200/60">mm</span></div>
+                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['sum_rain_1'] ?? '0' }}<span class="text-xl md:text-2xl text-blue-200/60">mm</span></div>
                         </div>
-                        <div class="bg-blue-500/20 p-3 rounded-xl">
-                            <svg class="w-8 h-8 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-blue-500/20 p-2.5 rounded-xl flex-shrink-0">
+                            <svg class="w-7 h-7 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
@@ -86,13 +86,13 @@
 
                 {{-- Last 24 Hours --}}
                 <div class="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl p-6 border border-indigo-500/20">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex-1 min-w-0">
                             <div class="text-indigo-300/80 text-sm font-medium uppercase tracking-wide mb-1">Last 24h</div>
-                            <div class="text-5xl font-bold text-white">{{ $module->dashboard_data['sum_rain_24'] ?? '0' }}<span class="text-2xl text-indigo-200/60">mm</span></div>
+                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['sum_rain_24'] ?? '0' }}<span class="text-xl md:text-2xl text-indigo-200/60">mm</span></div>
                         </div>
-                        <div class="bg-indigo-500/20 p-3 rounded-xl">
-                            <svg class="w-8 h-8 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-indigo-500/20 p-2.5 rounded-xl flex-shrink-0">
+                            <svg class="w-7 h-7 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                         </div>

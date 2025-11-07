@@ -54,13 +54,13 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {{-- Temperature Card --}}
                 <div class="bg-gradient-to-br from-rose-500/10 to-pink-500/10 rounded-2xl p-6 border border-rose-500/20">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex-1 min-w-0">
                             <div class="text-rose-300/80 text-sm font-medium uppercase tracking-wide mb-1">Temperature</div>
-                            <div class="text-5xl font-bold text-white">{{ $module->dashboard_data['Temperature'] }}<span class="text-2xl text-rose-200/60">°C</span></div>
+                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['Temperature'] }}<span class="text-xl md:text-2xl text-rose-200/60">°C</span></div>
                         </div>
-                        <div class="bg-rose-500/20 p-3 rounded-xl">
-                            <svg class="w-8 h-8 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-rose-500/20 p-2.5 rounded-xl flex-shrink-0">
+                            <svg class="w-7 h-7 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                             </svg>
                         </div>
@@ -88,13 +88,13 @@
 
                 {{-- Humidity Card --}}
                 <div class="bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-2xl p-6 border border-violet-500/20">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex-1 min-w-0">
                             <div class="text-violet-300/80 text-sm font-medium uppercase tracking-wide mb-1">Humidity</div>
-                            <div class="text-5xl font-bold text-white">{{ $module->dashboard_data['Humidity'] }}<span class="text-2xl text-violet-200/60">%</span></div>
+                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['Humidity'] }}<span class="text-xl md:text-2xl text-violet-200/60">%</span></div>
                         </div>
-                        <div class="bg-violet-500/20 p-3 rounded-xl">
-                            <svg class="w-8 h-8 text-violet-300" fill="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-violet-500/20 p-2.5 rounded-xl flex-shrink-0">
+                            <svg class="w-7 h-7 text-violet-300" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/>
                             </svg>
                         </div>
@@ -117,13 +117,13 @@
 
                 {{-- CO2 Card --}}
                 <div class="bg-gradient-to-br from-fuchsia-500/10 to-pink-500/10 rounded-2xl p-6 border border-fuchsia-500/20">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex-1 min-w-0">
                             <div class="text-fuchsia-300/80 text-sm font-medium uppercase tracking-wide mb-1">CO₂ Level</div>
-                            <div class="text-5xl font-bold text-white">{{ $module->dashboard_data['CO2'] }}<span class="text-xl text-fuchsia-200/60">ppm</span></div>
+                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['CO2'] }}<span class="text-lg md:text-xl text-fuchsia-200/60">ppm</span></div>
                         </div>
-                        <div class="bg-fuchsia-500/20 p-3 rounded-xl">
-                            <svg class="w-8 h-8 text-fuchsia-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-fuchsia-500/20 p-2.5 rounded-xl flex-shrink-0">
+                            <svg class="w-7 h-7 text-fuchsia-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
                             </svg>
                         </div>

@@ -54,13 +54,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {{-- Current Wind Speed --}}
                 <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl p-6 border border-emerald-500/20">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex-1 min-w-0">
                             <div class="text-emerald-300/80 text-sm font-medium uppercase tracking-wide mb-1">Wind Speed</div>
-                            <div class="text-5xl font-bold text-white">{{ $module->dashboard_data['WindStrength'] ?? 'N/A' }}<span class="text-xl text-emerald-200/60">km/h</span></div>
+                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['WindStrength'] ?? 'N/A' }}<span class="text-lg md:text-xl text-emerald-200/60">km/h</span></div>
                         </div>
-                        <div class="bg-emerald-500/20 p-3 rounded-xl">
-                            <svg class="w-8 h-8 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-emerald-500/20 p-2.5 rounded-xl flex-shrink-0">
+                            <svg class="w-7 h-7 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                             </svg>
                         </div>
@@ -79,13 +79,13 @@
 
                 {{-- Wind Direction --}}
                 <div class="bg-gradient-to-br from-green-500/10 to-cyan-500/10 rounded-2xl p-6 border border-green-500/20">
-                    <div class="flex items-start justify-between mb-4">
-                        <div>
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex-1 min-w-0">
                             <div class="text-green-300/80 text-sm font-medium uppercase tracking-wide mb-1">Wind Direction</div>
-                            <div class="text-5xl font-bold text-white">{{ $module->dashboard_data['WindAngle'] ?? 'N/A' }}<span class="text-2xl text-green-200/60">°</span></div>
+                            <div class="text-4xl md:text-5xl font-bold text-white">{{ $module->dashboard_data['WindAngle'] ?? 'N/A' }}<span class="text-xl md:text-2xl text-green-200/60">°</span></div>
                         </div>
-                        <div class="bg-green-500/20 p-3 rounded-xl">
-                            <svg class="w-8 h-8 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transform: rotate({{ $module->dashboard_data['WindAngle'] ?? 0 }}deg)">
+                        <div class="bg-green-500/20 p-2.5 rounded-xl flex-shrink-0">
+                            <svg class="w-7 h-7 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transform: rotate({{ $module->dashboard_data['WindAngle'] ?? 0 }}deg)">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                             </svg>
                         </div>
