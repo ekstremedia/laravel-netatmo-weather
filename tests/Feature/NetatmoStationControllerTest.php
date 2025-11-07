@@ -1,5 +1,6 @@
 <?php
 
+use Ekstremedia\NetatmoWeather\Models\NetatmoModule;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Models\NetatmoToken;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -9,6 +10,7 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\delete;
 use function Pest\Laravel\get;
+use function Pest\Laravel\patch;
 use function Pest\Laravel\post;
 use function Pest\Laravel\put;
 
@@ -251,4 +253,143 @@ it('returns 503 for public station without valid token', function () {
 
     get(route('netatmo.public', $station->uuid))
         ->assertStatus(503);
+});
+
+// Module Management Tests
+
+it('can reactivate an archived module', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    $module = NetatmoModule::create([
+        'netatmo_station_id' => $station->id,
+        'module_id' => '02:00:00:58:71:60',
+        'module_name' => 'Outdoor Module',
+        'type' => 'NAModule1',
+        'data_type' => ['Temperature', 'Humidity'],
+        'is_active' => false, // Archived
+    ]);
+
+    patch(route('netatmo.modules.activate', [$station->uuid, $module->id]))
+        ->assertRedirect(route('netatmo.show', $station->uuid))
+        ->assertSessionHas('success');
+
+    assertDatabaseHas('netatmo_modules', [
+        'id' => $module->id,
+        'is_active' => true,
+    ]);
+});
+
+it('can delete an archived module', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    $module = NetatmoModule::create([
+        'netatmo_station_id' => $station->id,
+        'module_id' => '02:00:00:58:71:60',
+        'module_name' => 'Old Module',
+        'type' => 'NAModule1',
+        'data_type' => ['Temperature', 'Humidity'],
+        'is_active' => false, // Archived
+    ]);
+
+    delete(route('netatmo.modules.destroy', [$station->uuid, $module->id]))
+        ->assertRedirect(route('netatmo.show', $station->uuid))
+        ->assertSessionHas('success');
+
+    assertDatabaseMissing('netatmo_modules', [
+        'id' => $module->id,
+    ]);
+});
+
+it('cannot delete active modules', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    $module = NetatmoModule::create([
+        'netatmo_station_id' => $station->id,
+        'module_id' => '02:00:00:58:71:60',
+        'module_name' => 'Active Module',
+        'type' => 'NAModule1',
+        'data_type' => ['Temperature', 'Humidity'],
+        'is_active' => true, // Active
+    ]);
+
+    delete(route('netatmo.modules.destroy', [$station->uuid, $module->id]))
+        ->assertRedirect(route('netatmo.show', $station->uuid))
+        ->assertSessionHas('error');
+
+    assertDatabaseHas('netatmo_modules', [
+        'id' => $module->id,
+    ]);
+});
+
+it('returns 404 when activating module from wrong station', function () {
+    $station1 = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Station 1',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    $station2 = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Station 2',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    $module = NetatmoModule::create([
+        'netatmo_station_id' => $station2->id, // Belongs to station2
+        'module_id' => '02:00:00:58:71:60',
+        'module_name' => 'Module',
+        'type' => 'NAModule1',
+        'data_type' => ['Temperature'],
+        'is_active' => false,
+    ]);
+
+    // Try to activate via station1 (should fail)
+    patch(route('netatmo.modules.activate', [$station1->uuid, $module->id]))
+        ->assertNotFound();
+});
+
+it('returns 404 when deleting module from wrong station', function () {
+    $station1 = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Station 1',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    $station2 = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Station 2',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    $module = NetatmoModule::create([
+        'netatmo_station_id' => $station2->id, // Belongs to station2
+        'module_id' => '02:00:00:58:71:60',
+        'module_name' => 'Module',
+        'type' => 'NAModule1',
+        'data_type' => ['Temperature'],
+        'is_active' => false,
+    ]);
+
+    // Try to delete via station1 (should fail)
+    delete(route('netatmo.modules.destroy', [$station1->uuid, $module->id]))
+        ->assertNotFound();
 });
