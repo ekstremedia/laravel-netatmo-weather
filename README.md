@@ -207,10 +207,76 @@ This route:
 
 If your Netatmo account has access to multiple weather stations, the package will prompt you to select which physical device each configuration should display data from.
 
+### Multiple Weather Stations: Two Approaches
+
+**Option 1: Shared Access (Recommended)**
+- Have others share their weather stations with your Netatmo account
+- Use your single account credentials for all configurations
+- Use device selection to choose which physical station each configuration displays
+- Simpler management, single authentication
+
+**Option 2: Separate Credentials (Fully Independent)**
+- Each station configuration uses **completely different** Netatmo account credentials
+- Each station authenticates separately with its own account
+- Each station fetches data using its own OAuth token
+- Each station is 100% isolated - no shared state
+- Useful when:
+  - Sharing is not possible or desired
+  - You want complete independence between stations
+  - Different people manage different weather stations
+  - You need to display weather from multiple Netatmo accounts
+
+### Setting Up Shared Access (Option 1)
+
+To display weather stations owned by others (family, friends, other locations):
+
+1. **Have the station owner share access:**
+   - They log into the Netatmo mobile app
+   - Go to Settings → Manage my Home
+   - Add you as a guest/user with access to their weather station
+
+2. **Your account now sees multiple devices:**
+   - After sharing, your Netatmo account has access to both stations
+   - When you authenticate a configuration, you'll see all available devices
+   - Select which physical device each configuration should display
+
+3. **Example Setup:**
+   - Configuration "My Home" → Select your weather station
+   - Configuration "Parents' House" → Select parents' weather station
+   - Both use your credentials, different device_id values
+
+### Setting Up Separate Credentials (Option 2)
+
+To use completely independent Netatmo accounts for different stations:
+
+1. **Get API credentials for each Netatmo account:**
+   - Account A (yours): Go to https://dev.netatmo.com/ → Create App → Get Client ID + Secret
+   - Account B (parents'): They do the same → Get their Client ID + Secret
+
+2. **Create station configurations with different credentials:**
+   - Create Station 1: Use Account A credentials
+   - Create Station 2: Use Account B credentials
+   - Each station stores its credentials separately (encrypted)
+
+3. **Authenticate each station independently:**
+   - Visit `/netatmo/authenticate/{station-1}` → Login with Account A
+   - Visit `/netatmo/authenticate/{station-2}` → Login with Account B
+   - Each gets its own OAuth token
+
+4. **Each station operates independently:**
+   - Station 1 fetches data using Account A's token
+   - Station 2 fetches data using Account B's token
+   - No shared state, complete isolation
+
+**Visual Indicators:**
+- The UI shows masked Client ID for each station (e.g., `66c3d88a••••`)
+- Different Client IDs confirm different accounts are being used
+- Token status is tracked separately per station
+
 ### How It Works
 
 1. **Single Device**: If you only have one weather station, the device is automatically selected
-2. **Multiple Devices**: When you have multiple weather stations, you'll be redirected to a device selection page after authentication
+2. **Multiple Devices**: When you have multiple weather stations (owned or shared), you'll be redirected to a device selection page after authentication
 3. **Manual Selection**: Choose which Netatmo device this configuration should use from a list showing:
    - Station name
    - Number of modules

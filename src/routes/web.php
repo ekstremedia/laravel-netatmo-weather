@@ -22,6 +22,8 @@ Route::middleware(['web', 'auth'])->group(function () {
         ->name('netatmo.select-device');
     Route::post('/netatmo/{weatherStation}/set-device', [NetatmoStationController::class, 'setDevice'])
         ->name('netatmo.set-device');
+    Route::patch('/netatmo/{weatherStation}/modules/{module}/activate', [NetatmoStationController::class, 'activateModule'])
+        ->name('netatmo.modules.activate');
     Route::delete('/netatmo/{weatherStation}/modules/{module}', [NetatmoStationController::class, 'destroyModule'])
         ->name('netatmo.modules.destroy');
     Route::get('/netatmo/authenticate/{weatherStation}', [NetatmoStationAuthController::class, 'authenticate'])

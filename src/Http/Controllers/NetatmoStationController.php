@@ -264,6 +264,24 @@ class NetatmoStationController extends Controller
     }
 
     /**
+     * Reactivate an archived module.
+     */
+    public function activateModule(NetatmoStation $weatherStation, NetatmoModule $module): RedirectResponse
+    {
+        $this->authorize('update', $weatherStation);
+
+        // Verify the module belongs to this station
+        if ($module->netatmo_station_id !== $weatherStation->id) {
+            abort(404);
+        }
+
+        $module->update(['is_active' => true]);
+
+        return redirect()->route('netatmo.show', $weatherStation)
+            ->with('success', 'Module reactivated successfully.');
+    }
+
+    /**
      * Delete an archived module.
      */
     public function destroyModule(NetatmoStation $weatherStation, NetatmoModule $module): RedirectResponse

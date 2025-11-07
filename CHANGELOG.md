@@ -15,16 +15,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dedicated public layout without admin controls
 - Copy-to-clipboard functionality for public URLs
 - Database migration for `is_public` column
-- Device selection feature for accounts with multiple Netatmo weather stations
+- Device selection feature for accounts with multiple Netatmo weather stations (owned or shared)
+- Support for Netatmo account sharing - display weather stations shared with your account
 - `device_id` field to NetatmoStation model for device identification
 - Device selection UI showing station name, module count, and device ID
 - Routes for manual device selection and reassignment (`/netatmo/{station}/select-device`, `/netatmo/{station}/set-device`)
 - `getAvailableDevices()` method in NetatmoService to fetch all devices from API
 - Database migration for `device_id` column
+- Documentation for two approaches: shared access vs. separate credentials
 - Module lifecycle management with `is_active` status tracking
 - Automatic archiving of modules no longer detected by Netatmo API
-- Archived Modules section in station view showing inactive modules
+- Archived Modules section in station view showing inactive modules with full details (battery, RF status, data types, last seen)
 - Delete functionality for archived/inactive modules
+- **Reactivate button** for archived modules - restore them to active status
+- Enhanced module display showing proper names for module types (e.g., "Outdoor Module" for NAModule1)
+- Improved "No Dashboard Data" widget showing available module information even when measurements are unavailable
+- Display of supported data types (Temperature, Humidity, etc.) for all modules
 - "Change Device" button on station detail page
 - Database migration for `is_active` column on netatmo_modules table
 
@@ -36,6 +42,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All views now filter to show only active modules by default
 - Module counts now reflect only active modules
 - Service automatically marks modules not in API response as inactive during data sync
+- Added "API Configuration" section on station detail page showing Client ID, Device ID, Token status, and Last data fetch
+- Added Client ID and Device ID indicators on station index page
+- Clarified documentation for two setup approaches: shared access vs. separate credentials
+- Made it visually clear which Netatmo account each station is using
 
 ### Fixed
 - Fixed duplicate module constraint when adding multiple stations with shared modules

@@ -81,6 +81,17 @@
                                                 </span>
                                             @endif
                                         </div>
+                                        <div class="flex items-center space-x-2 mt-1">
+                                            <span class="text-xs text-purple-400/60 font-mono">
+                                                <i class="fas fa-id-badge mr-1"></i>Client: {{ substr($weatherstation->client_id, 0, 8) }}••••
+                                            </span>
+                                            @if($weatherstation->device_id)
+                                                <span class="text-xs text-purple-400/40">•</span>
+                                                <span class="text-xs text-purple-400/60 font-mono">
+                                                    <i class="fas fa-broadcast-tower mr-1"></i>{{ $weatherstation->device_id }}
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>
