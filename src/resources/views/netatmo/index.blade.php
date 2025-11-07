@@ -37,7 +37,24 @@
             <div class="grid grid-cols-1 gap-6">
                 @foreach($weatherStations as $weatherstation)
                     <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-2xl shadow-purple-900/20 hover:shadow-purple-800/30 transition-all duration-300 overflow-hidden border border-dark-border/50 hover:border-purple-500/50"
-                         x-data="{ showConfirm: false }">
+                         x-data="{
+                            showConfirm: false,
+                            isLoading: {{ ($weatherstation->token && $weatherstation->token->hasValidToken() && $weatherstation->modules->count() === 0) ? 'true' : 'false' }},
+                            async fetchData() {
+                                if (!this.isLoading) return;
+                                try {
+                                    const response = await fetch('{{ route('netatmo.show', $weatherstation) }}');
+                                    if (response.ok) {
+                                        // Reload the page to show the fetched data
+                                        window.location.reload();
+                                    }
+                                } catch (error) {
+                                    console.error('Failed to fetch data:', error);
+                                    this.isLoading = false;
+                                }
+                            }
+                         }"
+                         x-init="fetchData()">
                         <!-- Station Card Header -->
                         <div class="bg-gradient-to-r from-dark-surface/60 to-purple-900/20 px-6 py-4 border-b border-dark-border/50">
                             <div class="flex items-start justify-between">
@@ -48,15 +65,14 @@
                                              class="w-8 h-8 brightness-150">
                                     </div>
                                     <div>
-                                        <a href="{{ route('netatmo.show', $weatherstation) }}"
-                                           class="text-xl font-bold text-white hover:text-purple-300 transition-colors">
-                                            {{ $weatherstation->station_name }}
-                                        </a>
-                                        <div class="flex items-center mt-1">
+                                        <div class="flex items-center space-x-3">
+                                            <a href="{{ route('netatmo.show', $weatherstation) }}"
+                                               class="text-xl font-bold text-white hover:text-purple-300 transition-colors">
+                                                {{ $weatherstation->station_name }}
+                                            </a>
                                             @if($weatherstation->token && $weatherstation->token->hasValidToken())
-                                                <span class="inline-flex items-center space-x-1 text-sm text-green-400">
-                                                    <i class="fa fa-check-circle"></i>
-                                                    <span class="font-medium">Connected & Ready</span>
+                                                <span class="inline-flex items-center justify-center w-6 h-6 bg-green-500/20 rounded-full border border-green-500/30" title="Connected">
+                                                    <i class="fa fa-check text-green-400 text-xs"></i>
                                                 </span>
                                             @else
                                                 <span class="inline-flex items-center space-x-1 text-sm text-amber-400">
@@ -69,6 +85,72 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Loading State -->
+                        <div x-show="isLoading" class="px-6 py-4 border-b border-dark-border/50">
+                            <div class="flex items-center space-x-3 text-purple-300">
+                                <div class="animate-spin">
+                                    <i class="fas fa-spinner text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">Fetching weather data...</div>
+                                    <div class="text-sm text-purple-400/70">This may take a few seconds</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Station Data Preview -->
+                        @if($weatherstation->token && $weatherstation->token->hasValidToken() && $weatherstation->modules->count() > 0)
+                            <div class="px-6 py-4 border-b border-dark-border/50">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="text-sm font-semibold text-purple-300 uppercase tracking-wide">
+                                        <i class="fas fa-chart-bar mr-2"></i>Quick Overview
+                                    </h4>
+                                    <span class="text-xs text-purple-400/70">
+                                        <i class="fas fa-cube mr-1"></i>{{ $weatherstation->modules->count() }} {{ $weatherstation->modules->count() === 1 ? 'module' : 'modules' }}
+                                    </span>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                    @foreach($weatherstation->modules->take(6) as $module)
+                                        @if($module->dashboard_data)
+                                            @php
+                                                $icon = match($module->type) {
+                                                    'NAMain' => 'fas fa-home',
+                                                    'NAModule1' => 'fas fa-cloud-sun',
+                                                    'NAModule2' => 'fas fa-wind',
+                                                    'NAModule3' => 'fas fa-cloud-rain',
+                                                    'NAModule4' => 'fas fa-door-open',
+                                                    default => 'fas fa-cube'
+                                                };
+                                                $color = match($module->type) {
+                                                    'NAMain' => 'purple',
+                                                    'NAModule1' => 'cyan',
+                                                    'NAModule2' => 'emerald',
+                                                    'NAModule3' => 'sky',
+                                                    'NAModule4' => 'violet',
+                                                    default => 'purple'
+                                                };
+                                            @endphp
+                                            <div class="bg-dark-surface/40 rounded-lg p-3 border border-dark-border/30">
+                                                <div class="flex items-center space-x-2 mb-1">
+                                                    <i class="{{ $icon }} text-{{ $color }}-400 text-xs"></i>
+                                                    <span class="text-xs text-purple-300/70 truncate">{{ $module->module_name }}</span>
+                                                </div>
+                                                @if(isset($module->dashboard_data['Temperature']))
+                                                    <div class="text-lg font-bold text-white">{{ $module->dashboard_data['Temperature'] }}°C</div>
+                                                @elseif(isset($module->dashboard_data['WindStrength']))
+                                                    <div class="text-lg font-bold text-white">{{ $module->dashboard_data['WindStrength'] }} <span class="text-xs">km/h</span></div>
+                                                @elseif(isset($module->dashboard_data['Rain']))
+                                                    <div class="text-lg font-bold text-white">{{ $module->dashboard_data['Rain'] }} <span class="text-xs">mm</span></div>
+                                                @else
+                                                    <div class="text-sm text-purple-400/70">Active</div>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
 
                         <!-- Station Card Body -->
                         <div class="px-6 py-4">

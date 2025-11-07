@@ -13,13 +13,33 @@ This is **laravel-netatmo-weather**, a Laravel package for integrating Netatmo W
 
 ## Development Commands
 
+### Testing
+```bash
+# Run all tests with Pest
+composer test
+
+# Run tests with coverage report
+composer test-coverage
+
+# Run specific test suite
+vendor/bin/pest --testsuite Unit
+vendor/bin/pest --testsuite Feature
+
+# Run specific test file
+vendor/bin/pest tests/Unit/NetatmoStationTest.php
+
+# Run tests in parallel (faster)
+vendor/bin/pest --parallel
+```
+
 ### Code Quality
 ```bash
 # Run Laravel Pint (code formatter)
 vendor/bin/pint
+composer format
 
-# Run tests (when implemented)
-composer test
+# Check code style without fixing
+vendor/bin/pint --test
 ```
 
 ### Package Development Setup
@@ -180,11 +200,72 @@ Optional UI scaffolding in `src/resources/views/`:
 - `dashboard_data` field stores raw sensor readings as JSON
 - `updateOrCreate` pattern prevents duplicate modules on data refresh
 
-## Testing Notes
+## Testing
 
-- Test suite not yet implemented (testbench configured in composer.json)
-- Manual testing requires valid Netatmo API credentials
-- Use Storage facade logs disk for debugging API responses
+### Test Suite Overview
+
+The package uses **Pest PHP** for elegant and expressive testing:
+
+**Unit Tests** (`tests/Unit/`)
+- `NetatmoStationTest.php` - Model creation, UUID routing, encryption, relationships, cascade deletes (6 tests)
+- `NetatmoTokenTest.php` - Token validation, expiration checks, relationships (4 tests)
+- `NetatmoModuleTest.php` - Module creation, JSON casting, multiple module types (4 tests)
+
+**Feature Tests** (`tests/Feature/`)
+- `NetatmoStationControllerTest.php` - CRUD operations, authentication redirects, validation (9 tests)
+- `NetatmoServiceTest.php` - API integration, data caching, HTTP mocking, module updates (4 tests)
+
+### Test Configuration
+
+**Pest Configuration** (`tests/Pest.php`)
+- Configures TestCase for all tests
+- Enables Laravel-specific assertions
+- Uses SQLite in-memory database
+
+**PHPUnit Configuration** (`phpunit.xml`)
+- Uses SQLite in-memory database for testing
+- Separated into Unit and Feature test suites
+- Code coverage available via `composer test-coverage`
+
+**Test Base Class** (`tests/TestCase.php`)
+- Extends Orchestra Testbench for package testing
+- Automatically runs migrations before tests
+- Configures factory namespace resolution
+- Sets up in-memory SQLite database
+
+### Why Pest?
+
+Pest provides a more elegant syntax compared to PHPUnit:
+```php
+// Pest style - readable and concise
+it('can create a netatmo station', function () {
+    $station = NetatmoStation::create([...]);
+    expect($station->uuid)->not->toBeNull();
+});
+
+// vs PHPUnit style
+public function test_it_can_create_a_netatmo_station(): void {
+    $station = NetatmoStation::create([...]);
+    $this->assertNotNull($station->uuid);
+}
+```
+
+### Running Tests in CI/CD
+
+GitHub Actions workflow configured in `.github/workflows/tests.yml`:
+- Tests against PHP 8.2 & 8.3
+- Tests against Laravel 11.x & 12.x
+- Matrix testing across all combinations
+- Uses Pest for test execution
+- Code style checks with Laravel Pint
+- Runs on push to main/develop and all PRs
+
+### Manual Testing
+
+Manual testing requires valid Netatmo API credentials:
+1. Create app at https://dev.netatmo.com/apps
+2. Configure credentials in test application
+3. Test full OAuth flow and data fetching
 
 ## Common Gotchas
 

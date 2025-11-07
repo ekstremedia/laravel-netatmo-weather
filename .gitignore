@@ -3,3 +3,12 @@ node_modules/
 .idea/
 composer.lock
 package-lock.json
+
+# Testing
+.phpunit.cache
+coverage/
+phpunit.xml.bak
+
+# Build artifacts
+build/
+dist/

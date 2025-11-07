@@ -2,13 +2,13 @@
 
 namespace Ekstremedia\NetatmoWeather\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Ekstremedia\NetatmoWeather\Http\Requests\NetatmoWeatherStationRequest;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Services\NetatmoService;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controller;
 
 class NetatmoStationController extends Controller
 {

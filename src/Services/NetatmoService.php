@@ -51,9 +51,6 @@ class NetatmoService
 
         $this->storeStationData($weatherStation, $responseBody['body']);
 
-        // Save response to file for debugging
-        Storage::disk('logs')->put("getstationsdata-" . $weatherStation->id . ".json", json_encode($responseBody, JSON_PRETTY_PRINT));
-
         return $response->json();
     }
 

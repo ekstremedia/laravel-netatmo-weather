@@ -1,5 +1,10 @@
 # Laravel Netatmo Weather
 
+[![Tests](https://github.com/ekstremedia/laravel-netatmo-weather/workflows/Tests/badge.svg)](https://github.com/ekstremedia/laravel-netatmo-weather/actions)
+[![PHP Version](https://img.shields.io/packagist/php-v/ekstremedia/laravel-netatmo-weather)](https://packagist.org/packages/ekstremedia/laravel-netatmo-weather)
+[![Laravel Version](https://img.shields.io/badge/Laravel-11.x%20%7C%2012.x-orange)](https://laravel.com)
+[![License](https://img.shields.io/packagist/l/ekstremedia/laravel-netatmo-weather)](https://github.com/ekstremedia/laravel-netatmo-weather/blob/main/LICENSE)
+
 A Laravel package for integrating Netatmo Weather Station API with your Laravel application. This package provides an easy-to-use interface for authenticating with Netatmo, fetching weather data, and storing it in your database.
 
 ## Features
@@ -208,9 +213,62 @@ The package automatically caches weather data for 10 minutes to reduce API calls
 
 ## Testing
 
+The package includes comprehensive test coverage using **Pest PHP**:
+
 ```bash
+# Run all tests
 composer test
+
+# Run tests with coverage report
+composer test-coverage
+
+# Run specific test suite
+vendor/bin/pest --testsuite Unit
+vendor/bin/pest --testsuite Feature
+
+# Run tests in parallel
+vendor/bin/pest --parallel
+
+# Check code style
+composer format
+vendor/bin/pint --test
 ```
+
+### Test Coverage
+
+**Unit Tests (14 tests):**
+- Model functionality (NetatmoStation, NetatmoToken, NetatmoModule)
+- Encryption and UUID generation
+- Relationships and cascade deletes
+- Token validation and expiration
+- JSON field casting
+
+**Feature Tests (13 tests):**
+- CRUD operations for weather stations
+- Authentication flow and redirects
+- API integration with HTTP mocking
+- Data caching (10-minute strategy)
+- Module updates without duplication
+
+### Why Pest?
+
+Pest provides a more elegant and expressive testing syntax:
+
+```php
+it('can create a netatmo station', function () {
+    $station = NetatmoStation::create([...]);
+    expect($station->uuid)->not->toBeNull();
+});
+```
+
+### CI/CD
+
+The package uses GitHub Actions for continuous integration:
+- Tests against PHP 8.2 & 8.3
+- Tests against Laravel 11.x & 12.x
+- Uses Pest for elegant test execution
+- Code style checks with Laravel Pint
+- Runs on every push and pull request
 
 ## Contributing
 

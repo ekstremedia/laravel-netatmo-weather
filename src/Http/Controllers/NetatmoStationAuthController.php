@@ -2,10 +2,10 @@
 
 namespace Ekstremedia\NetatmoWeather\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Http;
 
 class NetatmoStationAuthController extends Controller
