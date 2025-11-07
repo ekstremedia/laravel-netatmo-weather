@@ -62,9 +62,7 @@ class NetatmoStationController extends Controller
         return [
             ['name' => 'station_name', 'type' => 'text', 'required' => true],
             ['name' => 'client_id', 'type' => 'text', 'required' => true],
-            ['name' => 'client_secret', 'type' => 'text', 'required' => true],
-            ['name' => 'redirect_uri', 'type' => 'text', 'required' => false],
-            ['name' => 'webhook_uri', 'type' => 'text', 'required' => false],
+            ['name' => 'client_secret', 'type' => 'password', 'required' => true],
         ];
     }
 
@@ -76,9 +74,11 @@ class NetatmoStationController extends Controller
         $data = $request->validated();
         $data['user_id'] = auth()->id();
 
-        NetatmoStation::create($data);
+        $weatherStation = NetatmoStation::create($data);
 
-        return redirect()->route('netatmo.index')->with('success', 'Weather station created successfully.');
+        // Redirect directly to authentication
+        return redirect()->route('netatmo.authenticate', $weatherStation)
+            ->with('success', 'Weather station created. Please authenticate with Netatmo.');
 
     }
 
@@ -87,11 +87,15 @@ class NetatmoStationController extends Controller
      */
     public function show(NetatmoStation $weatherStation, NetatmoService $netatmoService): view|RedirectResponse
     {
+        // Check if token exists and is valid
+        if (!$weatherStation->token || !$weatherStation->token->hasValidToken()) {
+            return redirect()->route('netatmo.authenticate', $weatherStation)
+                ->with('error', 'Please authenticate with Netatmo first.');
+        }
+
         try {
             // Fetch data from the weather station
             $netatmoService->getStationData($weatherStation);
-//            $weatherStation->load('modules.latestReading');
-            //          $weatherStation->refresh();
 
             return view('netatmoweather::netatmo.show', compact('weatherStation'));
         } catch (Exception $e) {
@@ -99,7 +103,6 @@ class NetatmoStationController extends Controller
 
             return redirect()->route('netatmo.index')->with('error', 'Failed to retrieve data from Netatmo: '.$e->getMessage());
         }
-        //        return view('netatmoweather::netatmo.show', compact('weatherStation'));
     }
 
     /**

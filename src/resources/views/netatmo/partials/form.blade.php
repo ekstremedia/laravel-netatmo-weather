@@ -7,6 +7,23 @@
         @method('PUT')
     @endif
 
+    <!-- Info Box -->
+    @if(!isset($weatherStation))
+    <div class="bg-blue-900/20 border border-blue-700/30 rounded-xl p-4 mb-6">
+        <div class="flex items-start space-x-3">
+            <i class="fas fa-info-circle text-blue-400 text-lg mt-1"></i>
+            <div>
+                <h4 class="text-blue-300 font-semibold mb-1">Get Your Netatmo API Credentials</h4>
+                <p class="text-blue-200/70 text-sm mb-2">You'll need to create an app on the Netatmo Developer Portal to get your Client ID and Secret.</p>
+                <a href="https://dev.netatmo.com/apps" target="_blank" class="inline-flex items-center space-x-1 text-sm text-blue-300 hover:text-blue-200">
+                    <span>Visit Netatmo Developer Portal</span>
+                    <i class="fas fa-external-link-alt text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    @endif
+
     @foreach ($fields as $field)
         <div class="space-y-2">
             <label class="block text-purple-200 text-sm font-semibold" for="{{ $field['name'] }}">

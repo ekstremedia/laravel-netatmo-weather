@@ -34,7 +34,7 @@
 
         <!-- Weather Stations List -->
         @if($weatherStations->count())
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 gap-6">
                 @foreach($weatherStations as $weatherstation)
                     <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-2xl shadow-purple-900/20 hover:shadow-purple-800/30 transition-all duration-300 overflow-hidden border border-dark-border/50 hover:border-purple-500/50"
                          x-data="{ showConfirm: false }">
@@ -56,14 +56,13 @@
                                             @if($weatherstation->token && $weatherstation->token->hasValidToken())
                                                 <span class="inline-flex items-center space-x-1 text-sm text-green-400">
                                                     <i class="fa fa-check-circle"></i>
-                                                    <span class="font-medium">Authenticated</span>
+                                                    <span class="font-medium">Connected & Ready</span>
                                                 </span>
                                             @else
-                                                <a href="{{ route('netatmo.authenticate', $weatherstation) }}"
-                                                   class="inline-flex items-center space-x-1 px-3 py-1 bg-amber-900/30 hover:bg-amber-800/40 text-amber-400 text-sm font-medium rounded-lg transition-colors border border-amber-700/30">
-                                                    <i class="fa fa-exclamation-circle"></i>
-                                                    <span>Authenticate Required</span>
-                                                </a>
+                                                <span class="inline-flex items-center space-x-1 text-sm text-amber-400">
+                                                    <i class="fa fa-exclamation-circle animate-pulse"></i>
+                                                    <span class="font-medium">Authentication Required</span>
+                                                </span>
                                             @endif
                                         </div>
                                     </div>
@@ -73,23 +72,29 @@
 
                         <!-- Station Card Body -->
                         <div class="px-6 py-4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex space-x-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                                @if($weatherstation->token && $weatherstation->token->hasValidToken())
                                     <a href="{{ route('netatmo.show', $weatherstation) }}"
                                        class="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-netatmo-purple to-netatmo-deep hover:from-netatmo-deep hover:to-purple-900 text-white font-medium rounded-lg transition-all duration-200 shadow-lg shadow-purple-900/30">
-                                        <i class="fas fa-eye"></i>
-                                        <span>View</span>
+                                        <i class="fas fa-chart-line"></i>
+                                        <span>View Data</span>
                                     </a>
+                                @else
+                                    <a href="{{ route('netatmo.authenticate', $weatherstation) }}"
+                                       class="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-amber-900/30 animate-pulse">
+                                        <i class="fas fa-key"></i>
+                                        <span>Authenticate Now</span>
+                                    </a>
+                                @endif
 
-                                    <a href="{{ route('netatmo.edit', $weatherstation) }}"
-                                       class="inline-flex items-center space-x-2 px-4 py-2 bg-dark-surface/60 hover:bg-dark-surface border border-dark-border/50 text-purple-200 font-medium rounded-lg transition-all duration-200">
-                                        <i class="fas fa-edit"></i>
-                                        <span>Edit</span>
-                                    </a>
-                                </div>
+                                <a href="{{ route('netatmo.edit', $weatherstation) }}"
+                                   class="inline-flex items-center space-x-2 px-4 py-2 bg-dark-surface/60 hover:bg-dark-surface border border-dark-border/50 text-purple-200 font-medium rounded-lg transition-all duration-200">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Settings</span>
+                                </a>
 
                                 <button @click="showConfirm = true"
-                                        class="inline-flex items-center space-x-2 px-4 py-2 bg-red-900/20 hover:bg-red-900/30 text-red-400 border border-red-800/30 font-medium rounded-lg transition-all duration-200">
+                                        class="inline-flex items-center space-x-2 px-4 py-2 bg-red-900/20 hover:bg-red-900/30 text-red-400 border border-red-800/30 font-medium rounded-lg transition-all duration-200 ml-auto">
                                     <i class="fas fa-trash-alt"></i>
                                     <span>Delete</span>
                                 </button>
