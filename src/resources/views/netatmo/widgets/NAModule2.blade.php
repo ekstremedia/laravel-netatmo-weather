@@ -53,8 +53,9 @@
             {{-- Primary Wind Metrics --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {{-- Current Wind Speed --}}
-                <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl p-4 border border-emerald-500/20">
-                    <div class="flex items-start justify-between gap-2 mb-3">
+                <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl p-4 border border-emerald-500/20"
+                     x-data="miniChart('{{ $module->module_id }}', 'WindStrength', '#10b981', ' km/h')">
+                    <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="flex-1 min-w-0">
                             <div class="text-emerald-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Wind Speed</div>
                             <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['WindStrength'] ?? 'N/A' }}<span class="text-base md:text-lg text-emerald-200/60">km/h</span></div>
@@ -65,6 +66,15 @@
                             </svg>
                         </div>
                     </div>
+
+                    {{-- Mini Chart --}}
+                    <div class="mt-2 mb-2 h-16 relative">
+                        <canvas x-ref="canvas" class="w-full h-full"></canvas>
+                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                            <div class="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    </div>
+
                     <div class="flex items-center justify-between gap-2">
                         <div class="text-center">
                             <div class="text-teal-400 text-[10px] mb-0.5">Gust</div>

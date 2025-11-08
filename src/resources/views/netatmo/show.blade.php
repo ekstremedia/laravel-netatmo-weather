@@ -217,9 +217,9 @@
             </div>
         </div>
 
-        <!-- Weather Graphs -->
-        @if($weatherStation->modules->where('is_active', true)->isNotEmpty())
-        <div class="mb-8" x-data="weatherCharts()">
+        <!-- Weather Graphs (Hidden - now integrated into widgets) -->
+        @if(false && $weatherStation->modules->where('is_active', true)->isNotEmpty())
+        <div class="mb-8 hidden" x-data="weatherCharts()">
             <div class="flex items-center space-x-3 mb-6">
                 <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-2.5 rounded-lg border border-purple-500/30">
                     <i class="fas fa-chart-line text-purple-400 text-xl"></i>
@@ -521,6 +521,107 @@
     </div>
 
     <script>
+        // Mini chart component for module widgets
+        window.miniChart = function(moduleId, dataType, color, unit) {
+            return {
+                loading: true,
+                chart: null,
+
+                init() {
+                    // Wait for Chart.js
+                    if (typeof Chart === 'undefined') {
+                        setTimeout(() => this.init(), 100);
+                        return;
+                    }
+
+                    this.loadData();
+                },
+
+                async loadData() {
+                    try {
+                        const response = await fetch(`/api/netatmo/stations/{{ $weatherStation->uuid }}/modules/${moduleId}/measurements?period=1day&scale=1hour`);
+                        const data = await response.json();
+
+                        if (data.error) {
+                            console.error('API error for mini chart:', data);
+                            this.loading = false;
+                            return;
+                        }
+
+                        if (data.measurements && data.measurements.data[dataType]) {
+                            this.createChart(data.measurements.timestamps, data.measurements.data[dataType], color, unit);
+                        }
+                    } catch (error) {
+                        console.error('Failed to load mini chart:', error);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                createChart(timestamps, values, color, unit) {
+                    const canvas = this.$refs.canvas;
+                    if (!canvas) return;
+
+                    // Format timestamps to show only hours
+                    const labels = timestamps.map(t => {
+                        const date = new Date(t);
+                        return date.getHours() + ':00';
+                    });
+
+                    const ctx = canvas.getContext('2d');
+                    this.chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                data: values,
+                                borderColor: color,
+                                backgroundColor: color + '20',
+                                borderWidth: 1.5,
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 0,
+                                pointHoverRadius: 3,
+                                pointHoverBackgroundColor: color,
+                                pointHoverBorderColor: '#fff',
+                                pointHoverBorderWidth: 1,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    enabled: true,
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 8,
+                                    titleFont: { size: 10 },
+                                    bodyFont: { size: 11 },
+                                    displayColors: false,
+                                    callbacks: {
+                                        label: (context) => `${context.parsed.y}${unit}`
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    display: false,
+                                },
+                                y: {
+                                    display: false,
+                                }
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
+                            }
+                        }
+                    });
+                }
+            }
+        };
+
         // Define weatherCharts globally before Alpine.js initializes
         window.weatherCharts = function() {
             return {

@@ -45,6 +45,9 @@ class MeasurementService
             $types = $module->data_type ?? ['Temperature', 'Humidity'];
         }
 
+        // Map data types to valid Netatmo API types
+        $types = $this->mapToNetatmoTypes($types);
+
         // Fetch from Netatmo API
         $measurements = $this->fetchFromNetatmo(
             $station,
@@ -295,5 +298,22 @@ class MeasurementService
         }
 
         return $formatted;
+    }
+
+    /**
+     * Map data types to valid Netatmo API measurement types
+     *
+     * @param  array  $types
+     * @return array
+     */
+    protected function mapToNetatmoTypes(array $types): array
+    {
+        $mapping = [
+            'Wind' => 'WindStrength',  // Wind module stores as "Wind" but API expects "WindStrength"
+        ];
+
+        return array_map(function ($type) use ($mapping) {
+            return $mapping[$type] ?? $type;
+        }, $types);
     }
 }
