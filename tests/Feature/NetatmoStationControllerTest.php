@@ -4,6 +4,7 @@ use Ekstremedia\NetatmoWeather\Models\NetatmoModule;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Models\NetatmoToken;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Http;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -139,7 +140,67 @@ it('redirects to authenticate when showing station without token', function () {
         ->assertSessionHas('error');
 });
 
-it('redirects to authenticate when showing station with invalid token', function () {
+it('automatically refreshes expired token on show', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'device_id' => 'test_device_id',
+    ]);
+
+    // Create expired token with valid refresh token
+    $token = NetatmoToken::create([
+        'netatmo_station_id' => $station->id,
+        'access_token' => 'expired_access_token',
+        'refresh_token' => 'valid_refresh_token',
+        'expires_at' => now()->subHour(),
+    ]);
+
+    // Mock the token refresh API call
+    Http::fake([
+        config('netatmo-weather.netatmo_token_url') => Http::response([
+            'access_token' => 'new_access_token',
+            'refresh_token' => 'new_refresh_token',
+            'expires_in' => 10800,
+        ], 200),
+        config('netatmo-weather.netatmo_api_url').'/getstationsdata' => Http::response([
+            'body' => [
+                'devices' => [
+                    [
+                        '_id' => 'test_device_id',
+                        'type' => 'NAMain',
+                        'module_name' => 'Indoor',
+                        'data_type' => ['Temperature', 'Humidity', 'CO2', 'Noise', 'Pressure'],
+                        'dashboard_data' => [
+                            'Temperature' => 22.5,
+                            'Humidity' => 45,
+                            'CO2' => 600,
+                            'Noise' => 35,
+                            'Pressure' => 1013.5,
+                            'AbsolutePressure' => 1013.5,
+                            'min_temp' => 20.0,
+                            'max_temp' => 24.0,
+                            'date_min_temp' => now()->subHours(6)->timestamp,
+                            'date_max_temp' => now()->subHours(2)->timestamp,
+                            'temp_trend' => 'stable',
+                            'pressure_trend' => 'stable',
+                        ],
+                    ],
+                ],
+            ],
+        ], 200),
+    ]);
+
+    get(route('netatmo.show', $station->uuid))
+        ->assertOk();
+
+    // Verify token was refreshed
+    expect($token->fresh()->access_token)->toBe('new_access_token');
+    expect($token->fresh()->refresh_token)->toBe('new_refresh_token');
+});
+
+it('redirects to authenticate when token refresh fails', function () {
     $station = NetatmoStation::create([
         'user_id' => 1,
         'station_name' => 'Test Station',
@@ -151,12 +212,20 @@ it('redirects to authenticate when showing station with invalid token', function
     NetatmoToken::create([
         'netatmo_station_id' => $station->id,
         'access_token' => 'expired_token',
-        'refresh_token' => 'refresh_token',
+        'refresh_token' => 'invalid_refresh_token',
         'expires_at' => now()->subHour(),
     ]);
 
+    // Mock failed token refresh
+    Http::fake([
+        config('netatmo-weather.netatmo_token_url') => Http::response([
+            'error' => 'invalid_grant',
+        ], 400),
+    ]);
+
     get(route('netatmo.show', $station->uuid))
-        ->assertRedirect(route('netatmo.authenticate', $station->uuid));
+        ->assertRedirect(route('netatmo.authenticate', $station->uuid))
+        ->assertSessionHas('error');
 });
 
 it('can toggle public access for a station', function () {
@@ -246,6 +315,152 @@ it('returns 503 for public station without valid token', function () {
         'client_id' => 'test_client_id',
         'client_secret' => 'test_client_secret',
         'is_public' => true,
+    ]);
+
+    // Test public route without authentication
+    $this->app['auth']->forgetGuards();
+
+    get(route('netatmo.public', $station->uuid))
+        ->assertStatus(503);
+});
+
+it('automatically refreshes expired token on selectDevice', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    // Create expired token with valid refresh token
+    $token = NetatmoToken::create([
+        'netatmo_station_id' => $station->id,
+        'access_token' => 'expired_access_token',
+        'refresh_token' => 'valid_refresh_token',
+        'expires_at' => now()->subHour(),
+    ]);
+
+    // Mock the token refresh and device list API calls
+    Http::fake([
+        config('netatmo-weather.netatmo_token_url') => Http::response([
+            'access_token' => 'new_access_token',
+            'refresh_token' => 'new_refresh_token',
+            'expires_in' => 10800,
+        ], 200),
+        config('netatmo-weather.netatmo_api_url').'/getstationsdata' => Http::response([
+            'body' => [
+                'devices' => [
+                    [
+                        '_id' => 'device_1',
+                        'station_name' => 'Station 1',
+                        'type' => 'NAMain',
+                        'data_type' => ['Temperature'],
+                    ],
+                    [
+                        '_id' => 'device_2',
+                        'station_name' => 'Station 2',
+                        'type' => 'NAMain',
+                        'data_type' => ['Temperature'],
+                    ],
+                ],
+            ],
+        ], 200),
+    ]);
+
+    get(route('netatmo.select-device', $station->uuid))
+        ->assertOk()
+        ->assertViewIs('netatmoweather::netatmo.select-device');
+
+    // Verify token was refreshed
+    expect($token->fresh()->access_token)->toBe('new_access_token');
+});
+
+it('automatically refreshes expired token on publicShow', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Public Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'is_public' => true,
+        'device_id' => 'test_device_id',
+    ]);
+
+    // Create expired token with valid refresh token
+    $token = NetatmoToken::create([
+        'netatmo_station_id' => $station->id,
+        'access_token' => 'expired_access_token',
+        'refresh_token' => 'valid_refresh_token',
+        'expires_at' => now()->subHour(),
+    ]);
+
+    // Mock the token refresh and API calls
+    Http::fake([
+        config('netatmo-weather.netatmo_token_url') => Http::response([
+            'access_token' => 'new_access_token',
+            'refresh_token' => 'new_refresh_token',
+            'expires_in' => 10800,
+        ], 200),
+        config('netatmo-weather.netatmo_api_url').'/getstationsdata' => Http::response([
+            'body' => [
+                'devices' => [
+                    [
+                        '_id' => 'test_device_id',
+                        'type' => 'NAMain',
+                        'module_name' => 'Indoor',
+                        'data_type' => ['Temperature', 'Humidity', 'CO2', 'Noise', 'Pressure'],
+                        'dashboard_data' => [
+                            'Temperature' => 22.5,
+                            'Humidity' => 45,
+                            'CO2' => 600,
+                            'Noise' => 35,
+                            'Pressure' => 1013.5,
+                            'AbsolutePressure' => 1013.5,
+                            'min_temp' => 20.0,
+                            'max_temp' => 24.0,
+                            'date_min_temp' => now()->subHours(6)->timestamp,
+                            'date_max_temp' => now()->subHours(2)->timestamp,
+                            'temp_trend' => 'stable',
+                            'pressure_trend' => 'stable',
+                        ],
+                    ],
+                ],
+            ],
+        ], 200),
+    ]);
+
+    // Test public route without authentication
+    $this->app['auth']->forgetGuards();
+
+    get(route('netatmo.public', $station->uuid))
+        ->assertOk()
+        ->assertViewIs('netatmoweather::netatmo.public');
+
+    // Verify token was refreshed
+    expect($token->fresh()->access_token)->toBe('new_access_token');
+});
+
+it('returns 503 on publicShow when token refresh fails', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Public Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'is_public' => true,
+    ]);
+
+    // Create expired token
+    NetatmoToken::create([
+        'netatmo_station_id' => $station->id,
+        'access_token' => 'expired_token',
+        'refresh_token' => 'invalid_refresh_token',
+        'expires_at' => now()->subHour(),
+    ]);
+
+    // Mock failed token refresh
+    Http::fake([
+        config('netatmo-weather.netatmo_token_url') => Http::response([
+            'error' => 'invalid_grant',
+        ], 400),
     ]);
 
     // Test public route without authentication
