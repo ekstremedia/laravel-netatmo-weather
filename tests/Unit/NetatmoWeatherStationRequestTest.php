@@ -4,7 +4,7 @@ use Ekstremedia\NetatmoWeather\Http\Requests\NetatmoWeatherStationRequest;
 use Illuminate\Support\Facades\Validator;
 
 it('validates required fields', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $validator = Validator::make([], $request->rules());
 
     expect($validator->fails())->toBeTrue();
@@ -14,7 +14,7 @@ it('validates required fields', function () {
 });
 
 it('passes validation with valid data', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => 'Test Station',
         'client_id' => 'test_client_id',
@@ -27,7 +27,7 @@ it('passes validation with valid data', function () {
 });
 
 it('validates redirect_uri must be a URL', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => 'Test Station',
         'client_id' => 'test_client_id',
@@ -42,7 +42,7 @@ it('validates redirect_uri must be a URL', function () {
 });
 
 it('validates webhook_uri must be a URL', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => 'Test Station',
         'client_id' => 'test_client_id',
@@ -57,7 +57,7 @@ it('validates webhook_uri must be a URL', function () {
 });
 
 it('accepts valid URLs for redirect_uri and webhook_uri', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => 'Test Station',
         'client_id' => 'test_client_id',
@@ -72,7 +72,7 @@ it('accepts valid URLs for redirect_uri and webhook_uri', function () {
 });
 
 it('validates is_public must be boolean', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => 'Test Station',
         'client_id' => 'test_client_id',
@@ -87,7 +87,7 @@ it('validates is_public must be boolean', function () {
 });
 
 it('validates api_enabled must be boolean', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => 'Test Station',
         'client_id' => 'test_client_id',
@@ -102,7 +102,7 @@ it('validates api_enabled must be boolean', function () {
 });
 
 it('validates api_token minimum length', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => 'Test Station',
         'client_id' => 'test_client_id',
@@ -117,7 +117,7 @@ it('validates api_token minimum length', function () {
 });
 
 it('validates api_token maximum length', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => 'Test Station',
         'client_id' => 'test_client_id',
@@ -132,7 +132,7 @@ it('validates api_token maximum length', function () {
 });
 
 it('accepts api_token with valid length', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => 'Test Station',
         'client_id' => 'test_client_id',
@@ -146,7 +146,7 @@ it('accepts api_token with valid length', function () {
 });
 
 it('validates station_name maximum length', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => str_repeat('a', 256),
         'client_id' => 'test_client_id',
@@ -160,7 +160,7 @@ it('validates station_name maximum length', function () {
 });
 
 it('validates client_id maximum length', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => 'Test Station',
         'client_id' => str_repeat('a', 256),
@@ -174,7 +174,7 @@ it('validates client_id maximum length', function () {
 });
 
 it('validates client_secret maximum length', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
     $data = [
         'station_name' => 'Test Station',
         'client_id' => 'test_client_id',
@@ -188,7 +188,7 @@ it('validates client_secret maximum length', function () {
 });
 
 it('accepts boolean values for is_public', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
 
     foreach ([true, false, 1, 0, '1', '0'] as $value) {
         $data = [
@@ -204,7 +204,7 @@ it('accepts boolean values for is_public', function () {
 });
 
 it('accepts boolean values for api_enabled', function () {
-    $request = new NetatmoWeatherStationRequest();
+    $request = new NetatmoWeatherStationRequest;
 
     foreach ([true, false, 1, 0, '1', '0'] as $value) {
         $data = [

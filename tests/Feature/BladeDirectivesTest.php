@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Blade;
 it('formats datetime with @datetime directive', function () {
     $timestamp = 1704067200; // 2024-01-01 00:00:00 UTC
 
-    $rendered = Blade::render('@datetime(' . $timestamp . ')');
+    $rendered = Blade::render('@datetime('.$timestamp.')');
 
     expect($rendered)->toBeString();
     expect($rendered)->toContain('2024-01-01');
@@ -14,7 +14,7 @@ it('formats datetime with @datetime directive', function () {
 it('formats time with @time directive', function () {
     $timestamp = 1704110400; // 2024-01-01 12:00:00 UTC
 
-    $rendered = Blade::render('@time(' . $timestamp . ')');
+    $rendered = Blade::render('@time('.$timestamp.')');
 
     expect($rendered)->toBeString();
     expect($rendered)->toMatch('/\d{2}:\d{2}/'); // Matches HH:MM format
@@ -50,7 +50,7 @@ it('uses configured timezone for @datetime directive', function () {
     config(['app.timezone' => 'UTC']);
 
     $timestamp = 1704067200; // 2024-01-01 00:00:00 UTC
-    $rendered = Blade::render('@datetime(' . $timestamp . ')');
+    $rendered = Blade::render('@datetime('.$timestamp.')');
 
     expect($rendered)->toContain('2024-01-01');
 });
@@ -59,7 +59,7 @@ it('uses configured timezone for @time directive', function () {
     config(['app.timezone' => 'UTC']);
 
     $timestamp = 1704110400; // 2024-01-01 12:00:00 UTC
-    $rendered = Blade::render('@time(' . $timestamp . ')');
+    $rendered = Blade::render('@time('.$timestamp.')');
 
     expect($rendered)->toMatch('/\d{2}:\d{2}/');
 });

@@ -1,10 +1,8 @@
 <?php
 
 use Ekstremedia\NetatmoWeather\Models\NetatmoModule;
-use Ekstremedia\NetatmoWeather\Models\NetatmoModuleReading;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Models\NetatmoToken;
-use Ekstremedia\NetatmoWeather\Services\MeasurementService;
 use Ekstremedia\NetatmoWeather\Tests\Support\User;
 use Illuminate\Support\Facades\Http;
 
@@ -12,7 +10,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\getJson;
 
 it('allows owner to access module measurements without API token', function () {
-    $user = new User();
+    $user = new User;
     $user->id = 1;
     $user->email = 'test@example.com';
 
@@ -136,7 +134,7 @@ it('allows non-owner with valid API token on module measurements', function () {
 });
 
 it('validates period parameter on module measurements', function () {
-    $user = new User();
+    $user = new User;
     $user->id = 1;
 
     $station = NetatmoStation::create([
@@ -168,7 +166,7 @@ it('validates period parameter on module measurements', function () {
 });
 
 it('validates scale parameter on module measurements', function () {
-    $user = new User();
+    $user = new User;
     $user->id = 1;
 
     $station = NetatmoStation::create([
@@ -200,7 +198,7 @@ it('validates scale parameter on module measurements', function () {
 });
 
 it('handles measurement service exceptions on module measurements', function () {
-    $user = new User();
+    $user = new User;
     $user->id = 1;
 
     $station = NetatmoStation::create([
@@ -281,7 +279,7 @@ it('only allows station owner to access debug endpoint', function () {
 });
 
 it('allows owner to access debug endpoint', function () {
-    $user = new User();
+    $user = new User;
     $user->id = 1;
 
     $station = NetatmoStation::create([
@@ -325,7 +323,7 @@ it('allows owner to access debug endpoint', function () {
 });
 
 it('debug endpoint handles different period parameters', function () {
-    $user = new User();
+    $user = new User;
     $user->id = 1;
 
     $station = NetatmoStation::create([
@@ -364,7 +362,7 @@ it('debug endpoint handles different period parameters', function () {
 });
 
 it('debug endpoint excludes module_id parameter for NAMain modules', function () {
-    $user = new User();
+    $user = new User;
     $user->id = 1;
 
     $station = NetatmoStation::create([
@@ -402,7 +400,7 @@ it('debug endpoint excludes module_id parameter for NAMain modules', function ()
 });
 
 it('debug endpoint includes module_id parameter for non-NAMain modules', function () {
-    $user = new User();
+    $user = new User;
     $user->id = 1;
 
     $station = NetatmoStation::create([
