@@ -101,7 +101,7 @@
 
                 async loadData() {
                     try {
-                        const response = await fetch(`/api/v1/netatmo/stations/{{ $weatherStation->uuid }}/modules/${moduleId}/measurements?period=1day&scale=1hour`);
+                        const response = await fetch(`/api/netatmo/stations/{{ $weatherStation->uuid }}/modules/${moduleId}/measurements?period=1day&scale=1hour`);
                         const data = await response.json();
 
                         if (data.error) {
@@ -243,7 +243,7 @@
 
                 async loadData() {
                     try {
-                        const response = await fetch(`/api/v1/netatmo/stations/{{ $weatherStation->uuid }}/modules/${moduleId}/measurements?period=1day&scale=1hour`);
+                        const response = await fetch(`/api/netatmo/stations/{{ $weatherStation->uuid }}/modules/${moduleId}/measurements?period=1day&scale=1hour`);
                         const data = await response.json();
 
                         if (data.error) {
