@@ -16,9 +16,7 @@ use Illuminate\Support\Facades\Log;
 
 class WeatherStationApiController extends Controller
 {
-    public function __construct(protected NetatmoService $netatmoService)
-    {
-    }
+    public function __construct(protected NetatmoService $netatmoService) {}
 
     /**
      * Get all weather data for a station.
