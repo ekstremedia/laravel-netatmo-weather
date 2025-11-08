@@ -36,21 +36,13 @@ return [
      * Customize route prefixes and middleware for different route groups
      */
     'routes' => [
-        // Web routes (UI) - prefix and middleware
+        // Web routes (UI) - includes authenticated and public routes
+        // Web routes use default /netatmo prefix and handle middleware internally
         'web' => [
             'enabled' => env('NETATMO_WEB_ROUTES_ENABLED', true),
-            'prefix' => env('NETATMO_WEB_PREFIX', 'netatmo'),
-            'middleware' => ['web', 'auth'],
         ],
 
-        // Public web routes (no auth required)
-        'public' => [
-            'enabled' => env('NETATMO_PUBLIC_ROUTES_ENABLED', true),
-            'prefix' => env('NETATMO_PUBLIC_PREFIX', 'netatmo/public'),
-            'middleware' => ['web'],
-        ],
-
-        // API routes (JSON responses)
+        // API routes (JSON responses) - fully configurable
         'api' => [
             'enabled' => env('NETATMO_API_ROUTES_ENABLED', true),
             'prefix' => env('NETATMO_API_PREFIX', 'api/netatmo'),

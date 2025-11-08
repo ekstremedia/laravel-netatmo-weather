@@ -608,3 +608,103 @@ it('returns 404 when deleting module from wrong station', function () {
     delete(route('netatmo.modules.destroy', [$station1->uuid, $module->id]))
         ->assertNotFound();
 });
+
+// API Settings Tests
+
+it('can enable API access for a station', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'api_enabled' => false,
+    ]);
+
+    $data = [
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'api_enabled' => true,
+    ];
+
+    put(route('netatmo.update', $station->uuid), $data)
+        ->assertRedirect();
+
+    assertDatabaseHas('netatmo_stations', [
+        'id' => $station->id,
+        'api_enabled' => true,
+    ]);
+});
+
+it('can set API token for a station', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'api_enabled' => false,
+    ]);
+
+    $apiToken = 'super-secret-token-with-at-least-32-characters-long';
+
+    $data = [
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'api_enabled' => true,
+        'api_token' => $apiToken,
+    ];
+
+    put(route('netatmo.update', $station->uuid), $data)
+        ->assertRedirect();
+
+    $station->refresh();
+    expect($station->api_enabled)->toBeTrue();
+    expect($station->api_token)->toBe($apiToken);
+});
+
+it('can disable API access for a station', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'api_enabled' => true,
+        'api_token' => 'existing-token-with-at-least-32-characters',
+    ]);
+
+    $data = [
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'api_enabled' => false,
+    ];
+
+    put(route('netatmo.update', $station->uuid), $data)
+        ->assertRedirect();
+
+    assertDatabaseHas('netatmo_stations', [
+        'id' => $station->id,
+        'api_enabled' => false,
+    ]);
+});
+
+it('rejects API tokens shorter than 32 characters', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    $data = [
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'api_enabled' => true,
+        'api_token' => 'short', // Too short
+    ];
+
+    put(route('netatmo.update', $station->uuid), $data)
+        ->assertSessionHasErrors(['api_token']);
+});

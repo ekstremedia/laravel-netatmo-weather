@@ -89,14 +89,12 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
     protected function registerRoutes(): void
     {
         $webConfig = config('netatmo-weather.routes.web', []);
-        $publicConfig = config('netatmo-weather.routes.public', []);
         $apiConfig = config('netatmo-weather.routes.api', []);
 
-        // Register web routes (authenticated UI)
+        // Register web routes (authenticated UI + public routes)
+        // Web routes handle their own middleware and prefixes internally
         if ($webConfig['enabled'] ?? true) {
-            Route::middleware($webConfig['middleware'] ?? ['web', 'auth'])
-                ->prefix($webConfig['prefix'] ?? 'netatmo')
-                ->group(__DIR__.'/routes/web.php');
+            $this->loadRoutesFrom(__DIR__.'/routes/web.php');
         }
 
         // Register API routes (JSON endpoints)

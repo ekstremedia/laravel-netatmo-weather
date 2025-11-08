@@ -279,7 +279,7 @@ it('returns measurements endpoint data', function () {
     expect($measurements)->toHaveKey('Indoor');
     expect($measurements)->toHaveKey('Outdoor');
     expect($measurements['Indoor']['data']['Temperature'])->toBe(22.5);
-    expect($measurements['Outdoor']['data']['Temperature'])->toBe(18.0);
+    expect($measurements['Outdoor']['data']['Temperature'])->toBe(18);
 });
 
 it('returns specific module data', function () {
