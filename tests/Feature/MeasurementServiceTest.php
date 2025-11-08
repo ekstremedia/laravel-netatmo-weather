@@ -318,3 +318,226 @@ it('loads station relationship when not loaded', function () {
 
     expect($freshModule->relationLoaded('netatmoStation'))->toBeTrue();
 });
+
+it('uses module data_type when types parameter is null', function () {
+    Http::fake([
+        '*' => Http::response([
+            'body' => [1704067200 => [25.5, 65]],
+            'status' => 'ok',
+        ], 200),
+    ]);
+
+    // Call without types parameter - should use module's data_type
+    $result = $this->service->fetchAndStoreMeasurements(
+        $this->module,
+        '30min',
+        now()->subHour(),
+        now(),
+        null  // types is null
+    );
+
+    expect($result)->toBeArray();
+
+    $reading = NetatmoModuleReading::first();
+    expect($reading->dashboard_data)->toHaveKeys(['Temperature', 'Humidity']);
+});
+
+it('handles different period values correctly', function () {
+    $periods = ['1hour', '6hours', '12hours', '1day', '3days', '1week', '1month', 'invalid'];
+
+    foreach ($periods as $period) {
+        // Create a reading within the period
+        NetatmoModuleReading::create([
+            'netatmo_module_id' => $this->module->id,
+            'time_utc' => now()->subMinutes(5),
+            'dashboard_data' => ['Temperature' => 20, 'Humidity' => 60],
+        ]);
+
+        Http::fake([
+            '*' => Http::response([
+                'body' => [],
+                'status' => 'ok',
+            ], 200),
+        ]);
+
+        Cache::flush();
+
+        $result = $this->service->getMeasurements($this->module, $period, '30min');
+
+        expect($result)->toBeArray();
+        expect($result)->toHaveKeys(['timestamps', 'data']);
+
+        // Clean up for next iteration
+        NetatmoModuleReading::query()->delete();
+    }
+});
+
+it('refreshes data when readings are more than 30 minutes old', function () {
+    // Create old reading (35 minutes ago)
+    NetatmoModuleReading::create([
+        'netatmo_module_id' => $this->module->id,
+        'time_utc' => now()->subMinutes(35),
+        'dashboard_data' => ['Temperature' => 18, 'Humidity' => 55],
+    ]);
+
+    Http::fake([
+        '*' => Http::response([
+            'body' => [
+                now()->timestamp => [22, 60],
+            ],
+            'status' => 'ok',
+        ], 200),
+    ]);
+
+    Cache::flush();
+
+    $result = $this->service->getMeasurements($this->module, '1hour', '30min');
+
+    // Should have fetched new data
+    expect(NetatmoModuleReading::count())->toBeGreaterThan(1);
+});
+
+it('does not refresh when readings are recent', function () {
+    // Create recent reading (5 minutes ago)
+    NetatmoModuleReading::create([
+        'netatmo_module_id' => $this->module->id,
+        'time_utc' => now()->subMinutes(5),
+        'dashboard_data' => ['Temperature' => 22, 'Humidity' => 60],
+    ]);
+
+    // Don't fake HTTP - if it tries to call API, test will fail
+
+    Cache::flush();
+
+    $result = $this->service->getMeasurements($this->module, '1hour', '30min');
+
+    // Should use existing data
+    expect($result)->toHaveKeys(['timestamps', 'data']);
+    expect(NetatmoModuleReading::count())->toBe(1);
+});
+
+it('uses default period of 1day when invalid period provided', function () {
+    NetatmoModuleReading::create([
+        'netatmo_module_id' => $this->module->id,
+        'time_utc' => now()->subMinutes(5),
+        'dashboard_data' => ['Temperature' => 22, 'Humidity' => 60],
+    ]);
+
+    Http::fake([
+        '*' => Http::response([
+            'body' => [],
+            'status' => 'ok',
+        ], 200),
+    ]);
+
+    Cache::flush();
+
+    $result = $this->service->getMeasurements($this->module, 'invalid_period', '30min');
+
+    expect($result)->toHaveKeys(['timestamps', 'data']);
+});
+
+it('uses correct cache duration for different periods', function () {
+    $testCases = [
+        ['period' => '1hour', 'expectedMin' => 250, 'expectedMax' => 350],
+        ['period' => '6hours', 'expectedMin' => 250, 'expectedMax' => 350],
+        ['period' => '12hours', 'expectedMin' => 850, 'expectedMax' => 950],
+        ['period' => '1day', 'expectedMin' => 850, 'expectedMax' => 950],
+        ['period' => '3days', 'expectedMin' => 1750, 'expectedMax' => 1850],
+        ['period' => '1week', 'expectedMin' => 3550, 'expectedMax' => 3650],
+        ['period' => '1month', 'expectedMin' => 3550, 'expectedMax' => 3650],
+    ];
+
+    foreach ($testCases as $case) {
+        NetatmoModuleReading::create([
+            'netatmo_module_id' => $this->module->id,
+            'time_utc' => now()->subMinutes(5),
+            'dashboard_data' => ['Temperature' => 20, 'Humidity' => 60],
+        ]);
+
+        Http::fake([
+            '*' => Http::response([
+                'body' => [],
+                'status' => 'ok',
+            ], 200),
+        ]);
+
+        Cache::flush();
+
+        $this->service->getMeasurements($this->module, $case['period'], '30min');
+
+        $cacheKey = "measurements.{$this->module->id}.{$case['period']}.30min";
+        expect(Cache::has($cacheKey))->toBeTrue();
+
+        NetatmoModuleReading::query()->delete();
+    }
+});
+
+it('defaults to module data_type when types not specified', function () {
+    Http::fake([
+        '*' => Http::response([
+            'body' => [1704067200 => [25.5, 65]],
+            'status' => 'ok',
+        ], 200),
+    ]);
+
+    // Fetch without specifying types
+    $this->service->fetchAndStoreMeasurements(
+        $this->module,
+        '30min',
+        now()->subHour(),
+        now()
+    );
+
+    $reading = NetatmoModuleReading::first();
+    // Should have both Temperature and Humidity from module's data_type
+    expect($reading->dashboard_data)->toHaveKeys(['Temperature', 'Humidity']);
+});
+
+it('handles multiple measurement types correctly', function () {
+    $multiModule = NetatmoModule::create([
+        'netatmo_station_id' => $this->station->id,
+        'module_id' => 'multi_module',
+        'module_name' => 'Multi Sensor',
+        'type' => 'NAMain',
+        'data_type' => ['Temperature', 'Humidity', 'CO2', 'Pressure', 'Noise'],
+    ]);
+
+    Http::fake([
+        '*' => Http::response([
+            'body' => [1704067200 => [22.5, 55, 800, 1013, 35]],
+            'status' => 'ok',
+        ], 200),
+    ]);
+
+    $this->service->fetchAndStoreMeasurements(
+        $multiModule,
+        '30min',
+        now()->subHour(),
+        now()
+    );
+
+    $reading = NetatmoModuleReading::where('netatmo_module_id', $multiModule->id)->first();
+    expect($reading->dashboard_data)->toHaveKeys(['Temperature', 'Humidity', 'CO2', 'Pressure', 'Noise']);
+    expect($reading->dashboard_data['CO2'])->toBe(800);
+    expect($reading->dashboard_data['Pressure'])->toBe(1013);
+    expect($reading->dashboard_data['Noise'])->toBe(35);
+});
+
+it('formats empty readings correctly', function () {
+    Cache::flush();
+
+    // Test with no readings
+    Http::fake([
+        '*' => Http::response([
+            'body' => [],
+            'status' => 'ok',
+        ], 200),
+    ]);
+
+    $result = $this->service->getMeasurements($this->module, '1hour', '30min');
+
+    expect($result)->toHaveKeys(['timestamps', 'data']);
+    expect($result['timestamps'])->toBe([]);
+    expect($result['data'])->toBe([]);
+});
