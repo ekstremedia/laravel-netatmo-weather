@@ -32,9 +32,16 @@ class NetatmoWeatherStationRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         // Convert checkbox values to boolean
-        $this->merge([
+        $data = [
             'is_public' => $this->boolean('is_public'),
             'api_enabled' => $this->boolean('api_enabled'),
-        ]);
+        ];
+
+        // If remove_api_token is set, clear the api_token
+        if ($this->input('remove_api_token') === '1') {
+            $data['api_token'] = null;
+        }
+
+        $this->merge($data);
     }
 }

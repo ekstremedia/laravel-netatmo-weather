@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('netatmo_stations', function (Blueprint $table) {
             $table->boolean('api_enabled')->default(false)->after('is_public');
-            $table->string('api_token', 64)->nullable()->after('api_enabled');
+            $table->string('api_token', 512)->nullable()->after('api_enabled');
         });
     }
 
