@@ -412,3 +412,72 @@ it('does not return inactive modules in measurements', function () {
     expect($measurements)->toHaveKey('Indoor');
     expect($measurements)->not->toHaveKey('Archived');
 });
+
+it('returns 503 when token refresh fails on show', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'device_id' => 'device_123',
+        'api_enabled' => true,
+    ]);
+
+    // Create expired token
+    NetatmoToken::create([
+        'netatmo_station_id' => $station->id,
+        'access_token' => 'expired_token',
+        'refresh_token' => 'invalid_refresh_token',
+        'expires_at' => now()->subHour(), // Expired
+    ]);
+
+    // Mock failed token refresh
+    \Illuminate\Support\Facades\Http::fake([
+        config('netatmo-weather.netatmo_token_url') => \Illuminate\Support\Facades\Http::response([
+            'error' => 'invalid_grant',
+        ], 400),
+    ]);
+
+    getJson(route('api.netatmo.show', ['uuid' => $station->uuid]))
+        ->assertStatus(503)
+        ->assertJson([
+            'error' => 'Station authentication has expired',
+        ]);
+});
+
+it('skips modules without dashboard_data in measurements', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+        'api_enabled' => true,
+    ]);
+
+    NetatmoModule::create([
+        'netatmo_station_id' => $station->id,
+        'module_id' => 'module_1',
+        'module_name' => 'With Data',
+        'type' => 'NAMain',
+        'data_type' => ['Temperature'],
+        'dashboard_data' => ['Temperature' => 22.5],
+        'is_active' => true,
+    ]);
+
+    NetatmoModule::create([
+        'netatmo_station_id' => $station->id,
+        'module_id' => 'module_2',
+        'module_name' => 'Without Data',
+        'type' => 'NAModule1',
+        'data_type' => ['Temperature'],
+        'dashboard_data' => null, // No data
+        'is_active' => true,
+    ]);
+
+    $response = getJson(route('api.netatmo.measurements', ['uuid' => $station->uuid]))
+        ->assertOk();
+
+    $measurements = $response->json('measurements');
+    expect($measurements)->toHaveKey('With Data');
+    expect($measurements)->not->toHaveKey('Without Data');
+});
