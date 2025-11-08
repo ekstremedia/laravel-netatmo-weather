@@ -8,6 +8,7 @@ use Ekstremedia\NetatmoWeather\Services\NetatmoService;
 use Ekstremedia\NetatmoWeather\Services\TokenRefreshService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class NetatmoWeatherServiceProvider extends ServiceProvider
@@ -17,7 +18,8 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__.'/routes/web.php');
+        // Load routes based on configuration
+        $this->registerRoutes();
 
         $this->publishes([
             __DIR__.'/assets/images' => public_path('netatmo-weather/images'),
@@ -79,5 +81,29 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
         $this->app->singleton(TokenRefreshService::class, function ($app) {
             return new TokenRefreshService;
         });
+    }
+
+    /**
+     * Register package routes based on configuration.
+     */
+    protected function registerRoutes(): void
+    {
+        $webConfig = config('netatmo-weather.routes.web', []);
+        $publicConfig = config('netatmo-weather.routes.public', []);
+        $apiConfig = config('netatmo-weather.routes.api', []);
+
+        // Register web routes (authenticated UI)
+        if ($webConfig['enabled'] ?? true) {
+            Route::middleware($webConfig['middleware'] ?? ['web', 'auth'])
+                ->prefix($webConfig['prefix'] ?? 'netatmo')
+                ->group(__DIR__.'/routes/web.php');
+        }
+
+        // Register API routes (JSON endpoints)
+        if ($apiConfig['enabled'] ?? true) {
+            Route::middleware($apiConfig['middleware'] ?? ['api'])
+                ->prefix($apiConfig['prefix'] ?? 'api/netatmo')
+                ->group(__DIR__.'/routes/api.php');
+        }
     }
 }

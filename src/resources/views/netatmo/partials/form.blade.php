@@ -76,6 +76,103 @@
         </div>
     </div>
 
+    <!-- API Settings -->
+    <div class="space-y-3 pt-6 border-t border-dark-border/50" x-data="{ apiEnabled: {{ old('api_enabled', isset($weatherStation) && $weatherStation->api_enabled ? 'true' : 'false') }}, generateToken: false }">
+        <div class="bg-blue-900/20 border border-blue-700/30 rounded-xl p-4">
+            <div class="flex items-start space-x-3">
+                <input type="checkbox"
+                       id="api_enabled"
+                       name="api_enabled"
+                       value="1"
+                       x-model="apiEnabled"
+                       {{ old('api_enabled', isset($weatherStation) && $weatherStation->api_enabled ? true : false) ? 'checked' : '' }}
+                       class="w-5 h-5 mt-0.5 rounded border-blue-500/50 bg-dark-surface/60 text-netatmo-purple focus:ring-2 focus:ring-netatmo-purple/50 focus:ring-offset-0 transition-colors">
+                <div class="flex-1">
+                    <label for="api_enabled" class="text-blue-200 font-semibold cursor-pointer block mb-1">
+                        <i class="fas fa-code mr-1"></i>
+                        Enable API Access
+                    </label>
+                    <p class="text-blue-300/70 text-sm mb-3">
+                        Allow programmatic access to this station's weather data via JSON API endpoints. Perfect for Raspberry Pi, home automation, or custom integrations.
+                    </p>
+
+                    <!-- API Token Section -->
+                    <div x-show="apiEnabled" x-transition class="mt-3 pt-3 border-t border-blue-700/20">
+                        <div class="space-y-2">
+                            <label class="text-blue-200 text-sm font-semibold flex items-center space-x-2">
+                                <i class="fas fa-key text-xs"></i>
+                                <span>API Token (Optional)</span>
+                            </label>
+                            <p class="text-blue-300/60 text-xs mb-2">
+                                Leave empty for public API access, or set a token for authentication via Bearer token.
+                            </p>
+
+                            @if(isset($weatherStation) && $weatherStation->api_token)
+                                <div class="flex items-center space-x-2">
+                                    <button type="button"
+                                            @click="generateToken = !generateToken"
+                                            class="px-3 py-1.5 bg-blue-700/30 hover:bg-blue-700/50 text-blue-300 text-xs rounded-lg transition-colors">
+                                        <i class="fas fa-sync-alt mr-1"></i>
+                                        <span x-text="generateToken ? 'Cancel' : 'Regenerate Token'"></span>
+                                    </button>
+                                    <span class="text-xs text-blue-400/60">Current token is set</span>
+                                </div>
+                            @else
+                                <button type="button"
+                                        @click="generateToken = !generateToken"
+                                        class="px-3 py-1.5 bg-blue-700/30 hover:bg-blue-700/50 text-blue-300 text-xs rounded-lg transition-colors">
+                                    <i class="fas fa-plus mr-1"></i>
+                                    <span x-text="generateToken ? 'Cancel' : 'Set API Token'"></span>
+                                </button>
+                            @endif
+
+                            <div x-show="generateToken" x-transition class="mt-2">
+                                <input type="text"
+                                       name="api_token"
+                                       id="api_token"
+                                       value="{{ old('api_token') }}"
+                                       placeholder="Enter a secure token or leave empty"
+                                       class="w-full px-3 py-2 bg-dark-surface/60 border border-blue-700/30 rounded-lg text-white placeholder-blue-400/40 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50">
+                                <p class="text-blue-400/50 text-xs mt-1">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Use a long, random string. Minimum 32 characters recommended.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Endpoints Info -->
+        @if(isset($weatherStation) && $weatherStation->api_enabled)
+        <div x-show="apiEnabled" x-transition class="bg-green-900/20 border border-green-700/30 rounded-xl p-4">
+            <div class="flex items-start space-x-3">
+                <i class="fas fa-check-circle text-green-400 text-lg mt-0.5"></i>
+                <div class="flex-1">
+                    <h4 class="text-green-300 font-semibold mb-2">API Endpoints</h4>
+                    <div class="space-y-1 text-xs font-mono">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-green-400/70">GET</span>
+                            <code class="text-green-300">{{ url(config('netatmo-weather.routes.api.prefix', 'api/netatmo') . '/stations/' . $weatherStation->uuid) }}</code>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-green-400/70">GET</span>
+                            <code class="text-green-300">{{ url(config('netatmo-weather.routes.api.prefix', 'api/netatmo') . '/stations/' . $weatherStation->uuid . '/measurements') }}</code>
+                        </div>
+                    </div>
+                    @if($weatherStation->api_token)
+                        <p class="text-green-300/60 text-xs mt-2">
+                            <i class="fas fa-lock mr-1"></i>
+                            Include header: <code class="text-green-300">Authorization: Bearer YOUR_TOKEN</code>
+                        </p>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @endif
+    </div>
+
     <div class="pt-6 flex items-center justify-end space-x-3">
         <a href="{{ url()->previous() }}"
            class="inline-flex items-center space-x-2 px-6 py-3 bg-dark-surface/60 hover:bg-dark-surface border border-dark-border/50 text-purple-200 font-medium rounded-xl transition-all duration-200">

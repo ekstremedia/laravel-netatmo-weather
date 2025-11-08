@@ -22,6 +22,8 @@ class NetatmoStation extends Model
         'station_name',
         'device_id',
         'is_public',
+        'api_enabled',
+        'api_token',
         'client_id',
         'client_secret',
         'redirect_uri',
@@ -33,6 +35,7 @@ class NetatmoStation extends Model
      */
     protected $casts = [
         'is_public' => 'boolean',
+        'api_enabled' => 'boolean',
     ];
 
     /**
@@ -41,6 +44,7 @@ class NetatmoStation extends Model
     protected array $encryptable = [
         'client_id',
         'client_secret',
+        'api_token',
     ];
 
     /**
