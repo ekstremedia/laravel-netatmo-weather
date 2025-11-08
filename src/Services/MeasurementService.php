@@ -15,12 +15,8 @@ class MeasurementService
     /**
      * Fetch measurements from Netatmo API and store in database
      *
-     * @param  NetatmoModule  $module
      * @param  string  $scale  Options: max, 30min, 1hour, 3hours, 1day, 1week, 1month
-     * @param  Carbon|null  $dateBegin
-     * @param  Carbon|null  $dateEnd
      * @param  array|null  $types  Measurement types (Temperature, Humidity, CO2, etc.)
-     * @return array
      */
     public function fetchAndStoreMeasurements(
         NetatmoModule $module,
@@ -30,7 +26,7 @@ class MeasurementService
         ?array $types = null
     ): array {
         // Load station relationship if not already loaded
-        if (!$module->relationLoaded('netatmoStation')) {
+        if (! $module->relationLoaded('netatmoStation')) {
             $module->load('netatmoStation.token');
         }
 
@@ -143,8 +139,8 @@ class MeasurementService
                 'station_id' => $station->id,
                 'module_id' => $module->module_id,
                 'data_point_count' => count($data),
-                'first_timestamp' => !empty($data) ? Carbon::createFromTimestamp(array_key_first($data))->toDateTimeString() : null,
-                'last_timestamp' => !empty($data) ? Carbon::createFromTimestamp(array_key_last($data))->toDateTimeString() : null,
+                'first_timestamp' => ! empty($data) ? Carbon::createFromTimestamp(array_key_first($data))->toDateTimeString() : null,
+                'last_timestamp' => ! empty($data) ? Carbon::createFromTimestamp(array_key_last($data))->toDateTimeString() : null,
             ]);
         }
 
@@ -182,10 +178,8 @@ class MeasurementService
     /**
      * Get measurements for a module with caching
      *
-     * @param  NetatmoModule  $module
      * @param  string  $period  Options: 1hour, 6hours, 12hours, 1day, 3days, 1week, 1month
      * @param  string  $scale  Options: max, 30min, 1hour, 3hours, 1day, 1week, 1month
-     * @return array
      */
     public function getMeasurements(
         NetatmoModule $module,
@@ -197,7 +191,7 @@ class MeasurementService
 
         return Cache::remember($cacheKey, $cacheDuration, function () use ($module, $period, $scale) {
             // Load station relationship if not already loaded
-            if (!$module->relationLoaded('netatmoStation')) {
+            if (! $module->relationLoaded('netatmoStation')) {
                 $module->load('netatmoStation.token');
             }
 
@@ -302,9 +296,6 @@ class MeasurementService
 
     /**
      * Map data types to valid Netatmo API measurement types
-     *
-     * @param  array  $types
-     * @return array
      */
     protected function mapToNetatmoTypes(array $types): array
     {
