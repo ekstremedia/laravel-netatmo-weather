@@ -45,8 +45,8 @@
                         <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['Temperature'] }}<span class="text-lg md:text-xl text-orange-200/60">°C</span></div>
                     </div>
                     <div class="bg-orange-500/20 p-2 rounded-xl flex-shrink-0">
-                        <svg class="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        <svg class="w-6 h-6 text-orange-300" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15 13V5c0-1.66-1.34-3-3-3S9 3.34 9 5v8c-1.21.91-2 2.37-2 4 0 2.76 2.24 5 5 5s5-2.24 5-5c0-1.63-.79-3.09-2-4zm-4-8c0-.55.45-1 1-1s1 .45 1 1v8.5l.5.25c.86.43 1.5 1.28 1.5 2.25 0 1.38-1.12 2.5-2.5 2.5S10 17.38 10 16c0-.97.64-1.82 1.5-2.25l.5-.25V5z"/>
                         </svg>
                     </div>
                 </div>

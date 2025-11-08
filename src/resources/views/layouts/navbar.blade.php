@@ -1,7 +1,7 @@
 {{-- resources/views/layout/navbar.blade.php --}}
 
 <nav class="bg-dark-elevated/90 backdrop-blur-xl shadow-2xl border-b border-dark-border/50 sticky top-0 z-50">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="px-4">
         <div class="flex justify-between items-center h-16">
             <!-- Logo & Title -->
             <a href="{{ route('netatmo.index') }}" class="flex items-center space-x-3 group">

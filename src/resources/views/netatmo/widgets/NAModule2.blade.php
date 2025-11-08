@@ -94,19 +94,20 @@
 
                 {{-- Wind Direction --}}
                 <div class="bg-gradient-to-br from-green-500/10 to-cyan-500/10 rounded-2xl p-4 border border-green-500/20">
-                    <div class="flex items-start justify-between gap-2 mb-3">
-                        <div class="flex-1 min-w-0">
-                            <div class="text-green-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Wind Direction</div>
-                            <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['WindAngle'] ?? 'N/A' }}<span class="text-lg md:text-xl text-green-200/60">°</span></div>
-                        </div>
-                        <div class="bg-green-500/20 p-2 rounded-xl flex-shrink-0">
-                            <svg class="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transform: rotate({{ $module->dashboard_data['WindAngle'] ?? 0 }}deg)">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    <div class="text-green-300/80 text-xs font-medium uppercase tracking-wide mb-3 text-center">Wind Direction</div>
+
+                    {{-- Large Central Compass Arrow --}}
+                    <div class="flex flex-col items-center justify-center mb-3">
+                        <div class="relative">
+                            <svg class="w-24 h-24 text-green-400/70" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="transform: rotate({{ $module->dashboard_data['WindAngle'] ?? 0 }}deg)">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                             </svg>
                         </div>
+                        <div class="text-3xl font-bold text-white mt-2">{{ $module->dashboard_data['WindAngle'] ?? 'N/A' }}<span class="text-lg text-green-200/60">°</span></div>
                     </div>
+
                     <div class="text-center pt-2 border-t border-green-500/20">
-                        <span class="text-xs font-semibold text-green-200">
+                        <span class="text-lg font-semibold text-green-200">
                             @php
                                 $angle = $module->dashboard_data['WindAngle'] ?? 0;
                                 $directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
@@ -114,7 +115,6 @@
                             @endphp
                             {{ $directions[$index] }}
                         </span>
-                        <span class="text-[10px] text-green-200/60 ml-2">({{ ucfirst($directions[$index]) }})</span>
                     </div>
                 </div>
             </div>
@@ -125,7 +125,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <div class="text-xs text-purple-300/80 mb-0.5">Peak Wind Today</div>
-                            <div class="text-xl font-bold text-white leading-none">{{ $module->dashboard_data['max_wind_str'] ?? 'N/A' }} km/h</div>
+                            <div class="text-xl font-bold text-white leading-none">{{ round($module->dashboard_data['max_wind_str'] / 3.6, 1) ?? 'N/A' }} m/s</div>
                         </div>
                         <div class="text-right">
                             <div class="text-xs text-purple-300/80 mb-0.5">Recorded At</div>

@@ -28,14 +28,6 @@
                         <span>Edit Station</span>
                     </button>
                 </a>
-                <a href="{{ route('netatmo.select-device', $weatherStation) }}">
-                    <button
-                        class="inline-flex items-center space-x-2 px-6 py-3 bg-dark-surface/60 hover:bg-dark-surface border border-dark-border/50 text-purple-200 font-medium rounded-xl transition-all duration-200"
-                        title="Change which Netatmo device this configuration uses">
-                        <i class="fas fa-broadcast-tower"></i>
-                        <span>Change Device</span>
-                    </button>
-                </a>
                 <a href="{{ route('netatmo.authenticate', $weatherStation) }}">
                     <button
                         class="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-netatmo-purple via-purple-600 to-netatmo-deep hover:from-netatmo-deep hover:to-purple-900 text-white font-semibold rounded-xl shadow-lg shadow-purple-900/50 hover:shadow-xl hover:shadow-purple-800/50 transform hover:-translate-y-0.5 transition-all duration-200 ring-2 ring-purple-500/20">
