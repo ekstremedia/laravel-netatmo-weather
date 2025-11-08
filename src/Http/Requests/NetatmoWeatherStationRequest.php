@@ -21,6 +21,8 @@ class NetatmoWeatherStationRequest extends FormRequest
             'redirect_uri' => 'nullable|url',
             'webhook_uri' => 'nullable|url',
             'is_public' => 'nullable|boolean',
+            'api_enabled' => 'nullable|boolean',
+            'api_token' => 'nullable|string|min:32|max:255',
         ];
     }
 
@@ -29,9 +31,17 @@ class NetatmoWeatherStationRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        // Convert checkbox value to boolean
-        $this->merge([
-            'is_public' => $this->has('is_public') ? true : false,
-        ]);
+        // Convert checkbox values to boolean
+        $data = [
+            'is_public' => $this->boolean('is_public'),
+            'api_enabled' => $this->boolean('api_enabled'),
+        ];
+
+        // If remove_api_token is set, clear the api_token
+        if ($this->input('remove_api_token') === '1') {
+            $data['api_token'] = null;
+        }
+
+        $this->merge($data);
     }
 }

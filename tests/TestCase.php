@@ -72,5 +72,8 @@ class TestCase extends Orchestra
 
         $migration = include __DIR__.'/../database/migrations/2025_01_07_000004_add_is_active_to_netatmo_modules_table.php';
         $migration->up();
+
+        $migration = include __DIR__.'/../database/migrations/2025_01_08_000001_add_api_settings_to_netatmo_stations_table.php';
+        $migration->up();
     }
 }

@@ -20,10 +20,10 @@
         </div>
 
         <!-- Form Card -->
-        <div class="max-w-3xl mx-auto">
+        <div class="max-w-5xl mx-auto">
             <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-2xl shadow-purple-900/20 border border-dark-border/50 overflow-hidden">
                 <div class="p-8">
-                    @include('netatmoweather::netatmo.partials.form', ['weatherStation' => $weatherStation ?? null])
+                    @include('netatmoweather::netatmo.partials.form-tabs', ['weatherStation' => $weatherStation ?? null])
                 </div>
             </div>
         </div>

@@ -85,8 +85,9 @@
                 </div>
 
                 {{-- Last 24 Hours --}}
-                <div class="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl p-4 border border-indigo-500/20">
-                    <div class="flex items-start justify-between gap-2 mb-3">
+                <div class="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl p-4 border border-indigo-500/20"
+                     x-data="miniChart('{{ $module->module_id }}', 'Rain', '#06b6d4', ' mm')">
+                    <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="flex-1 min-w-0">
                             <div class="text-indigo-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Last 24h</div>
                             <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['sum_rain_24'] ?? '0' }}<span class="text-lg md:text-xl text-indigo-200/60">mm</span></div>
@@ -97,6 +98,15 @@
                             </svg>
                         </div>
                     </div>
+
+                    {{-- Mini Chart --}}
+                    <div class="mt-2 mb-2 h-16 relative">
+                        <canvas x-ref="canvas" class="w-full h-full"></canvas>
+                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                            <div class="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    </div>
+
                     <div class="text-[10px] text-indigo-200/60 uppercase">Daily total</div>
                 </div>
             </div>

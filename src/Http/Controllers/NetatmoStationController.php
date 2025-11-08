@@ -17,19 +17,32 @@ class NetatmoStationController extends Controller
 {
     use AuthorizesRequests;
 
+    public function __construct(
+        protected NetatmoService $netatmoService
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
         // Fetch weather stations with eager loading to prevent N+1 queries
         $weatherStations = NetatmoStation::where('user_id', auth()->id())
             ->with(['token', 'modules'])
             ->get();
 
-        // Check each weather station's token validity and refresh if necessary
+        $needsAuth = null;
+
+        // Fetch weather data for each station
         foreach ($weatherStations as $weatherStation) {
-            if ($weatherStation->token && ! $weatherStation->token->hasValidToken()) {
+            if (! $weatherStation->token) {
+                // No token at all - needs authentication
+                $needsAuth = $weatherStation;
+                break;
+            }
+
+            // Check if token is expired and refresh if needed
+            if (! $weatherStation->token->hasValidToken()) {
                 try {
                     $weatherStation->token->refreshToken();
                 } catch (Exception $e) {
@@ -37,8 +50,27 @@ class NetatmoStationController extends Controller
                         'weather_station_id' => $weatherStation->id,
                         'error' => $e->getMessage(),
                     ]);
+                    // Refresh failed - needs re-authentication
+                    $needsAuth = $weatherStation;
+                    break;
                 }
             }
+
+            // Fetch fresh weather data from Netatmo
+            try {
+                $this->netatmoService->getStationData($weatherStation);
+            } catch (Exception $e) {
+                logger()->error('Failed to fetch weather data for station', [
+                    'weather_station_id' => $weatherStation->id,
+                    'error' => $e->getMessage(),
+                ]);
+                // Continue with other stations even if this one fails
+            }
+        }
+
+        // Auto-redirect to authenticate the first station that needs it
+        if ($needsAuth) {
+            return redirect()->route('netatmo.authenticate', $needsAuth);
         }
 
         return view('netatmoweather::netatmo.index', compact('weatherStations'));

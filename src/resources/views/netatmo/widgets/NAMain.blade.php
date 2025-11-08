@@ -37,18 +37,28 @@
         {{-- Primary Metrics - Large Cards --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             {{-- Temperature Card --}}
-            <div class="bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-2xl p-4 border border-orange-500/20">
-                <div class="flex items-start justify-between gap-2 mb-3">
+            <div class="bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-2xl p-4 border border-orange-500/20"
+                 x-data="miniChart('{{ $module->module_id }}', 'Temperature', '#ef4444', '°C')">
+                <div class="flex items-start justify-between gap-2 mb-2">
                     <div class="flex-1 min-w-0">
                         <div class="text-orange-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Temperature</div>
                         <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['Temperature'] }}<span class="text-lg md:text-xl text-orange-200/60">°C</span></div>
                     </div>
                     <div class="bg-orange-500/20 p-2 rounded-xl flex-shrink-0">
-                        <svg class="w-6 h-6 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        <svg class="w-6 h-6 text-orange-300" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15 13V5c0-1.66-1.34-3-3-3S9 3.34 9 5v8c-1.21.91-2 2.37-2 4 0 2.76 2.24 5 5 5s5-2.24 5-5c0-1.63-.79-3.09-2-4zm-4-8c0-.55.45-1 1-1s1 .45 1 1v8.5l.5.25c.86.43 1.5 1.28 1.5 2.25 0 1.38-1.12 2.5-2.5 2.5S10 17.38 10 16c0-.97.64-1.82 1.5-2.25l.5-.25V5z"/>
                         </svg>
                     </div>
                 </div>
+
+                {{-- Mini Chart --}}
+                <div class="mt-2 mb-2 h-12 relative">
+                    <canvas x-ref="canvas" class="w-full h-full"></canvas>
+                    <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                        <div class="w-3 h-3 border-2 border-orange-400 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </div>
+
                 <div class="flex items-center justify-between text-xs gap-2">
                     <span class="text-blue-300 flex items-center whitespace-nowrap">
                         <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,7 +66,7 @@
                         </svg>
                         {{ $module->dashboard_data['min_temp'] }}°C
                     </span>
-                    <span class="text-orange-200/50 text-[10px]">@time($module->dashboard_data['date_min_temp'])</span>
+                    <span class="text-orange-200/50 text-[10px]">24h</span>
                     <span class="text-red-300 flex items-center whitespace-nowrap">
                         <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
@@ -64,15 +74,12 @@
                         {{ $module->dashboard_data['max_temp'] }}°C
                     </span>
                 </div>
-                <div class="mt-2 pt-2 border-t border-orange-500/20">
-                    <span class="text-[10px] text-orange-200/60 uppercase">Trend: </span>
-                    <span class="text-xs font-semibold text-orange-200">{{ $module->dashboard_data['temp_trend'] }}</span>
-                </div>
             </div>
 
             {{-- Humidity Card --}}
-            <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-4 border border-blue-500/20">
-                <div class="flex items-start justify-between gap-2 mb-3">
+            <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-4 border border-blue-500/20"
+                 x-data="miniChart('{{ $module->module_id }}', 'Humidity', '#3b82f6', '%')">
+                <div class="flex items-start justify-between gap-2 mb-2">
                     <div class="flex-1 min-w-0">
                         <div class="text-blue-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Humidity</div>
                         <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['Humidity'] }}<span class="text-lg md:text-xl text-blue-200/60">%</span></div>
@@ -83,6 +90,15 @@
                         </svg>
                     </div>
                 </div>
+
+                {{-- Mini Chart --}}
+                <div class="mt-2 mb-2 h-12 relative">
+                    <canvas x-ref="canvas" class="w-full h-full"></canvas>
+                    <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                        <div class="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </div>
+
                 <div class="mt-auto">
                     <div class="w-full bg-dark-surface/40 rounded-full h-2 overflow-hidden">
                         <div class="bg-gradient-to-r from-blue-400 to-cyan-400 h-2 rounded-full transition-all duration-500" style="width: {{ $module->dashboard_data['Humidity'] }}%"></div>
@@ -100,8 +116,9 @@
             </div>
 
             {{-- CO2 Card --}}
-            <div class="bg-gradient-to-br from-emerald-500/10 to-green-500/10 rounded-2xl p-4 border border-emerald-500/20">
-                <div class="flex items-start justify-between gap-2 mb-3">
+            <div class="bg-gradient-to-br from-emerald-500/10 to-green-500/10 rounded-2xl p-4 border border-emerald-500/20"
+                 x-data="miniChart('{{ $module->module_id }}', 'CO2', '#10b981', ' ppm')">
+                <div class="flex items-start justify-between gap-2 mb-2">
                     <div class="flex-1 min-w-0">
                         <div class="text-emerald-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">CO₂ Level</div>
                         <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['CO2'] }}<span class="text-base md:text-lg text-emerald-200/60">ppm</span></div>
@@ -112,6 +129,15 @@
                         </svg>
                     </div>
                 </div>
+
+                {{-- Mini Chart --}}
+                <div class="mt-2 mb-2 h-12 relative">
+                    <canvas x-ref="canvas" class="w-full h-full"></canvas>
+                    <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                        <div class="w-3 h-3 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </div>
+
                 <div class="mt-auto">
                     <p class="text-[10px] text-emerald-200/60 uppercase mb-0.5">Air Quality</p>
                     <p class="text-xs font-semibold
@@ -131,8 +157,49 @@
             </div>
         </div>
 
+        {{-- Noise Level Card with Bar Chart --}}
+        <div class="bg-gradient-to-br from-purple-500/10 to-fuchsia-500/10 rounded-2xl p-4 border border-purple-500/20"
+             x-data="miniBarChart('{{ $module->module_id }}', 'Noise', '#a855f7', ' dB')">
+            <div class="flex items-start justify-between gap-2 mb-2">
+                <div class="flex-1 min-w-0">
+                    <div class="text-purple-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Noise Level</div>
+                    <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['Noise'] }}<span class="text-base md:text-lg text-purple-200/60">dB</span></div>
+                </div>
+                <div class="bg-purple-500/20 p-2 rounded-xl flex-shrink-0">
+                    <svg class="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                    </svg>
+                </div>
+            </div>
+
+            {{-- Mini Bar Chart --}}
+            <div class="mt-2 mb-2 h-16 relative">
+                <canvas x-ref="canvas" class="w-full h-full"></canvas>
+                <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                    <div class="w-3 h-3 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            </div>
+
+            <div class="mt-auto">
+                <p class="text-[10px] text-purple-200/60 uppercase mb-0.5">Sound Level</p>
+                <p class="text-xs font-semibold
+                    @if($module->dashboard_data['Noise'] < 35) text-green-300
+                    @elseif($module->dashboard_data['Noise'] < 50) text-yellow-300
+                    @else text-red-300
+                    @endif">
+                    @if($module->dashboard_data['Noise'] < 35)
+                        Quiet
+                    @elseif($module->dashboard_data['Noise'] < 50)
+                        Moderate
+                    @else
+                        Noisy
+                    @endif
+                </p>
+            </div>
+        </div>
+
         {{-- Secondary Metrics --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
             {{-- Pressure --}}
             <div class="bg-dark-surface/40 rounded-xl p-3 border border-dark-border/30 hover:border-amber-500/30 transition-colors">
                 <div class="flex items-center justify-between mb-1.5">
@@ -155,18 +222,6 @@
                 </div>
                 <div class="text-xl font-bold text-white leading-none">{{ $module->dashboard_data['AbsolutePressure'] }}</div>
                 <div class="text-[10px] text-purple-400/60 mt-1">mbar</div>
-            </div>
-
-            {{-- Noise Level --}}
-            <div class="bg-dark-surface/40 rounded-xl p-3 border border-dark-border/30 hover:border-purple-500/30 transition-colors">
-                <div class="flex items-center justify-between mb-1.5">
-                    <span class="text-xs text-purple-300/80">Noise</span>
-                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
-                    </svg>
-                </div>
-                <div class="text-xl font-bold text-white leading-none">{{ $module->dashboard_data['Noise'] }}</div>
-                <div class="text-[10px] text-purple-400/60 mt-1">dB</div>
             </div>
 
             {{-- WiFi Status --}}

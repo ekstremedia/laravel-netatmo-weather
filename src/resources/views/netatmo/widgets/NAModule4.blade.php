@@ -53,18 +53,28 @@
             {{-- Primary Metrics --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {{-- Temperature Card --}}
-                <div class="bg-gradient-to-br from-rose-500/10 to-pink-500/10 rounded-2xl p-4 border border-rose-500/20">
-                    <div class="flex items-start justify-between gap-2 mb-3">
+                <div class="bg-gradient-to-br from-rose-500/10 to-pink-500/10 rounded-2xl p-4 border border-rose-500/20"
+                     x-data="miniChart('{{ $module->module_id }}', 'Temperature', '#f43f5e', '°C')">
+                    <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="flex-1 min-w-0">
                             <div class="text-rose-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Temperature</div>
                             <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['Temperature'] }}<span class="text-lg md:text-xl text-rose-200/60">°C</span></div>
                         </div>
                         <div class="bg-rose-500/20 p-2 rounded-xl flex-shrink-0">
-                            <svg class="w-6 h-6 text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            <svg class="w-6 h-6 text-rose-300" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M15 13V5c0-1.66-1.34-3-3-3S9 3.34 9 5v8c-1.21.91-2 2.37-2 4 0 2.76 2.24 5 5 5s5-2.24 5-5c0-1.63-.79-3.09-2-4zm-4-8c0-.55.45-1 1-1s1 .45 1 1v8.5l.5.25c.86.43 1.5 1.28 1.5 2.25 0 1.38-1.12 2.5-2.5 2.5S10 17.38 10 16c0-.97.64-1.82 1.5-2.25l.5-.25V5z"/>
                             </svg>
                         </div>
                     </div>
+
+                    {{-- Mini Chart --}}
+                    <div class="mt-2 mb-2 h-12 relative">
+                        <canvas x-ref="canvas" class="w-full h-full"></canvas>
+                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                            <div class="w-3 h-3 border-2 border-rose-400 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    </div>
+
                     <div class="flex items-center justify-between text-xs gap-2">
                         <span class="text-blue-300 flex items-center whitespace-nowrap">
                             <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,7 +82,7 @@
                             </svg>
                             {{ $module->dashboard_data['min_temp'] }}°C
                         </span>
-                        <span class="text-rose-200/50 text-[10px]">@time($module->dashboard_data['date_min_temp'])</span>
+                        <span class="text-rose-200/50 text-[10px]">24h</span>
                         <span class="text-red-300 flex items-center whitespace-nowrap">
                             <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
@@ -80,15 +90,12 @@
                             {{ $module->dashboard_data['max_temp'] }}°C
                         </span>
                     </div>
-                    <div class="mt-2 pt-2 border-t border-rose-500/20">
-                        <span class="text-[10px] text-rose-200/60 uppercase">Trend: </span>
-                        <span class="text-xs font-semibold text-rose-200">{{ $module->dashboard_data['temp_trend'] }}</span>
-                    </div>
                 </div>
 
                 {{-- Humidity Card --}}
-                <div class="bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-2xl p-4 border border-violet-500/20">
-                    <div class="flex items-start justify-between gap-2 mb-3">
+                <div class="bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-2xl p-4 border border-violet-500/20"
+                     x-data="miniChart('{{ $module->module_id }}', 'Humidity', '#8b5cf6', '%')">
+                    <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="flex-1 min-w-0">
                             <div class="text-violet-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Humidity</div>
                             <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['Humidity'] }}<span class="text-lg md:text-xl text-violet-200/60">%</span></div>
@@ -99,6 +106,15 @@
                             </svg>
                         </div>
                     </div>
+
+                    {{-- Mini Chart --}}
+                    <div class="mt-2 mb-2 h-12 relative">
+                        <canvas x-ref="canvas" class="w-full h-full"></canvas>
+                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                            <div class="w-3 h-3 border-2 border-violet-400 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    </div>
+
                     <div class="mt-auto">
                         <div class="w-full bg-dark-surface/40 rounded-full h-2 overflow-hidden">
                             <div class="bg-gradient-to-r from-violet-400 to-purple-400 h-2 rounded-full transition-all duration-500" style="width: {{ $module->dashboard_data['Humidity'] }}%"></div>
@@ -116,8 +132,9 @@
                 </div>
 
                 {{-- CO2 Card --}}
-                <div class="bg-gradient-to-br from-fuchsia-500/10 to-pink-500/10 rounded-2xl p-4 border border-fuchsia-500/20">
-                    <div class="flex items-start justify-between gap-2 mb-3">
+                <div class="bg-gradient-to-br from-fuchsia-500/10 to-pink-500/10 rounded-2xl p-4 border border-fuchsia-500/20"
+                     x-data="miniChart('{{ $module->module_id }}', 'CO2', '#d946ef', ' ppm')">
+                    <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="flex-1 min-w-0">
                             <div class="text-fuchsia-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">CO₂ Level</div>
                             <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['CO2'] }}<span class="text-base md:text-lg text-fuchsia-200/60">ppm</span></div>
@@ -128,6 +145,15 @@
                             </svg>
                         </div>
                     </div>
+
+                    {{-- Mini Chart --}}
+                    <div class="mt-2 mb-2 h-12 relative">
+                        <canvas x-ref="canvas" class="w-full h-full"></canvas>
+                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                            <div class="w-3 h-3 border-2 border-fuchsia-400 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    </div>
+
                     <div class="mt-auto">
                         <p class="text-[10px] text-fuchsia-200/60 uppercase mb-0.5">Air Quality</p>
                         <p class="text-xs font-semibold
