@@ -46,6 +46,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Client ID and Device ID indicators on station index page
 - Clarified documentation for two setup approaches: shared access vs. separate credentials
 - Made it visually clear which Netatmo account each station is using
+- **Automatic token refresh now works seamlessly across all endpoints** - users only need to authenticate once when adding a station
+- Controller methods now attempt automatic token refresh before redirecting to authentication
+- Public API endpoints automatically refresh tokens in the background without user intervention
 
 ### Fixed
 - Fixed duplicate module constraint when adding multiple stations with shared modules

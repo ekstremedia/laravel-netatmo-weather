@@ -87,10 +87,25 @@ class NetatmoStationController extends Controller
     {
         $this->authorize('view', $weatherStation);
 
-        // Check if token exists and is valid
-        if (! $weatherStation->token || ! $weatherStation->token->hasValidToken()) {
+        // Check if token exists
+        if (! $weatherStation->token) {
             return redirect()->route('netatmo.authenticate', $weatherStation)
                 ->with('error', 'Please authenticate with Netatmo first.');
+        }
+
+        // Try to refresh token if expired
+        if (! $weatherStation->token->hasValidToken()) {
+            try {
+                $weatherStation->token->refreshToken();
+            } catch (Exception $e) {
+                logger()->error('Failed to refresh token', [
+                    'station_id' => $weatherStation->id,
+                    'error' => $e->getMessage(),
+                ]);
+
+                return redirect()->route('netatmo.authenticate', $weatherStation)
+                    ->with('error', 'Session expired. Please re-authenticate with Netatmo.');
+            }
         }
 
         // Check if device selection is needed
@@ -129,10 +144,25 @@ class NetatmoStationController extends Controller
     {
         $this->authorize('update', $weatherStation);
 
-        // Check if token exists and is valid
-        if (! $weatherStation->token || ! $weatherStation->token->hasValidToken()) {
+        // Check if token exists
+        if (! $weatherStation->token) {
             return redirect()->route('netatmo.authenticate', $weatherStation)
                 ->with('error', 'Please authenticate with Netatmo first.');
+        }
+
+        // Try to refresh token if expired
+        if (! $weatherStation->token->hasValidToken()) {
+            try {
+                $weatherStation->token->refreshToken();
+            } catch (Exception $e) {
+                logger()->error('Failed to refresh token', [
+                    'station_id' => $weatherStation->id,
+                    'error' => $e->getMessage(),
+                ]);
+
+                return redirect()->route('netatmo.authenticate', $weatherStation)
+                    ->with('error', 'Session expired. Please re-authenticate with Netatmo.');
+            }
         }
 
         try {
@@ -177,9 +207,23 @@ class NetatmoStationController extends Controller
         // Check if the station is marked as public
         abort_if(! $weatherStation->is_public, 404, 'This weather station is not publicly available.');
 
-        // Check if token exists and is valid
-        if (! $weatherStation->token || ! $weatherStation->token->hasValidToken()) {
-            abort(503, 'Weather station data is currently unavailable.');
+        // Check if token exists
+        if (! $weatherStation->token) {
+            abort(503, 'Weather station data is currently unavailable. Please contact the station owner.');
+        }
+
+        // Try to refresh token if expired
+        if (! $weatherStation->token->hasValidToken()) {
+            try {
+                $weatherStation->token->refreshToken();
+            } catch (Exception $e) {
+                logger()->error('Failed to refresh token for public view', [
+                    'station_id' => $weatherStation->id,
+                    'error' => $e->getMessage(),
+                ]);
+
+                abort(503, 'Weather station authentication has expired. Please contact the station owner.');
+            }
         }
 
         try {
