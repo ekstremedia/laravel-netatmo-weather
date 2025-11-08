@@ -32,12 +32,31 @@ beforeEach(function () {
     actingAs($user);
 });
 
-it('can display index page', function () {
+it('auto-redirects to authenticate when station has no token', function () {
     $station = NetatmoStation::create([
         'user_id' => 1,
         'station_name' => 'Test Station',
         'client_id' => 'test_client_id',
         'client_secret' => 'test_client_secret',
+    ]);
+
+    get(route('netatmo.index'))
+        ->assertRedirect(route('netatmo.authenticate', $station));
+});
+
+it('can display index page when station has valid token', function () {
+    $station = NetatmoStation::create([
+        'user_id' => 1,
+        'station_name' => 'Test Station',
+        'client_id' => 'test_client_id',
+        'client_secret' => 'test_client_secret',
+    ]);
+
+    NetatmoToken::create([
+        'netatmo_station_id' => $station->id,
+        'access_token' => 'valid_token',
+        'refresh_token' => 'refresh_token',
+        'expires_at' => now()->addHour(),
     ]);
 
     get(route('netatmo.index'))
