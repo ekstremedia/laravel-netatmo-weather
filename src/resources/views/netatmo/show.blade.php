@@ -46,177 +46,6 @@
             </div>
         </div>
 
-        <!-- Public Access Section -->
-        <div class="mb-8 bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden"
-             x-data="{
-                isPublic: {{ $weatherStation->is_public ? 'true' : 'false' }},
-                showCopied: false,
-                publicUrl: '{{ route('netatmo.public', $weatherStation) }}',
-                async togglePublic() {
-                    try {
-                        const response = await fetch('{{ route('netatmo.toggle-public', $weatherStation) }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json',
-                            }
-                        });
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            this.isPublic = data.is_public;
-                        }
-                    } catch (error) {
-                        console.error('Failed to toggle public access:', error);
-                    }
-                },
-                copyUrl() {
-                    navigator.clipboard.writeText(this.publicUrl);
-                    this.showCopied = true;
-                    setTimeout(() => this.showCopied = false, 2000);
-                }
-             }">
-            <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-purple-900/10">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-2.5 rounded-lg border border-purple-500/30">
-                            <i class="fas fa-share-alt text-purple-400"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-white">Public Access</h3>
-                            <p class="text-xs text-purple-300/70">Share your weather data publicly</p>
-                        </div>
-                    </div>
-
-                    <!-- Toggle Switch -->
-                    <button @click="togglePublic()"
-                            class="relative inline-flex h-8 w-14 items-center rounded-full transition-colors"
-                            :class="isPublic ? 'bg-green-500' : 'bg-gray-600'">
-                        <span class="inline-block h-6 w-6 transform rounded-full bg-white transition-transform"
-                              :class="isPublic ? 'translate-x-7' : 'translate-x-1'"></span>
-                    </button>
-                </div>
-            </div>
-
-            <div x-show="isPublic"
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 transform -translate-y-2"
-                 x-transition:enter-end="opacity-100 transform translate-y-0"
-                 class="px-6 py-4">
-                <div class="flex items-center space-x-2">
-                    <div class="flex-1 bg-dark-surface/60 rounded-lg px-4 py-3 border border-dark-border/30">
-                        <p class="text-sm text-purple-200 break-all" x-text="publicUrl"></p>
-                    </div>
-                    <button @click="copyUrl()"
-                            class="px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium rounded-lg transition-all duration-200 shadow-lg shadow-purple-900/30 flex-shrink-0">
-                        <i class="fas" :class="showCopied ? 'fa-check' : 'fa-copy'"></i>
-                        <span class="ml-2" x-text="showCopied ? 'Copied!' : 'Copy'"></span>
-                    </button>
-                </div>
-                <p class="text-xs text-purple-400/60 mt-2">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    Anyone with this link can view your weather station data
-                </p>
-            </div>
-        </div>
-
-        <!-- API Configuration Info -->
-        <div class="mb-8 bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
-            <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-blue-900/10">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-gradient-to-br from-blue-500/20 to-blue-600/20 p-2.5 rounded-lg border border-blue-500/30">
-                        <i class="fas fa-key text-blue-400"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-white">API Configuration</h3>
-                        <p class="text-xs text-blue-300/70">Authentication and connection details</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="px-6 py-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Client ID -->
-                    <div class="bg-dark-surface/40 border border-blue-900/30 rounded-xl p-4">
-                        <div class="flex items-center space-x-2 mb-2">
-                            <i class="fas fa-id-badge text-blue-400 text-sm"></i>
-                            <h4 class="text-sm font-semibold text-blue-300 uppercase tracking-wide">Client ID</h4>
-                        </div>
-                        <p class="text-white font-mono text-sm">{{ substr($weatherStation->client_id, 0, 8) }}••••••••</p>
-                        <p class="text-xs text-blue-400/50 mt-1">Unique application identifier</p>
-                    </div>
-
-                    <!-- Device ID -->
-                    <div class="bg-dark-surface/40 border border-blue-900/30 rounded-xl p-4">
-                        <div class="flex items-center space-x-2 mb-2">
-                            <i class="fas fa-broadcast-tower text-blue-400 text-sm"></i>
-                            <h4 class="text-sm font-semibold text-blue-300 uppercase tracking-wide">Device ID</h4>
-                        </div>
-                        @if($weatherStation->device_id)
-                            <p class="text-white font-mono text-sm">{{ $weatherStation->device_id }}</p>
-                            <p class="text-xs text-blue-400/50 mt-1">Physical Netatmo device MAC address</p>
-                        @else
-                            <p class="text-orange-400 text-sm">Not selected</p>
-                            <p class="text-xs text-orange-400/50 mt-1">Will auto-select on first authentication</p>
-                        @endif
-                    </div>
-
-                    <!-- Token Status -->
-                    <div class="bg-dark-surface/40 border border-blue-900/30 rounded-xl p-4">
-                        <div class="flex items-center space-x-2 mb-2">
-                            <i class="fas fa-shield-alt text-blue-400 text-sm"></i>
-                            <h4 class="text-sm font-semibold text-blue-300 uppercase tracking-wide">Token Status</h4>
-                        </div>
-                        @if($weatherStation->token && $weatherStation->token->hasValidToken())
-                            <div class="flex items-center space-x-2">
-                                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                                <p class="text-green-400 text-sm font-semibold">Active</p>
-                            </div>
-                            <p class="text-xs text-blue-400/50 mt-1">Expires {{ $weatherStation->token->expires_at->diffForHumans() }}</p>
-                        @elseif($weatherStation->token)
-                            <div class="flex items-center space-x-2">
-                                <span class="w-2 h-2 bg-orange-400 rounded-full"></span>
-                                <p class="text-orange-400 text-sm font-semibold">Expired</p>
-                            </div>
-                            <p class="text-xs text-orange-400/50 mt-1">Needs re-authentication</p>
-                        @else
-                            <div class="flex items-center space-x-2">
-                                <span class="w-2 h-2 bg-red-400 rounded-full"></span>
-                                <p class="text-red-400 text-sm font-semibold">Not Authenticated</p>
-                            </div>
-                            <p class="text-xs text-red-400/50 mt-1">Click "Refresh Data" to authenticate</p>
-                        @endif
-                    </div>
-
-                    <!-- Last Update -->
-                    <div class="bg-dark-surface/40 border border-blue-900/30 rounded-xl p-4">
-                        <div class="flex items-center space-x-2 mb-2">
-                            <i class="fas fa-clock text-blue-400 text-sm"></i>
-                            <h4 class="text-sm font-semibold text-blue-300 uppercase tracking-wide">Last Data Fetch</h4>
-                        </div>
-                        @if($weatherStation->modules()->where('is_active', true)->exists())
-                            @php
-                                $latestModule = $weatherStation->modules()->where('is_active', true)->latest('updated_at')->first();
-                            @endphp
-                            <p class="text-white text-sm">{{ $latestModule->updated_at->diffForHumans() }}</p>
-                            <p class="text-xs text-blue-400/50 mt-1">{{ $latestModule->updated_at->format('M d, Y H:i:s') }}</p>
-                        @else
-                            <p class="text-gray-400 text-sm">No data yet</p>
-                            <p class="text-xs text-gray-400/50 mt-1">Authenticate to fetch data</p>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="mt-4 bg-blue-900/20 border border-blue-700/30 rounded-xl p-3">
-                    <p class="text-xs text-blue-300/70">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        This station uses its own Netatmo API credentials and OAuth token. Data is fetched independently from other stations.
-                    </p>
-                </div>
-            </div>
-        </div>
-
         <!-- Weather Graphs (Hidden - now integrated into widgets) -->
         @if(false && $weatherStation->modules->where('is_active', true)->isNotEmpty())
         <div class="mb-8 hidden" x-data="weatherCharts()">
@@ -549,13 +378,46 @@
                         }
 
                         if (data.measurements && data.measurements.data[dataType]) {
-                            this.createChart(data.measurements.timestamps, data.measurements.data[dataType], color, unit);
+                            let values = data.measurements.data[dataType];
+
+                            // Convert km/h to m/s for wind speed
+                            if (unit === ' m/s' && dataType === 'WindStrength') {
+                                values = values.map(v => v / 3.6);
+                            }
+
+                            // Apply moving average smoothing for humidity and slow-changing metrics
+                            if (unit === '%' || unit === ' dB') {
+                                values = this.smoothData(values, 3); // 3-point moving average
+                            }
+
+                            this.createChart(data.measurements.timestamps, values, color, unit);
                         }
                     } catch (error) {
                         console.error('Failed to load mini chart:', error);
                     } finally {
                         this.loading = false;
                     }
+                },
+
+                smoothData(data, windowSize) {
+                    if (data.length < windowSize) return data;
+
+                    const smoothed = [];
+                    const halfWindow = Math.floor(windowSize / 2);
+
+                    for (let i = 0; i < data.length; i++) {
+                        let sum = 0;
+                        let count = 0;
+
+                        for (let j = Math.max(0, i - halfWindow); j <= Math.min(data.length - 1, i + halfWindow); j++) {
+                            sum += data[j];
+                            count++;
+                        }
+
+                        smoothed.push(sum / count);
+                    }
+
+                    return smoothed;
                 },
 
                 createChart(timestamps, values, color, unit) {
@@ -568,6 +430,16 @@
                         return date.getHours() + ':00';
                     });
 
+                    // Calculate min/max for better scaling with padding
+                    const minVal = Math.min(...values);
+                    const maxVal = Math.max(...values);
+                    const range = maxVal - minVal;
+                    const padding = range * 0.15; // 15% padding top and bottom
+
+                    // Use cubic interpolation for smoother curves on slow-changing metrics
+                    const cubicInterpolationMode = (unit === '%' || unit === ' dB') ? 'monotone' : false;
+                    const tension = (unit === '%' || unit === ' dB') ? 0 : 0.5;
+
                     const ctx = canvas.getContext('2d');
                     this.chart = new Chart(ctx, {
                         type: 'line',
@@ -578,7 +450,8 @@
                                 borderColor: color,
                                 backgroundColor: color + '20',
                                 borderWidth: 1.5,
-                                tension: 0.4,
+                                tension: tension,
+                                cubicInterpolationMode: cubicInterpolationMode,
                                 fill: true,
                                 pointRadius: 0,
                                 pointHoverRadius: 3,
@@ -600,7 +473,7 @@
                                     bodyFont: { size: 11 },
                                     displayColors: false,
                                     callbacks: {
-                                        label: (context) => `${context.parsed.y}${unit}`
+                                        label: (context) => `${context.parsed.y.toFixed(1)}${unit}`
                                     }
                                 }
                             },
@@ -610,6 +483,112 @@
                                 },
                                 y: {
                                     display: false,
+                                    min: Math.max(0, minVal - padding), // Don't go below 0
+                                    max: maxVal + padding,
+                                }
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
+                            }
+                        }
+                    });
+                }
+            }
+        };
+
+        // Mini bar chart component for noise levels
+        window.miniBarChart = function(moduleId, dataType, color, unit) {
+            return {
+                loading: true,
+                chart: null,
+
+                init() {
+                    // Wait for Chart.js
+                    if (typeof Chart === 'undefined') {
+                        setTimeout(() => this.init(), 100);
+                        return;
+                    }
+
+                    this.loadData();
+                },
+
+                async loadData() {
+                    try {
+                        const response = await fetch(`/api/netatmo/stations/{{ $weatherStation->uuid }}/modules/${moduleId}/measurements?period=1day&scale=1hour`);
+                        const data = await response.json();
+
+                        if (data.error) {
+                            console.error('API error for mini bar chart:', data);
+                            this.loading = false;
+                            return;
+                        }
+
+                        if (data.measurements && data.measurements.data[dataType]) {
+                            this.createBarChart(data.measurements.timestamps, data.measurements.data[dataType], color, unit);
+                        }
+                    } catch (error) {
+                        console.error('Failed to load mini bar chart:', error);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                createBarChart(timestamps, values, color, unit) {
+                    const canvas = this.$refs.canvas;
+                    if (!canvas) return;
+
+                    // Format timestamps to show only hours
+                    const labels = timestamps.map(t => {
+                        const date = new Date(t);
+                        return date.getHours() + ':00';
+                    });
+
+                    // Calculate min/max for better scaling with padding
+                    const minVal = Math.min(...values);
+                    const maxVal = Math.max(...values);
+                    const range = maxVal - minVal;
+                    const padding = range * 0.1; // 10% padding top
+
+                    const ctx = canvas.getContext('2d');
+                    this.chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                data: values,
+                                backgroundColor: color + '60', // More opaque for bars
+                                borderColor: color,
+                                borderWidth: 1,
+                                borderRadius: 2,
+                                hoverBackgroundColor: color + 'A0',
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    enabled: true,
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 8,
+                                    titleFont: { size: 10 },
+                                    bodyFont: { size: 11 },
+                                    displayColors: false,
+                                    callbacks: {
+                                        label: (context) => `${context.parsed.y.toFixed(0)}${unit}`
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    display: false,
+                                },
+                                y: {
+                                    display: false,
+                                    min: Math.max(0, minVal - padding),
+                                    max: maxVal + padding,
                                 }
                             },
                             interaction: {

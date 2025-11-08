@@ -53,12 +53,17 @@
             {{-- Primary Wind Metrics --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {{-- Current Wind Speed --}}
+                @php
+                    $windSpeed = isset($module->dashboard_data['WindStrength']) ? round($module->dashboard_data['WindStrength'] / 3.6, 1) : null;
+                    $gustSpeed = isset($module->dashboard_data['GustStrength']) ? round($module->dashboard_data['GustStrength'] / 3.6, 1) : null;
+                    $maxWindSpeed = isset($module->dashboard_data['max_wind_str']) ? round($module->dashboard_data['max_wind_str'] / 3.6, 1) : null;
+                @endphp
                 <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl p-4 border border-emerald-500/20"
-                     x-data="miniChart('{{ $module->module_id }}', 'WindStrength', '#10b981', ' km/h')">
+                     x-data="miniChart('{{ $module->module_id }}', 'WindStrength', '#10b981', ' m/s')">
                     <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="flex-1 min-w-0">
                             <div class="text-emerald-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Wind Speed</div>
-                            <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['WindStrength'] ?? 'N/A' }}<span class="text-base md:text-lg text-emerald-200/60">km/h</span></div>
+                            <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $windSpeed ?? 'N/A' }}<span class="text-base md:text-lg text-emerald-200/60">m/s</span></div>
                         </div>
                         <div class="bg-emerald-500/20 p-2 rounded-xl flex-shrink-0">
                             <svg class="w-6 h-6 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,11 +83,11 @@
                     <div class="flex items-center justify-between gap-2">
                         <div class="text-center">
                             <div class="text-teal-400 text-[10px] mb-0.5">Gust</div>
-                            <div class="text-base font-bold text-white leading-none">{{ $module->dashboard_data['GustStrength'] ?? 'N/A' }}<span class="text-xs text-teal-200/60">km/h</span></div>
+                            <div class="text-base font-bold text-white leading-none">{{ $gustSpeed ?? 'N/A' }}<span class="text-xs text-teal-200/60">m/s</span></div>
                         </div>
                         <div class="text-center">
                             <div class="text-teal-400 text-[10px] mb-0.5">Max Wind</div>
-                            <div class="text-base font-bold text-white leading-none">{{ $module->dashboard_data['max_wind_str'] ?? 'N/A' }}<span class="text-xs text-teal-200/60">km/h</span></div>
+                            <div class="text-base font-bold text-white leading-none">{{ $maxWindSpeed ?? 'N/A' }}<span class="text-xs text-teal-200/60">m/s</span></div>
                         </div>
                     </div>
                 </div>

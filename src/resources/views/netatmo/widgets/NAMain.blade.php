@@ -157,8 +157,49 @@
             </div>
         </div>
 
+        {{-- Noise Level Card with Bar Chart --}}
+        <div class="bg-gradient-to-br from-purple-500/10 to-fuchsia-500/10 rounded-2xl p-4 border border-purple-500/20"
+             x-data="miniBarChart('{{ $module->module_id }}', 'Noise', '#a855f7', ' dB')">
+            <div class="flex items-start justify-between gap-2 mb-2">
+                <div class="flex-1 min-w-0">
+                    <div class="text-purple-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Noise Level</div>
+                    <div class="text-3xl md:text-4xl font-bold text-white leading-none">{{ $module->dashboard_data['Noise'] }}<span class="text-base md:text-lg text-purple-200/60">dB</span></div>
+                </div>
+                <div class="bg-purple-500/20 p-2 rounded-xl flex-shrink-0">
+                    <svg class="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                    </svg>
+                </div>
+            </div>
+
+            {{-- Mini Bar Chart --}}
+            <div class="mt-2 mb-2 h-16 relative">
+                <canvas x-ref="canvas" class="w-full h-full"></canvas>
+                <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                    <div class="w-3 h-3 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            </div>
+
+            <div class="mt-auto">
+                <p class="text-[10px] text-purple-200/60 uppercase mb-0.5">Sound Level</p>
+                <p class="text-xs font-semibold
+                    @if($module->dashboard_data['Noise'] < 35) text-green-300
+                    @elseif($module->dashboard_data['Noise'] < 50) text-yellow-300
+                    @else text-red-300
+                    @endif">
+                    @if($module->dashboard_data['Noise'] < 35)
+                        Quiet
+                    @elseif($module->dashboard_data['Noise'] < 50)
+                        Moderate
+                    @else
+                        Noisy
+                    @endif
+                </p>
+            </div>
+        </div>
+
         {{-- Secondary Metrics --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
             {{-- Pressure --}}
             <div class="bg-dark-surface/40 rounded-xl p-3 border border-dark-border/30 hover:border-amber-500/30 transition-colors">
                 <div class="flex items-center justify-between mb-1.5">
@@ -181,18 +222,6 @@
                 </div>
                 <div class="text-xl font-bold text-white leading-none">{{ $module->dashboard_data['AbsolutePressure'] }}</div>
                 <div class="text-[10px] text-purple-400/60 mt-1">mbar</div>
-            </div>
-
-            {{-- Noise Level --}}
-            <div class="bg-dark-surface/40 rounded-xl p-3 border border-dark-border/30 hover:border-purple-500/30 transition-colors">
-                <div class="flex items-center justify-between mb-1.5">
-                    <span class="text-xs text-purple-300/80">Noise</span>
-                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
-                    </svg>
-                </div>
-                <div class="text-xl font-bold text-white leading-none">{{ $module->dashboard_data['Noise'] }}</div>
-                <div class="text-[10px] text-purple-400/60 mt-1">dB</div>
             </div>
 
             {{-- WiFi Status --}}
