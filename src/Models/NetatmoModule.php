@@ -49,6 +49,14 @@ class NetatmoModule extends Model
         return $this->belongsTo(NetatmoStation::class, 'netatmo_station_id');
     }
 
+    /**
+     * Alias for netatmoStation relationship
+     */
+    public function station(): BelongsTo
+    {
+        return $this->netatmoStation();
+    }
+
     public function readings(): HasMany
     {
         return $this->hasMany(NetatmoModuleReading::class);

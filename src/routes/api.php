@@ -16,3 +16,9 @@ Route::get('/stations/{uuid}/modules/{moduleId}', [WeatherStationApiController::
 
 Route::get('/stations/{uuid}/measurements', [WeatherStationApiController::class, 'measurements'])
     ->name('api.netatmo.measurements');
+
+Route::get('/stations/{uuid}/modules/{moduleId}/measurements', [WeatherStationApiController::class, 'moduleMeasurements'])
+    ->name('api.netatmo.module.measurements');
+
+Route::get('/stations/{uuid}/modules/{moduleId}/measurements/debug', [WeatherStationApiController::class, 'debugModuleMeasurements'])
+    ->name('api.netatmo.module.measurements.debug');

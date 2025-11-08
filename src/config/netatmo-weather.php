@@ -46,7 +46,7 @@ return [
         'api' => [
             'enabled' => env('NETATMO_API_ROUTES_ENABLED', true),
             'prefix' => env('NETATMO_API_PREFIX', 'api/netatmo'),
-            'middleware' => ['api'],
+            'middleware' => ['web', 'api'], // Both web and api for session + token auth
         ],
     ],
 

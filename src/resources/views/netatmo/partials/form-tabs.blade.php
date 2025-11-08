@@ -349,6 +349,27 @@
                         <p class="text-green-300/60 text-xs mt-2">Returns data for a specific module. Replace {moduleId} with the module's ID.</p>
                     </div>
 
+                    <!-- Module Measurements (Historical Data) -->
+                    <div class="bg-dark-surface/40 border border-green-700/20 rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 bg-green-700/30 text-green-300 text-xs font-mono rounded">GET</span>
+                                <span class="text-green-200 font-semibold">Module Measurements (Historical)</span>
+                            </div>
+                        </div>
+                        <code class="block bg-dark-surface/60 px-3 py-2 rounded text-xs text-green-300 font-mono break-all border border-green-700/30">
+                            {{ url(config('netatmo-weather.routes.api.prefix', 'api/netatmo') . '/stations/' . $weatherStation->uuid . '/modules/{moduleId}/measurements?period=1day&scale=30min') }}
+                        </code>
+                        <p class="text-green-300/60 text-xs mt-2">Returns historical measurements for graphing. Perfect for charts and time-series data.</p>
+                        <div class="mt-3 space-y-1">
+                            <p class="text-green-400/70 text-xs font-semibold">Query Parameters:</p>
+                            <ul class="text-green-300/50 text-xs space-y-0.5 ml-4 list-disc">
+                                <li><code class="text-green-300">period</code>: 1hour, 6hours, 12hours, 1day, 3days, 1week, 1month (default: 1day)</li>
+                                <li><code class="text-green-300">scale</code>: max, 30min, 1hour, 3hours, 1day, 1week, 1month (default: 30min)</li>
+                            </ul>
+                        </div>
+                    </div>
+
                     <!-- Authentication Info -->
                     <div x-show="hasToken" x-transition class="bg-yellow-900/20 border border-yellow-700/30 rounded-lg p-4">
                         <div class="flex items-start space-x-3">

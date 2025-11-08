@@ -217,6 +217,160 @@
             </div>
         </div>
 
+        <!-- Weather Graphs -->
+        @if($weatherStation->modules->where('is_active', true)->isNotEmpty())
+        <div class="mb-8" x-data="weatherCharts()">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-2.5 rounded-lg border border-purple-500/30">
+                    <i class="fas fa-chart-line text-purple-400 text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Weather Trends</h2>
+                    <p class="text-sm text-purple-300/70">Last 24 hours of measurements</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                @foreach($weatherStation->modules->where('is_active', true) as $module)
+                    @php
+                        $dataTypes = $module->data_type ?? [];
+                    @endphp
+
+                    @if(in_array('Temperature', $dataTypes))
+                    <!-- Temperature Chart -->
+                    <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-red-900/10">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-temperature-high text-red-400 text-lg"></i>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white">Temperature</h3>
+                                        <p class="text-xs text-red-300/70">{{ $module->module_name }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-2xl font-bold text-red-400">
+                                    @if(isset($module->dashboard_data['Temperature']))
+                                        {{ $module->dashboard_data['Temperature'] }}°C
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div x-show="!charts['temp-{{ $module->id }}']" class="flex items-center justify-center h-[200px]">
+                                <div class="text-center">
+                                    <i class="fas fa-spinner fa-spin text-red-400 text-2xl mb-2"></i>
+                                    <p class="text-red-400/70 text-sm">Loading data...</p>
+                                </div>
+                            </div>
+                            <canvas :id="'temp-{{ $module->id }}'" class="w-full" style="height: 200px;"></canvas>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(in_array('Humidity', $dataTypes))
+                    <!-- Humidity Chart -->
+                    <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-blue-900/10">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-tint text-blue-400 text-lg"></i>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white">Humidity</h3>
+                                        <p class="text-xs text-blue-300/70">{{ $module->module_name }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-2xl font-bold text-blue-400">
+                                    @if(isset($module->dashboard_data['Humidity']))
+                                        {{ $module->dashboard_data['Humidity'] }}%
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <canvas :id="'humidity-{{ $module->id }}'" class="w-full" style="height: 200px;"></canvas>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(in_array('CO2', $dataTypes))
+                    <!-- CO2 Chart -->
+                    <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-green-900/10">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-wind text-green-400 text-lg"></i>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white">CO₂ Levels</h3>
+                                        <p class="text-xs text-green-300/70">{{ $module->module_name }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-2xl font-bold text-green-400">
+                                    @if(isset($module->dashboard_data['CO2']))
+                                        {{ $module->dashboard_data['CO2'] }} ppm
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <canvas :id="'co2-{{ $module->id }}'" class="w-full" style="height: 200px;"></canvas>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(in_array('Rain', $dataTypes))
+                    <!-- Rain Chart (Bar Chart) -->
+                    <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-cyan-900/10">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-cloud-rain text-cyan-400 text-lg"></i>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white">Rainfall</h3>
+                                        <p class="text-xs text-cyan-300/70">{{ $module->module_name }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-2xl font-bold text-cyan-400">
+                                    @if(isset($module->dashboard_data['Rain']))
+                                        {{ $module->dashboard_data['Rain'] }} mm
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <canvas :id="'rain-{{ $module->id }}'" class="w-full" style="height: 200px;"></canvas>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(in_array('WindStrength', $dataTypes))
+                    <!-- Wind Speed Chart -->
+                    <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-purple-900/10">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-wind text-purple-400 text-lg"></i>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-white">Wind Speed</h3>
+                                        <p class="text-xs text-purple-300/70">{{ $module->module_name }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-2xl font-bold text-purple-400">
+                                    @if(isset($module->dashboard_data['WindStrength']))
+                                        {{ $module->dashboard_data['WindStrength'] }} km/h
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <canvas :id="'wind-{{ $module->id }}'" class="w-full" style="height: 200px;"></canvas>
+                        </div>
+                    </div>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <!-- Modules Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             @foreach($weatherStation->modules->where('is_active', true) as $module)
@@ -365,4 +519,281 @@
             </div>
         @endif
     </div>
+
+    <script>
+        // Define weatherCharts globally before Alpine.js initializes
+        window.weatherCharts = function() {
+            return {
+                charts: {},
+                init() {
+                    // Wait for Chart.js to be ready
+                    if (typeof Chart === 'undefined') {
+                        console.log('Waiting for Chart.js to load...');
+                        setTimeout(() => this.init(), 100);
+                        return;
+                    }
+
+                    console.log('Chart.js loaded, initializing weather charts...');
+
+                    // Initialize charts for each module
+                    @foreach($weatherStation->modules->where('is_active', true) as $module)
+                        this.initModuleCharts({{ $module->id }}, '{{ $module->module_id }}', {!! json_encode($module->data_type ?? []) !!});
+                    @endforeach
+                },
+
+                async initModuleCharts(moduleDbId, moduleId, dataTypes) {
+                    try {
+                        const url = `/api/netatmo/stations/{{ $weatherStation->uuid }}/modules/${moduleId}/measurements` + '?period=1day' + '&scale=30min';
+                        console.log('Fetching measurements for module:', moduleId, 'URL:', url);
+
+                        const response = await fetch(url);
+                        console.log('Response status:', response.status);
+
+                        const data = await response.json();
+                        console.log('Response data:', data);
+
+                        if (data.measurements && data.measurements.timestamps && data.measurements.timestamps.length > 0) {
+                            const timestamps = data.measurements.timestamps.map(t => new Date(t).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
+                            console.log('Creating charts for module', moduleDbId, 'with', timestamps.length, 'data points');
+
+                            // Temperature Chart
+                            if (dataTypes.includes('Temperature') && data.measurements.data.Temperature) {
+                                this.createLineChart(`temp-${moduleDbId}`, timestamps, data.measurements.data.Temperature, 'Temperature', '#ef4444', '°C');
+                            }
+
+                            // Humidity Chart
+                            if (dataTypes.includes('Humidity') && data.measurements.data.Humidity) {
+                                this.createLineChart(`humidity-${moduleDbId}`, timestamps, data.measurements.data.Humidity, 'Humidity', '#3b82f6', '%');
+                            }
+
+                            // CO2 Chart
+                            if (dataTypes.includes('CO2') && data.measurements.data.CO2) {
+                                this.createLineChart(`co2-${moduleDbId}`, timestamps, data.measurements.data.CO2, 'CO₂', '#10b981', ' ppm');
+                            }
+
+                            // Rain Chart (Bar Chart)
+                            if (dataTypes.includes('Rain') && data.measurements.data.Rain) {
+                                this.createBarChart(`rain-${moduleDbId}`, timestamps, data.measurements.data.Rain, 'Rainfall', '#06b6d4', ' mm');
+                            }
+
+                            // Wind Speed Chart
+                            if (dataTypes.includes('WindStrength') && data.measurements.data.WindStrength) {
+                                this.createLineChart(`wind-${moduleDbId}`, timestamps, data.measurements.data.WindStrength, 'Wind Speed', '#a855f7', ' km/h');
+                            }
+                        } else {
+                            console.warn('No measurement data available for module', moduleId, data);
+                            // Mark charts as attempted for this module to hide loading spinners
+                            dataTypes.forEach(type => {
+                                const chartId = this.getChartId(type, moduleDbId);
+                                if (chartId) {
+                                    this.charts[chartId] = 'no-data'; // Mark as attempted but no data
+                                    this.showNoDataMessage(chartId, type);
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Failed to fetch measurements for module ${moduleId}:`, error);
+                        // Mark all charts as failed to hide loading spinners
+                        dataTypes.forEach(type => {
+                            const chartId = this.getChartId(type, moduleDbId);
+                            if (chartId) {
+                                this.charts[chartId] = 'error';
+                                this.showErrorMessage(chartId, error.message);
+                            }
+                        });
+                    }
+                },
+
+                getChartId(dataType, moduleDbId) {
+                    const typeMap = {
+                        'Temperature': `temp-${moduleDbId}`,
+                        'Humidity': `humidity-${moduleDbId}`,
+                        'CO2': `co2-${moduleDbId}`,
+                        'Rain': `rain-${moduleDbId}`,
+                        'WindStrength': `wind-${moduleDbId}`,
+                    };
+                    return typeMap[dataType] || null;
+                },
+
+                showNoDataMessage(canvasId, dataType) {
+                    const canvas = document.getElementById(canvasId);
+                    if (!canvas) return;
+
+                    const parent = canvas.parentElement;
+                    const message = document.createElement('div');
+                    message.className = 'flex items-center justify-center h-[200px]';
+                    message.innerHTML = `
+                        <div class="text-center">
+                            <i class="fas fa-database text-gray-500 text-2xl mb-2"></i>
+                            <p class="text-gray-400 text-sm">No historical data available yet</p>
+                            <p class="text-gray-500 text-xs mt-1">Data will be collected over time</p>
+                        </div>
+                    `;
+                    canvas.style.display = 'none';
+                    parent.appendChild(message);
+                },
+
+                showErrorMessage(canvasId, errorMsg) {
+                    const canvas = document.getElementById(canvasId);
+                    if (!canvas) return;
+
+                    const parent = canvas.parentElement;
+                    const message = document.createElement('div');
+                    message.className = 'flex items-center justify-center h-[200px]';
+                    message.innerHTML = `
+                        <div class="text-center">
+                            <i class="fas fa-exclamation-triangle text-orange-500 text-2xl mb-2"></i>
+                            <p class="text-orange-400 text-sm">Failed to load chart data</p>
+                            <p class="text-orange-500 text-xs mt-1">${errorMsg || 'Unknown error'}</p>
+                        </div>
+                    `;
+                    canvas.style.display = 'none';
+                    parent.appendChild(message);
+                },
+
+                createLineChart(canvasId, labels, data, label, color, unit) {
+                    const canvas = document.getElementById(canvasId);
+                    if (!canvas) {
+                        console.error('Canvas not found:', canvasId);
+                        return;
+                    }
+
+                    console.log('Creating line chart:', canvasId, 'with', data.length, 'data points');
+
+                    const ctx = canvas.getContext('2d');
+                    this.charts[canvasId] = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: label,
+                                data: data,
+                                borderColor: color,
+                                backgroundColor: color + '20',
+                                borderWidth: 2,
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 0,
+                                pointHoverRadius: 4,
+                                pointHoverBackgroundColor: color,
+                                pointHoverBorderColor: '#fff',
+                                pointHoverBorderWidth: 2,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 12,
+                                    titleColor: '#fff',
+                                    bodyColor: '#fff',
+                                    borderColor: color,
+                                    borderWidth: 1,
+                                    callbacks: {
+                                        label: (context) => `${context.parsed.y}${unit}`
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: {
+                                        color: 'rgba(139, 92, 246, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#94a3b8',
+                                        maxRotation: 0,
+                                        maxTicksLimit: 8
+                                    }
+                                },
+                                y: {
+                                    grid: {
+                                        color: 'rgba(139, 92, 246, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#94a3b8',
+                                        callback: (value) => value + unit
+                                    }
+                                }
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index'
+                            }
+                        }
+                    });
+                },
+
+                createBarChart(canvasId, labels, data, label, color, unit) {
+                    const canvas = document.getElementById(canvasId);
+                    if (!canvas) return;
+
+                    const ctx = canvas.getContext('2d');
+                    this.charts[canvasId] = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: label,
+                                data: data,
+                                backgroundColor: color + '80',
+                                borderColor: color,
+                                borderWidth: 1,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    padding: 12,
+                                    titleColor: '#fff',
+                                    bodyColor: '#fff',
+                                    borderColor: color,
+                                    borderWidth: 1,
+                                    callbacks: {
+                                        label: (context) => `${context.parsed.y}${unit}`
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: {
+                                        color: 'rgba(139, 92, 246, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#94a3b8',
+                                        maxRotation: 0,
+                                        maxTicksLimit: 8
+                                    }
+                                },
+                                y: {
+                                    grid: {
+                                        color: 'rgba(139, 92, 246, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        color: '#94a3b8',
+                                        callback: (value) => value + unit
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    </script>
 @endsection

@@ -98,8 +98,9 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
         }
 
         // Register API routes (JSON endpoints)
+        // Use both web and api middleware to support both session and token auth
         if ($apiConfig['enabled'] ?? true) {
-            Route::middleware($apiConfig['middleware'] ?? ['api'])
+            Route::middleware($apiConfig['middleware'] ?? ['web', 'api'])
                 ->prefix($apiConfig['prefix'] ?? 'api/netatmo')
                 ->group(__DIR__.'/routes/api.php');
         }
