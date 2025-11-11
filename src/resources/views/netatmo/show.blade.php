@@ -15,7 +15,8 @@
                     <h1 class="text-3xl font-bold text-white">{{ $weatherStation->station_name }}</h1>
                     <p class="text-sm text-purple-300/80 mt-1">
                         <i class="fa-solid fa-signal mr-1"></i>
-                        {{ $weatherStation->modules->where('is_active', true)->count() }} {{ $weatherStation->modules->where('is_active', true)->count() === 1 ? 'module' : 'modules' }} connected
+                        {{ $weatherStation->modules->where('is_active', true)->count() }} {{ $weatherStation->modules->where('is_active', true)->count() === 1 ? 'module' : 'modules' }}
+                        connected
                     </p>
                 </div>
             </div>
@@ -23,14 +24,14 @@
             <div class="flex items-center space-x-2">
                 <a href="{{ route('netatmo.edit', $weatherStation) }}">
                     <button
-                        class="inline-flex items-center space-x-2 px-6 py-3 bg-dark-surface/60 hover:bg-dark-surface border border-dark-border/50 text-purple-200 font-medium rounded-xl transition-all duration-200">
+                            class="inline-flex items-center space-x-2 px-6 py-3 bg-dark-surface/60 hover:bg-dark-surface border border-dark-border/50 text-purple-200 font-medium rounded-xl transition-all duration-200">
                         <i class="fas fa-edit"></i>
                         <span>Edit Station</span>
                     </button>
                 </a>
                 <a href="{{ route('netatmo.authenticate', $weatherStation) }}">
                     <button
-                        class="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-netatmo-purple via-purple-600 to-netatmo-deep hover:from-netatmo-deep hover:to-purple-900 text-white font-semibold rounded-xl shadow-lg shadow-purple-900/50 hover:shadow-xl hover:shadow-purple-800/50 transform hover:-translate-y-0.5 transition-all duration-200 ring-2 ring-purple-500/20">
+                            class="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-netatmo-purple via-purple-600 to-netatmo-deep hover:from-netatmo-deep hover:to-purple-900 text-white font-semibold rounded-xl shadow-lg shadow-purple-900/50 hover:shadow-xl hover:shadow-purple-800/50 transform hover:-translate-y-0.5 transition-all duration-200 ring-2 ring-purple-500/20">
                         <i class="fas fa-sync-alt"></i>
                         <span>Refresh Data</span>
                     </button>
@@ -40,156 +41,162 @@
 
         <!-- Weather Graphs (Hidden - now integrated into widgets) -->
         @if(false && $weatherStation->modules->where('is_active', true)->isNotEmpty())
-        <div class="mb-8 hidden" x-data="weatherCharts()">
-            <div class="flex items-center space-x-3 mb-6">
-                <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-2.5 rounded-lg border border-purple-500/30">
-                    <i class="fas fa-chart-line text-purple-400 text-xl"></i>
+            <div class="mb-8 hidden" x-data="weatherCharts()">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/20 p-2.5 rounded-lg border border-purple-500/30">
+                        <i class="fas fa-chart-line text-purple-400 text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Weather Trends</h2>
+                        <p class="text-sm text-purple-300/70">Last 24 hours of measurements</p>
+                    </div>
                 </div>
-                <div>
-                    <h2 class="text-2xl font-bold text-white">Weather Trends</h2>
-                    <p class="text-sm text-purple-300/70">Last 24 hours of measurements</p>
-                </div>
-            </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                @foreach($weatherStation->modules->where('is_active', true) as $module)
-                    @php
-                        $dataTypes = $module->data_type ?? [];
-                    @endphp
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    @foreach($weatherStation->modules->where('is_active', true) as $module)
+                        @php
+                            $dataTypes = $module->data_type ?? [];
+                        @endphp
 
-                    @if(in_array('Temperature', $dataTypes))
-                    <!-- Temperature Chart -->
-                    <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
-                        <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-red-900/10">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <i class="fas fa-temperature-high text-red-400 text-lg"></i>
-                                    <div>
-                                        <h3 class="text-lg font-bold text-white">Temperature</h3>
-                                        <p class="text-xs text-red-300/70">{{ $module->module_name }}</p>
-                                    </div>
-                                </div>
-                                <span class="text-2xl font-bold text-red-400">
+                        @if(in_array('Temperature', $dataTypes))
+                            <!-- Temperature Chart -->
+                            <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
+                                <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-red-900/10">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-temperature-high text-red-400 text-lg"></i>
+                                            <div>
+                                                <h3 class="text-lg font-bold text-white">Temperature</h3>
+                                                <p class="text-xs text-red-300/70">{{ $module->module_name }}</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-2xl font-bold text-red-400">
                                     @if(isset($module->dashboard_data['Temperature']))
-                                        {{ $module->dashboard_data['Temperature'] }}°C
-                                    @endif
+                                                {{ $module->dashboard_data['Temperature'] }}°C
+                                            @endif
                                 </span>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <div x-show="!charts['temp-{{ $module->id }}']" class="flex items-center justify-center h-[200px]">
-                                <div class="text-center">
-                                    <i class="fas fa-spinner fa-spin text-red-400 text-2xl mb-2"></i>
-                                    <p class="text-red-400/70 text-sm">Loading data...</p>
-                                </div>
-                            </div>
-                            <canvas :id="'temp-{{ $module->id }}'" class="w-full" style="height: 200px;"></canvas>
-                        </div>
-                    </div>
-                    @endif
-
-                    @if(in_array('Humidity', $dataTypes))
-                    <!-- Humidity Chart -->
-                    <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
-                        <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-blue-900/10">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <i class="fas fa-tint text-blue-400 text-lg"></i>
-                                    <div>
-                                        <h3 class="text-lg font-bold text-white">Humidity</h3>
-                                        <p class="text-xs text-blue-300/70">{{ $module->module_name }}</p>
                                     </div>
                                 </div>
-                                <span class="text-2xl font-bold text-blue-400">
+                                <div class="p-6">
+                                    <div x-show="!charts['temp-{{ $module->id }}']"
+                                         class="flex items-center justify-center h-[200px]">
+                                        <div class="text-center">
+                                            <i class="fas fa-spinner fa-spin text-red-400 text-2xl mb-2"></i>
+                                            <p class="text-red-400/70 text-sm">Loading data...</p>
+                                        </div>
+                                    </div>
+                                    <canvas :id="'temp-{{ $module->id }}'" class="w-full"
+                                            style="height: 200px;"></canvas>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if(in_array('Humidity', $dataTypes))
+                            <!-- Humidity Chart -->
+                            <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
+                                <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-blue-900/10">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-tint text-blue-400 text-lg"></i>
+                                            <div>
+                                                <h3 class="text-lg font-bold text-white">Humidity</h3>
+                                                <p class="text-xs text-blue-300/70">{{ $module->module_name }}</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-2xl font-bold text-blue-400">
                                     @if(isset($module->dashboard_data['Humidity']))
-                                        {{ $module->dashboard_data['Humidity'] }}%
-                                    @endif
+                                                {{ $module->dashboard_data['Humidity'] }}%
+                                            @endif
                                 </span>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <canvas :id="'humidity-{{ $module->id }}'" class="w-full" style="height: 200px;"></canvas>
-                        </div>
-                    </div>
-                    @endif
-
-                    @if(in_array('CO2', $dataTypes))
-                    <!-- CO2 Chart -->
-                    <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
-                        <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-green-900/10">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <i class="fas fa-wind text-green-400 text-lg"></i>
-                                    <div>
-                                        <h3 class="text-lg font-bold text-white">CO₂ Levels</h3>
-                                        <p class="text-xs text-green-300/70">{{ $module->module_name }}</p>
                                     </div>
                                 </div>
-                                <span class="text-2xl font-bold text-green-400">
+                                <div class="p-6">
+                                    <canvas :id="'humidity-{{ $module->id }}'" class="w-full"
+                                            style="height: 200px;"></canvas>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if(in_array('CO2', $dataTypes))
+                            <!-- CO2 Chart -->
+                            <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
+                                <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-green-900/10">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-wind text-green-400 text-lg"></i>
+                                            <div>
+                                                <h3 class="text-lg font-bold text-white">CO₂ Levels</h3>
+                                                <p class="text-xs text-green-300/70">{{ $module->module_name }}</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-2xl font-bold text-green-400">
                                     @if(isset($module->dashboard_data['CO2']))
-                                        {{ $module->dashboard_data['CO2'] }} ppm
-                                    @endif
+                                                {{ $module->dashboard_data['CO2'] }} ppm
+                                            @endif
                                 </span>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <canvas :id="'co2-{{ $module->id }}'" class="w-full" style="height: 200px;"></canvas>
-                        </div>
-                    </div>
-                    @endif
-
-                    @if(in_array('Rain', $dataTypes))
-                    <!-- Rain Chart (Bar Chart) -->
-                    <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
-                        <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-cyan-900/10">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <i class="fas fa-cloud-rain text-cyan-400 text-lg"></i>
-                                    <div>
-                                        <h3 class="text-lg font-bold text-white">Rainfall</h3>
-                                        <p class="text-xs text-cyan-300/70">{{ $module->module_name }}</p>
                                     </div>
                                 </div>
-                                <span class="text-2xl font-bold text-cyan-400">
+                                <div class="p-6">
+                                    <canvas :id="'co2-{{ $module->id }}'" class="w-full"
+                                            style="height: 200px;"></canvas>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if(in_array('Rain', $dataTypes))
+                            <!-- Rain Chart (Bar Chart) -->
+                            <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
+                                <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-cyan-900/10">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-cloud-rain text-cyan-400 text-lg"></i>
+                                            <div>
+                                                <h3 class="text-lg font-bold text-white">Rainfall</h3>
+                                                <p class="text-xs text-cyan-300/70">{{ $module->module_name }}</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-2xl font-bold text-cyan-400">
                                     @if(isset($module->dashboard_data['Rain']))
-                                        {{ $module->dashboard_data['Rain'] }} mm
-                                    @endif
+                                                {{ $module->dashboard_data['Rain'] }} mm
+                                            @endif
                                 </span>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <canvas :id="'rain-{{ $module->id }}'" class="w-full" style="height: 200px;"></canvas>
-                        </div>
-                    </div>
-                    @endif
-
-                    @if(in_array('WindStrength', $dataTypes))
-                    <!-- Wind Speed Chart -->
-                    <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
-                        <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-purple-900/10">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <i class="fas fa-wind text-purple-400 text-lg"></i>
-                                    <div>
-                                        <h3 class="text-lg font-bold text-white">Wind Speed</h3>
-                                        <p class="text-xs text-purple-300/70">{{ $module->module_name }}</p>
                                     </div>
                                 </div>
-                                <span class="text-2xl font-bold text-purple-400">
-                                    @if(isset($module->dashboard_data['WindStrength']))
-                                        {{ $module->dashboard_data['WindStrength'] }} km/h
-                                    @endif
-                                </span>
+                                <div class="p-6">
+                                    <canvas :id="'rain-{{ $module->id }}'" class="w-full"
+                                            style="height: 200px;"></canvas>
+                                </div>
                             </div>
-                        </div>
-                        <div class="p-6">
-                            <canvas :id="'wind-{{ $module->id }}'" class="w-full" style="height: 200px;"></canvas>
-                        </div>
-                    </div>
-                    @endif
-                @endforeach
+                        @endif
+
+                        @if(in_array('WindStrength', $dataTypes))
+                            <!-- Wind Speed Chart -->
+                            <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-xl border border-dark-border/50 overflow-hidden">
+                                <div class="px-6 py-4 border-b border-dark-border/50 bg-gradient-to-r from-dark-surface/60 to-purple-900/10">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-wind text-purple-400 text-lg"></i>
+                                            <div>
+                                                <h3 class="text-lg font-bold text-white">Wind Speed</h3>
+                                                <p class="text-xs text-purple-300/70">{{ $module->module_name }}</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-2xl font-bold text-purple-400">
+                                    @if(isset($module->dashboard_data['WindStrength']))
+                                                {{ $module->dashboard_data['WindStrength'] }} km/h
+                                            @endif
+                                </span>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <canvas :id="'wind-{{ $module->id }}'" class="w-full"
+                                            style="height: 200px;"></canvas>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
             </div>
-        </div>
         @endif
 
         <!-- Modules Grid -->
@@ -305,7 +312,8 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center space-x-2 ml-4">
-                                        <form method="POST" action="{{ route('netatmo.modules.activate', [$weatherStation, $module]) }}">
+                                        <form method="POST"
+                                              action="{{ route('netatmo.modules.activate', [$weatherStation, $module]) }}">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit"
@@ -314,7 +322,8 @@
                                                 <span>Reactivate</span>
                                             </button>
                                         </form>
-                                        <form method="POST" action="{{ route('netatmo.modules.destroy', [$weatherStation, $module]) }}"
+                                        <form method="POST"
+                                              action="{{ route('netatmo.modules.destroy', [$weatherStation, $module]) }}"
                                               onsubmit="return confirm('Are you sure you want to permanently delete this module?');">
                                             @csrf
                                             @method('DELETE')
@@ -332,7 +341,8 @@
                     <div class="mt-4 bg-orange-900/20 border border-orange-700/30 rounded-xl p-3">
                         <p class="text-xs text-orange-300/70">
                             <i class="fas fa-info-circle mr-1"></i>
-                            These modules are no longer detected by the Netatmo API. They may have been removed, lost connection, or have dead batteries.
+                            These modules are no longer detected by the Netatmo API. They may have been removed, lost
+                            connection, or have dead batteries.
                             You can safely delete them if they're no longer needed.
                         </p>
                     </div>
@@ -343,7 +353,7 @@
 
     <script>
         // Mini chart component for module widgets
-        window.miniChart = function(moduleId, dataType, color, unit) {
+        window.miniChart = function (moduleId, dataType, color, unit) {
             return {
                 loading: true,
                 chart: null,
@@ -418,21 +428,23 @@
 
                     // Format timestamps to show only hours
                     const labels = timestamps.map(t => {
-                        const date = new Date(t);
-                        return date.getHours() + ':00';
-                    });
+                        const date = new Date(t)
+                        return date.getHours() + ':00'
+                    })
 
                     // Calculate min/max for better scaling with padding
-                    const minVal = Math.min(...values);
-                    const maxVal = Math.max(...values);
-                    const range = maxVal - minVal;
-                    const padding = range * 0.15; // 15% padding top and bottom
+                    const minVal = Math.min(...values)
+                    const maxVal = Math.max(...values)
+                    const range = maxVal - minVal || 1
+                    const padding = range * 0.15
 
-                    // Use cubic interpolation for smoother curves on slow-changing metrics
-                    const cubicInterpolationMode = (unit === '%' || unit === ' dB') ? 'monotone' : false;
-                    const tension = (unit === '%' || unit === ' dB') ? 0 : 0.5;
+                    const minAxis = minVal < 0 ? minVal - padding : Math.max(0, minVal - padding)
+                    const maxAxis = maxVal + padding
 
-                    const ctx = canvas.getContext('2d');
+                    const cubicInterpolationMode = (unit === '%' || unit === ' dB') ? 'monotone' : false
+                    const tension = (unit === '%' || unit === ' dB') ? 0 : 0.5
+
+                    const ctx = canvas.getContext('2d')
                     this.chart = new Chart(ctx, {
                         type: 'line',
                         data: {
@@ -456,13 +468,13 @@
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
-                                legend: { display: false },
+                                legend: {display: false},
                                 tooltip: {
                                     enabled: true,
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
                                     padding: 8,
-                                    titleFont: { size: 10 },
-                                    bodyFont: { size: 11 },
+                                    titleFont: {size: 10},
+                                    bodyFont: {size: 11},
                                     displayColors: false,
                                     callbacks: {
                                         label: (context) => `${context.parsed.y.toFixed(1)}${unit}`
@@ -475,8 +487,8 @@
                                 },
                                 y: {
                                     display: false,
-                                    min: Math.max(0, minVal - padding), // Don't go below 0
-                                    max: maxVal + padding,
+                                    min: minAxis,
+                                    max: maxAxis,
                                 }
                             },
                             interaction: {
@@ -484,13 +496,14 @@
                                 mode: 'index'
                             }
                         }
-                    });
+                    })
                 }
+
             }
         };
 
         // Mini bar chart component for noise levels
-        window.miniBarChart = function(moduleId, dataType, color, unit) {
+        window.miniBarChart = function (moduleId, dataType, color, unit) {
             return {
                 loading: true,
                 chart: null,
@@ -560,13 +573,13 @@
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
-                                legend: { display: false },
+                                legend: {display: false},
                                 tooltip: {
                                     enabled: true,
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
                                     padding: 8,
-                                    titleFont: { size: 10 },
-                                    bodyFont: { size: 11 },
+                                    titleFont: {size: 10},
+                                    bodyFont: {size: 11},
                                     displayColors: false,
                                     callbacks: {
                                         label: (context) => `${context.parsed.y.toFixed(0)}${unit}`
@@ -594,7 +607,7 @@
         };
 
         // Define weatherCharts globally before Alpine.js initializes
-        window.weatherCharts = function() {
+        window.weatherCharts = function () {
             return {
                 charts: {},
                 init() {
@@ -625,7 +638,10 @@
                         console.log('Response data:', data);
 
                         if (data.measurements && data.measurements.timestamps && data.measurements.timestamps.length > 0) {
-                            const timestamps = data.measurements.timestamps.map(t => new Date(t).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }));
+                            const timestamps = data.measurements.timestamps.map(t => new Date(t).toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }));
                             console.log('Creating charts for module', moduleDbId, 'with', timestamps.length, 'data points');
 
                             // Temperature Chart
