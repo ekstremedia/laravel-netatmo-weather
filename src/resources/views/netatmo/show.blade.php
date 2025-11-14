@@ -445,21 +445,48 @@
                     const tension = (unit === '%' || unit === ' dB') ? 0 : 0.5
 
                     const ctx = canvas.getContext('2d')
+
+                    // For temperature charts, use blue color when below 0
+                    let borderColor = color
+                    let backgroundColor = color + '20'
+
+                    if (unit === '°C' && maxVal < 0) {
+                        // All values below 0, use cool blue
+                        borderColor = '#3b82f6'
+                        backgroundColor = '#3b82f620'
+                    } else if (unit === '°C' && minVal < 0 && maxVal >= 0) {
+                        // Mixed values, create gradient
+                        const gradient = ctx.createLinearGradient(0, canvas.height, 0, 0)
+                        const zeroPoint = (0 - minAxis) / (maxAxis - minAxis)
+                        gradient.addColorStop(0, '#3b82f6') // Blue at bottom (cold)
+                        gradient.addColorStop(zeroPoint, '#3b82f6')
+                        gradient.addColorStop(zeroPoint, color) // Original color at 0°C
+                        gradient.addColorStop(1, color) // Original color at top (warm)
+                        borderColor = gradient
+
+                        const bgGradient = ctx.createLinearGradient(0, canvas.height, 0, 0)
+                        bgGradient.addColorStop(0, '#3b82f620')
+                        bgGradient.addColorStop(zeroPoint, '#3b82f620')
+                        bgGradient.addColorStop(zeroPoint, color + '20')
+                        bgGradient.addColorStop(1, color + '20')
+                        backgroundColor = bgGradient
+                    }
+
                     this.chart = new Chart(ctx, {
                         type: 'line',
                         data: {
                             labels: labels,
                             datasets: [{
                                 data: values,
-                                borderColor: color,
-                                backgroundColor: color + '20',
+                                borderColor: borderColor,
+                                backgroundColor: backgroundColor,
                                 borderWidth: 1.5,
                                 tension: tension,
                                 cubicInterpolationMode: cubicInterpolationMode,
                                 fill: true,
                                 pointRadius: 0,
                                 pointHoverRadius: 3,
-                                pointHoverBackgroundColor: color,
+                                pointHoverBackgroundColor: unit === '°C' && maxVal < 0 ? '#3b82f6' : color,
                                 pointHoverBorderColor: '#fff',
                                 pointHoverBorderWidth: 1,
                             }]
