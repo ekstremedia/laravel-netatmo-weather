@@ -438,7 +438,7 @@
                     const range = maxVal - minVal || 1
                     const padding = range * 0.15
 
-                    const minAxis = minVal < 0 ? minVal - padding : Math.max(0, minVal - padding)
+                    const minAxis = minVal - padding
                     const maxAxis = maxVal + padding
 
                     const cubicInterpolationMode = (unit === '%' || unit === ' dB') ? 'monotone' : false

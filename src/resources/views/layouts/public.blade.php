@@ -211,7 +211,7 @@
                                 x: { display: false },
                                 y: {
                                     display: false,
-                                    min: Math.max(0, minVal - padding),
+                                    min: minVal - padding,
                                     max: maxVal + padding,
                                 }
                             },
