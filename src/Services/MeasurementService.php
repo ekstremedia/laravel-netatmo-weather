@@ -88,6 +88,11 @@ class MeasurementService
             $params['module_id'] = $module->module_id;
         }
 
+        // Refresh token if necessary
+        if (! $station->token->hasValidToken()) {
+            $station->token->refreshToken();
+        }
+
         Log::info('Fetching measurements from Netatmo API', [
             'station_id' => $station->id,
             'station_device_id' => $station->device_id,
@@ -102,6 +107,14 @@ class MeasurementService
 
         $response = Http::withToken($station->token->access_token)
             ->get(config('netatmo-weather.netatmo_api_url').'/getmeasure', $params);
+
+        // If we get a 403 (invalid/revoked token), force refresh and retry once
+        if ($response->status() === 403) {
+            $station->token->refreshToken();
+
+            $response = Http::withToken($station->token->access_token)
+                ->get(config('netatmo-weather.netatmo_api_url').'/getmeasure', $params);
+        }
 
         $responseData = $response->json();
 

@@ -195,6 +195,11 @@ it('fetches from api when database is empty', function () {
 
 it('throws exception on api error', function () {
     Http::fake([
+        config('netatmo-weather.netatmo_token_url') => Http::response([
+            'access_token' => 'new_access_token',
+            'refresh_token' => 'new_refresh_token',
+            'expires_in' => 10800,
+        ], 200),
         '*' => Http::response([
             'error' => [
                 'code' => 2,

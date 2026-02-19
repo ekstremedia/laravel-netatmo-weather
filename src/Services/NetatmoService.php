@@ -56,6 +56,14 @@ class NetatmoService
         $response = Http::withToken($weatherStation->token->access_token)
             ->get($this->apiUrl.'/getstationsdata');
 
+        // If we get a 403 (invalid/revoked token), force refresh and retry once
+        if ($response->status() === 403) {
+            $weatherStation->token->refreshToken();
+
+            $response = Http::withToken($weatherStation->token->access_token)
+                ->get($this->apiUrl.'/getstationsdata');
+        }
+
         if ($response->failed()) {
             throw new RequestException($response);
         }
@@ -140,6 +148,14 @@ class NetatmoService
         // Make the API request
         $response = Http::withToken($weatherStation->token->access_token)
             ->get($this->apiUrl.'/getstationsdata');
+
+        // If we get a 403 (invalid/revoked token), force refresh and retry once
+        if ($response->status() === 403) {
+            $weatherStation->token->refreshToken();
+
+            $response = Http::withToken($weatherStation->token->access_token)
+                ->get($this->apiUrl.'/getstationsdata');
+        }
 
         if ($response->failed()) {
             throw new RequestException($response);
