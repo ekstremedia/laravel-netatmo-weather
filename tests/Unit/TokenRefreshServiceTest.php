@@ -4,6 +4,7 @@ use Ekstremedia\NetatmoWeather\Exceptions\TokenRefreshException;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Models\NetatmoToken;
 use Ekstremedia\NetatmoWeather\Services\TokenRefreshService;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
 it('refreshes token successfully', function () {
@@ -36,7 +37,7 @@ it('refreshes token successfully', function () {
 
     expect($token->access_token)->toBe('new_access_token')
         ->and($token->refresh_token)->toBe('new_refresh_token')
-        ->and($token->expires_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
+        ->and($token->expires_at)->toBeInstanceOf(Carbon::class)
         ->and($token->expires_at->isFuture())->toBeTrue();
 });
 

@@ -4,6 +4,7 @@ use Ekstremedia\NetatmoWeather\Models\NetatmoModule;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Models\NetatmoToken;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 use function Pest\Laravel\getJson;
 
@@ -432,8 +433,8 @@ it('returns 503 when token refresh fails on show', function () {
     ]);
 
     // Mock failed token refresh
-    \Illuminate\Support\Facades\Http::fake([
-        config('netatmo-weather.netatmo_token_url') => \Illuminate\Support\Facades\Http::response([
+    Http::fake([
+        config('netatmo-weather.netatmo_token_url') => Http::response([
             'error' => 'invalid_grant',
         ], 400),
     ]);

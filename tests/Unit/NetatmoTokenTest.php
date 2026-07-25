@@ -2,6 +2,7 @@
 
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Models\NetatmoToken;
+use Illuminate\Support\Carbon;
 
 it('can check if token is valid', function () {
     $station = NetatmoStation::create([
@@ -74,5 +75,5 @@ it('casts expires_at to datetime', function () {
         'expires_at' => now()->addHour(),
     ]);
 
-    expect($token->expires_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class);
+    expect($token->expires_at)->toBeInstanceOf(Carbon::class);
 });

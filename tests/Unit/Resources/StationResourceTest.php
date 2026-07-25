@@ -3,6 +3,7 @@
 use Ekstremedia\NetatmoWeather\Http\Resources\StationResource;
 use Ekstremedia\NetatmoWeather\Models\NetatmoModule;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 it('transforms station with basic data correctly', function () {
     $station = NetatmoStation::create([
@@ -293,7 +294,7 @@ it('includes loaded modules when eager loaded', function () {
     $array = $resource->toArray(request());
 
     // whenLoaded returns a ResourceCollection, not a plain array
-    expect($array['modules'])->toBeInstanceOf(\Illuminate\Http\Resources\Json\AnonymousResourceCollection::class);
+    expect($array['modules'])->toBeInstanceOf(AnonymousResourceCollection::class);
 });
 
 it('includes modules even when not explicitly eager loaded due to resource calculations', function () {
@@ -318,7 +319,7 @@ it('includes modules even when not explicitly eager loaded due to resource calcu
     $array = $resource->toArray(request());
 
     // Modules are loaded as a side effect of active_modules_count, last_updated, and location calculations
-    expect($array['modules'])->toBeInstanceOf(\Illuminate\Http\Resources\Json\AnonymousResourceCollection::class);
+    expect($array['modules'])->toBeInstanceOf(AnonymousResourceCollection::class);
 });
 
 it('uses first module with place data for location', function () {

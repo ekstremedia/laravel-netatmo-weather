@@ -1,5 +1,6 @@
 <?php
 
+use Ekstremedia\NetatmoWeather\Exceptions\InvalidApiResponseException;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Models\NetatmoToken;
 use Ekstremedia\NetatmoWeather\Services\NetatmoService;
@@ -197,7 +198,7 @@ it('throws exception when no devices in api response', function () {
     $service = new NetatmoService;
 
     expect(fn () => $service->storeStationData($station, $apiData))
-        ->toThrow(\Ekstremedia\NetatmoWeather\Exceptions\InvalidApiResponseException::class);
+        ->toThrow(InvalidApiResponseException::class);
 });
 
 it('handles api errors gracefully', function () {

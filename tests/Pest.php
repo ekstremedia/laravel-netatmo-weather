@@ -1,5 +1,6 @@
 <?php
 
+use Ekstremedia\NetatmoWeather\Tests\Support\User;
 use Ekstremedia\NetatmoWeather\Tests\TestCase;
 
 uses(TestCase::class)->in('Feature', 'Unit');
@@ -12,7 +13,7 @@ function createUser(array $attributes = [])
     static $userId = 0;
     $userId++;
 
-    return \Ekstremedia\NetatmoWeather\Tests\Support\User::create(array_merge([
+    return User::create(array_merge([
         'name' => 'Test User '.$userId,
         'email' => 'test'.$userId.'@example.com',
     ], $attributes));

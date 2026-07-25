@@ -3,7 +3,10 @@
 namespace Ekstremedia\NetatmoWeather\Tests;
 
 use Ekstremedia\NetatmoWeather\NetatmoWeatherServiceProvider;
+use Ekstremedia\NetatmoWeather\Tests\Support\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
@@ -14,7 +17,7 @@ class TestCase extends Orchestra
 
         // Enable foreign key constraints for SQLite
         if (config('database.default') === 'testing') {
-            \Illuminate\Support\Facades\DB::statement('PRAGMA foreign_keys=ON;');
+            DB::statement('PRAGMA foreign_keys=ON;');
         }
 
         Factory::guessFactoryNamesUsing(
@@ -39,10 +42,10 @@ class TestCase extends Orchestra
         ]);
 
         // Set up auth config to use test user model
-        config()->set('auth.providers.users.model', \Ekstremedia\NetatmoWeather\Tests\Support\User::class);
+        config()->set('auth.providers.users.model', User::class);
 
         // Create users table
-        \Illuminate\Support\Facades\Schema::create('users', function ($table) {
+        Schema::create('users', function ($table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();

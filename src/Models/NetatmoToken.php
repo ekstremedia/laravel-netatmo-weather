@@ -2,6 +2,7 @@
 
 namespace Ekstremedia\NetatmoWeather\Models;
 
+use Ekstremedia\NetatmoWeather\Exceptions\TokenRefreshException;
 use Ekstremedia\NetatmoWeather\Services\TokenRefreshService;
 use Ekstremedia\NetatmoWeather\Traits\Encryptable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -61,7 +62,7 @@ class NetatmoToken extends Model
      * Refresh the OAuth token using the refresh token.
      *
      *
-     * @throws \Ekstremedia\NetatmoWeather\Exceptions\TokenRefreshException
+     * @throws TokenRefreshException
      */
     public function refreshToken(): void
     {

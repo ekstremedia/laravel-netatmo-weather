@@ -5,6 +5,7 @@ use Ekstremedia\NetatmoWeather\Models\NetatmoModuleReading;
 use Ekstremedia\NetatmoWeather\Models\NetatmoStation;
 use Ekstremedia\NetatmoWeather\Models\NetatmoToken;
 use Ekstremedia\NetatmoWeather\Services\MeasurementService;
+use Ekstremedia\NetatmoWeather\Tests\Support\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -12,7 +13,7 @@ beforeEach(function () {
     $this->service = new MeasurementService;
 
     // Create test user
-    $this->user = new Ekstremedia\NetatmoWeather\Tests\Support\User;
+    $this->user = new User;
     $this->user->id = 1;
     $this->user->name = 'Test User';
     $this->user->email = 'test@example.com';
