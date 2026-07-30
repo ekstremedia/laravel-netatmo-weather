@@ -45,10 +45,25 @@ composer require ekstremedia/laravel-netatmo-weather
 php artisan vendor:publish --tag=config --provider="Ekstremedia\NetatmoWeather\NetatmoWeatherServiceProvider"
 ```
 
-### 3. Publish the public assets (optional, if using the included UI)
+### 3. Publish the public assets (required if using the included UI)
 
 ```bash
 php artisan vendor:publish --tag=public --provider="Ekstremedia\NetatmoWeather\NetatmoWeatherServiceProvider"
+```
+
+This publishes the images **and** the self-hosted CSS/JS the views load
+(compiled Tailwind, Chart.js, Font Awesome) to `public/netatmo-weather`. The
+views reference no CDNs, so they work behind a strict Content-Security-Policy
+(`script-src 'self'`, no `'unsafe-eval'`) — but only if these assets are
+published. After upgrading the package, re-run the command with `--force` to
+refresh them.
+
+If you change any Blade view, rebuild the compiled stylesheet from the package
+root (requires Node 18+):
+
+```bash
+npm install
+npm run build:css
 ```
 
 ### 4. Run the migrations

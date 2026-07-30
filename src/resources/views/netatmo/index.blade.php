@@ -36,25 +36,15 @@
         @if($weatherStations->count())
             <div class="grid grid-cols-1 gap-6">
                 @foreach($weatherStations as $weatherstation)
+                    @php
+                        // First visit after connecting a station: trigger one data
+                        // fetch (netatmo-admin.js reloads the page when it succeeds).
+                        $needsFirstFetch = $weatherstation->token
+                            && $weatherstation->token->hasValidToken()
+                            && $weatherstation->modules->count() === 0;
+                    @endphp
                     <div class="bg-dark-elevated/80 backdrop-blur-xl rounded-2xl shadow-2xl shadow-purple-900/20 hover:shadow-purple-800/30 transition-all duration-300 overflow-hidden border border-dark-border/50 hover:border-purple-500/50"
-                         x-data="{
-                            showConfirm: false,
-                            isLoading: {{ ($weatherstation->token && $weatherstation->token->hasValidToken() && $weatherstation->modules->count() === 0) ? 'true' : 'false' }},
-                            async fetchData() {
-                                if (!this.isLoading) return;
-                                try {
-                                    const response = await fetch('{{ route('netatmo.show', $weatherstation) }}');
-                                    if (response.ok) {
-                                        // Reload the page to show the fetched data
-                                        window.location.reload();
-                                    }
-                                } catch (error) {
-                                    console.error('Failed to fetch data:', error);
-                                    this.isLoading = false;
-                                }
-                            }
-                         }"
-                         x-init="fetchData()">
+                         @if($needsFirstFetch) data-auto-fetch-url="{{ route('netatmo.show', $weatherstation) }}" @endif>
                         <!-- Station Card Header -->
                         <div class="bg-gradient-to-r from-dark-surface/60 to-purple-900/20 px-6 py-4 border-b border-dark-border/50">
                             <div class="flex items-start justify-between">
@@ -98,7 +88,8 @@
                         </div>
 
                         <!-- Loading State -->
-                        <div x-show="isLoading" class="px-6 py-4 border-b border-dark-border/50">
+                        @if($needsFirstFetch)
+                        <div data-loading-row class="px-6 py-4 border-b border-dark-border/50">
                             <div class="flex items-center space-x-3 text-purple-300">
                                 <div class="animate-spin">
                                     <i class="fas fa-spinner text-lg"></i>
@@ -109,6 +100,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
 
                         <!-- Station Data Preview -->
                         @if($weatherstation->token && $weatherstation->token->hasValidToken() && $weatherstation->modules->count() > 0)
@@ -186,7 +178,7 @@
                                     <span>Settings</span>
                                 </a>
 
-                                <button @click="showConfirm = true"
+                                <button data-modal-open="delete-station-{{ $weatherstation->id }}"
                                         class="inline-flex items-center space-x-2 px-4 py-2 bg-red-900/20 hover:bg-red-900/30 text-red-400 border border-red-800/30 font-medium rounded-lg transition-all duration-200 ml-auto">
                                     <i class="fas fa-trash-alt"></i>
                                     <span>Delete</span>
@@ -195,23 +187,9 @@
                         </div>
 
                         <!-- Confirmation Modal -->
-                        <div x-show="showConfirm"
-                             x-cloak
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0"
-                             x-transition:enter-end="opacity-100"
-                             x-transition:leave="transition ease-in duration-150"
-                             x-transition:leave-start="opacity-100"
-                             x-transition:leave-end="opacity-0"
-                             class="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50 p-4">
-                            <div @click.away="showConfirm = false"
-                                 x-transition:enter="transition ease-out duration-200"
-                                 x-transition:enter-start="opacity-0 scale-95"
-                                 x-transition:enter-end="opacity-100 scale-100"
-                                 x-transition:leave="transition ease-in duration-150"
-                                 x-transition:leave-start="opacity-100 scale-100"
-                                 x-transition:leave-end="opacity-0 scale-95"
-                                 class="bg-dark-elevated border border-dark-border/50 rounded-2xl shadow-2xl max-w-md w-full p-6">
+                        <div data-modal="delete-station-{{ $weatherstation->id }}"
+                             class="hidden fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm z-50 p-4">
+                            <div class="bg-dark-elevated border border-dark-border/50 rounded-2xl shadow-2xl max-w-md w-full p-6">
                                 <div class="flex items-center space-x-3 mb-4">
                                     <div class="bg-red-900/30 p-3 rounded-full border border-red-800/30">
                                         <i class="fas fa-exclamation-triangle text-red-400 text-xl"></i>
@@ -224,24 +202,19 @@
                                     This action cannot be undone.
                                 </p>
                                 <div class="flex justify-end space-x-3">
-                                    <button @click="showConfirm = false"
+                                    <button data-modal-close
                                             class="px-5 py-2.5 bg-dark-surface hover:bg-dark-surface/60 border border-dark-border/50 text-purple-200 font-medium rounded-lg transition-colors">
                                         Cancel
                                     </button>
-                                    <button @click="$refs.deleteForm{{ $weatherstation->id }}.submit()"
-                                            class="px-5 py-2.5 bg-red-900/40 hover:bg-red-900/60 border border-red-800/50 text-red-300 font-medium rounded-lg transition-colors shadow-sm hover:shadow-red-900/20">
-                                        Yes, Delete
-                                    </button>
+                                    <form method="POST" action="{{ route('netatmo.destroy', $weatherstation) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="px-5 py-2.5 bg-red-900/40 hover:bg-red-900/60 border border-red-800/50 text-red-300 font-medium rounded-lg transition-colors shadow-sm hover:shadow-red-900/20">
+                                            Yes, Delete
+                                        </button>
+                                    </form>
                                 </div>
-
-                                <!-- Hidden form for delete action -->
-                                <form x-ref="deleteForm{{ $weatherstation->id }}"
-                                      method="POST"
-                                      action="{{ route('netatmo.destroy', $weatherstation) }}"
-                                      class="hidden">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
                             </div>
                         </div>
                     </div>

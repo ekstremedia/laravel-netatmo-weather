@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **All frontend assets are now self-hosted** so the pages work on hosts with a
+  strict Content-Security-Policy (`script-src 'self'` + nonce, no
+  `'unsafe-eval'`). The Tailwind Play CDN, jsDelivr (Chart.js, Alpine.js) and
+  cdnjs (Font Awesome) tags are gone; Tailwind is compiled ahead of time into
+  `src/assets/css/netatmo-weather.css` (rebuild with `npm run build:css`), and
+  Chart.js 4.4.1 + Font Awesome 6.7.1 are vendored under `src/assets/vendor/`.
+- Alpine.js removed entirely — its expression evaluator requires
+  `'unsafe-eval'`. All behaviours (mini charts, sidebar, tabs, toggle switches,
+  API-token flow, modals, expanders, flash dismiss) are rewritten as vanilla JS
+  data-attribute hooks in `src/assets/js/netatmo-charts.js` and
+  `src/assets/js/netatmo-admin.js`.
+- All inline `<script>` blocks and inline event handlers (`onclick`,
+  `onsubmit`) removed from the Blade views; the station uuid reaches the chart
+  script via a `data-station-uuid` body attribute.
+- The `public` publish tag now publishes the whole `src/assets` directory
+  (css, js, vendor, images) to `public/netatmo-weather`. **Upgrading apps must
+  re-run** `php artisan vendor:publish --tag=public --provider="Ekstremedia\NetatmoWeather\NetatmoWeatherServiceProvider" --force`.
+- The API-token "Generate" button now uses `crypto.getRandomValues()` instead
+  of `Math.random()`.
+
+### Removed
+- Dead `netatmo/partials/form.blade.php` (unreferenced legacy copy of the
+  station form) and the dead `weatherCharts()` block in `show.blade.php`.
+
 ### Added
 - Public sharing feature with per-station access control
 - `is_public` boolean field to NetatmoStation model

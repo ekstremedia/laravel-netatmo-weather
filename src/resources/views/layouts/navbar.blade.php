@@ -19,7 +19,7 @@
             <!-- Right Side -->
             <div class="flex items-center space-x-4">
                 <!-- Mobile menu button -->
-                <button @click="sidebar_open = !sidebar_open"
+                <button data-sidebar-toggle
                         class="sm:hidden p-2 rounded-lg hover:bg-dark-surface border border-dark-border/30 focus:outline-none focus:ring-2 focus:ring-netatmo-purple/50 transition-colors">
                     <i class="fa fa-bars text-xl text-purple-200"></i>
                 </button>

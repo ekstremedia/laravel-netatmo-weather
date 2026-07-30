@@ -38,7 +38,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             {{-- Temperature Card --}}
             <div class="bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-2xl p-4 border border-orange-500/20"
-                 x-data="miniChart('{{ $module->module_id }}', 'Temperature', '#ef4444', '°C')">
+                 data-mini-chart data-chart-type="line" data-module-id="{{ $module->module_id }}" data-metric="Temperature" data-color="#ef4444" data-unit="°C">
                 <div class="flex items-start justify-between gap-2 mb-2">
                     <div class="flex-1 min-w-0">
                         <div class="text-orange-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Temperature</div>
@@ -53,8 +53,8 @@
 
                 {{-- Mini Chart --}}
                 <div class="mt-2 mb-2 h-12 relative">
-                    <canvas x-ref="canvas" class="w-full h-full"></canvas>
-                    <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                    <canvas data-chart-canvas class="w-full h-full"></canvas>
+                    <div data-chart-loading class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
                         <div class="w-3 h-3 border-2 border-orange-400 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
 
             {{-- Humidity Card --}}
             <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-4 border border-blue-500/20"
-                 x-data="miniChart('{{ $module->module_id }}', 'Humidity', '#3b82f6', '%')">
+                 data-mini-chart data-chart-type="line" data-module-id="{{ $module->module_id }}" data-metric="Humidity" data-color="#3b82f6" data-unit="%">
                 <div class="flex items-start justify-between gap-2 mb-2">
                     <div class="flex-1 min-w-0">
                         <div class="text-blue-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Humidity</div>
@@ -93,8 +93,8 @@
 
                 {{-- Mini Chart --}}
                 <div class="mt-2 mb-2 h-12 relative">
-                    <canvas x-ref="canvas" class="w-full h-full"></canvas>
-                    <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                    <canvas data-chart-canvas class="w-full h-full"></canvas>
+                    <div data-chart-loading class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
                         <div class="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                 </div>
@@ -117,7 +117,7 @@
 
             {{-- CO2 Card --}}
             <div class="bg-gradient-to-br from-emerald-500/10 to-green-500/10 rounded-2xl p-4 border border-emerald-500/20"
-                 x-data="miniChart('{{ $module->module_id }}', 'CO2', '#10b981', ' ppm')">
+                 data-mini-chart data-chart-type="line" data-module-id="{{ $module->module_id }}" data-metric="CO2" data-color="#10b981" data-unit=" ppm">
                 <div class="flex items-start justify-between gap-2 mb-2">
                     <div class="flex-1 min-w-0">
                         <div class="text-emerald-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">CO₂ Level</div>
@@ -132,8 +132,8 @@
 
                 {{-- Mini Chart --}}
                 <div class="mt-2 mb-2 h-12 relative">
-                    <canvas x-ref="canvas" class="w-full h-full"></canvas>
-                    <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                    <canvas data-chart-canvas class="w-full h-full"></canvas>
+                    <div data-chart-loading class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
                         <div class="w-3 h-3 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                 </div>
@@ -159,7 +159,7 @@
 
         {{-- Noise Level Card with Bar Chart --}}
         <div class="bg-gradient-to-br from-purple-500/10 to-fuchsia-500/10 rounded-2xl p-4 border border-purple-500/20"
-             x-data="miniBarChart('{{ $module->module_id }}', 'Noise', '#a855f7', ' dB')">
+             data-mini-chart data-chart-type="bar" data-module-id="{{ $module->module_id }}" data-metric="Noise" data-color="#a855f7" data-unit=" dB">
             <div class="flex items-start justify-between gap-2 mb-2">
                 <div class="flex-1 min-w-0">
                     <div class="text-purple-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Noise Level</div>
@@ -174,8 +174,8 @@
 
             {{-- Mini Bar Chart --}}
             <div class="mt-2 mb-2 h-16 relative">
-                <canvas x-ref="canvas" class="w-full h-full"></canvas>
-                <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                <canvas data-chart-canvas class="w-full h-full"></canvas>
+                <div data-chart-loading class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
                     <div class="w-3 h-3 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
                 </div>
             </div>
