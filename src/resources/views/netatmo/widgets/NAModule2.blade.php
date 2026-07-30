@@ -59,7 +59,7 @@
                     $maxWindSpeed = isset($module->dashboard_data['max_wind_str']) ? round($module->dashboard_data['max_wind_str'] / 3.6, 1) : null;
                 @endphp
                 <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl p-4 border border-emerald-500/20"
-                     x-data="miniChart('{{ $module->module_id }}', 'WindStrength', '#10b981', ' m/s')">
+                     data-mini-chart data-chart-type="line" data-module-id="{{ $module->module_id }}" data-metric="WindStrength" data-color="#10b981" data-unit=" m/s">
                     <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="flex-1 min-w-0">
                             <div class="text-emerald-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Wind Speed</div>
@@ -74,8 +74,8 @@
 
                     {{-- Mini Chart --}}
                     <div class="mt-2 mb-2 h-16 relative">
-                        <canvas x-ref="canvas" class="w-full h-full"></canvas>
-                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                        <canvas data-chart-canvas class="w-full h-full"></canvas>
+                        <div data-chart-loading class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
                             <div class="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                     </div>

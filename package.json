@@ -2,11 +2,8 @@
   "name": "laravel-netatmo-weather",
   "version": "1.0.0",
   "description": "A Laravel package for integrating Netatmo Weather Station API with your Laravel application. This package provides an easy-to-use interface for authenticating with Netatmo, fetching weather data, and storing it in your database.",
-  "main": "index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:css": "tailwindcss -i ./resources/css/netatmo-weather.css -o ./src/assets/css/netatmo-weather.css --minify"
   },
   "repository": {
     "type": "git",
@@ -20,6 +17,6 @@
   },
   "homepage": "https://github.com/ekstremedia/laravel-netatmo-weather#readme",
   "devDependencies": {
-    "tailwindcss": "^4.0.0"
+    "tailwindcss": "^3.4.17"
   }
 }

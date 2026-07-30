@@ -54,7 +54,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {{-- Temperature Card --}}
                 <div class="bg-gradient-to-br from-rose-500/10 to-pink-500/10 rounded-2xl p-4 border border-rose-500/20"
-                     x-data="miniChart('{{ $module->module_id }}', 'Temperature', '#f43f5e', '°C')">
+                     data-mini-chart data-chart-type="line" data-module-id="{{ $module->module_id }}" data-metric="Temperature" data-color="#f43f5e" data-unit="°C">
                     <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="flex-1 min-w-0">
                             <div class="text-rose-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Temperature</div>
@@ -69,8 +69,8 @@
 
                     {{-- Mini Chart --}}
                     <div class="mt-2 mb-2 h-12 relative">
-                        <canvas x-ref="canvas" class="w-full h-full"></canvas>
-                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                        <canvas data-chart-canvas class="w-full h-full"></canvas>
+                        <div data-chart-loading class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
                             <div class="w-3 h-3 border-2 border-rose-400 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
 
                 {{-- Humidity Card --}}
                 <div class="bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-2xl p-4 border border-violet-500/20"
-                     x-data="miniChart('{{ $module->module_id }}', 'Humidity', '#8b5cf6', '%')">
+                     data-mini-chart data-chart-type="line" data-module-id="{{ $module->module_id }}" data-metric="Humidity" data-color="#8b5cf6" data-unit="%">
                     <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="flex-1 min-w-0">
                             <div class="text-violet-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Humidity</div>
@@ -109,8 +109,8 @@
 
                     {{-- Mini Chart --}}
                     <div class="mt-2 mb-2 h-12 relative">
-                        <canvas x-ref="canvas" class="w-full h-full"></canvas>
-                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                        <canvas data-chart-canvas class="w-full h-full"></canvas>
+                        <div data-chart-loading class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
                             <div class="w-3 h-3 border-2 border-violet-400 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
 
                 {{-- CO2 Card --}}
                 <div class="bg-gradient-to-br from-fuchsia-500/10 to-pink-500/10 rounded-2xl p-4 border border-fuchsia-500/20"
-                     x-data="miniChart('{{ $module->module_id }}', 'CO2', '#d946ef', ' ppm')">
+                     data-mini-chart data-chart-type="line" data-module-id="{{ $module->module_id }}" data-metric="CO2" data-color="#d946ef" data-unit=" ppm">
                     <div class="flex items-start justify-between gap-2 mb-2">
                         <div class="flex-1 min-w-0">
                             <div class="text-fuchsia-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">CO₂ Level</div>
@@ -148,8 +148,8 @@
 
                     {{-- Mini Chart --}}
                     <div class="mt-2 mb-2 h-12 relative">
-                        <canvas x-ref="canvas" class="w-full h-full"></canvas>
-                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                        <canvas data-chart-canvas class="w-full h-full"></canvas>
+                        <div data-chart-loading class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
                             <div class="w-3 h-3 border-2 border-fuchsia-400 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                     </div>

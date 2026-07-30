@@ -54,7 +54,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {{-- Temperature Card --}}
                 <div class="bg-gradient-to-br from-orange-500/10 to-amber-500/10 rounded-2xl p-4 border border-orange-500/20"
-                     x-data="miniChart('{{ $module->module_id }}', 'Temperature', '#ef4444', '°C')">
+                     data-mini-chart data-chart-type="line" data-module-id="{{ $module->module_id }}" data-metric="Temperature" data-color="#ef4444" data-unit="°C">
                     <div class="flex items-start justify-between gap-2 mb-3">
                         <div class="flex-1 min-w-0">
                             <div class="text-orange-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Temperature</div>
@@ -69,8 +69,8 @@
 
                     {{-- Mini Chart --}}
                     <div class="mt-3 mb-2 h-16 relative">
-                        <canvas x-ref="canvas" class="w-full h-full"></canvas>
-                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                        <canvas data-chart-canvas class="w-full h-full"></canvas>
+                        <div data-chart-loading class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
                             <div class="w-4 h-4 border-2 border-orange-400 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
 
                 {{-- Humidity Card --}}
                 <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-4 border border-blue-500/20"
-                     x-data="miniChart('{{ $module->module_id }}', 'Humidity', '#3b82f6', '%')">
+                     data-mini-chart data-chart-type="line" data-module-id="{{ $module->module_id }}" data-metric="Humidity" data-color="#3b82f6" data-unit="%">
                     <div class="flex items-start justify-between gap-2 mb-3">
                         <div class="flex-1 min-w-0">
                             <div class="text-blue-300/80 text-xs font-medium uppercase tracking-wide mb-1.5">Humidity</div>
@@ -109,8 +109,8 @@
 
                     {{-- Mini Chart --}}
                     <div class="mt-3 mb-2 h-16 relative">
-                        <canvas x-ref="canvas" class="w-full h-full"></canvas>
-                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
+                        <canvas data-chart-canvas class="w-full h-full"></canvas>
+                        <div data-chart-loading class="absolute inset-0 flex items-center justify-center bg-dark-surface/40 rounded">
                             <div class="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                     </div>

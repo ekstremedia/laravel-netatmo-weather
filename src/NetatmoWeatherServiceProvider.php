@@ -21,8 +21,11 @@ class NetatmoWeatherServiceProvider extends ServiceProvider
         // Load routes based on configuration
         $this->registerRoutes();
 
+        // Publishes images plus the self-hosted css/js/vendor assets the Blade
+        // layouts load — the views reference no CDN, so consuming apps must
+        // republish (vendor:publish --tag=public --force) after upgrading.
         $this->publishes([
-            __DIR__.'/assets/images' => public_path('netatmo-weather/images'),
+            __DIR__.'/assets' => public_path('netatmo-weather'),
         ], 'public');
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations/');
